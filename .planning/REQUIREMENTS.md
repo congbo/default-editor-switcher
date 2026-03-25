@@ -83,14 +83,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISC-01 | Phase 1 | Validated |
-| DISC-02 | Phase 1 | Validated |
-| DISC-03 | Phase 1 | Validated |
+| DISC-01 | Phase 1 | Awaiting verification |
+| DISC-02 | Phase 1 | Awaiting verification |
+| DISC-03 | Phase 1 | Awaiting verification |
 | MENU-01 | Phase 2 | Pending |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
 | GLOB-01 | Phase 2 | Pending |
-| GLOB-02 | Phase 1 | Validated |
+| GLOB-02 | Phase 1 | Awaiting verification |
 | GLOB-03 | Phase 2 | Pending |
 | LANG-01 | Phase 3 | Pending |
 | LANG-02 | Phase 3 | Pending |
@@ -119,4 +119,4 @@
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 after phase 01 execution review*

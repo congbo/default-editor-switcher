@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 01 complete - ready for Phase 02
-stopped_at: Phase 01 complete; xcodebuild build/test blocked by missing Xcode app
-last_updated: "2026-03-25T12:10:24Z"
+status: Phase 01 awaiting human verification
+stopped_at: Phase 01 implementation complete; waiting on full Xcode-backed verification
+last_updated: "2026-03-25T12:14:05Z"
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 3
   completed_plans: 3
 ---
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Phase 02 — menu bar global switch
+**Current focus:** Phase 01 — discovery-association-core human verification
 
 ## Current Position
 
-Phase: 01 (discovery-association-core) — COMPLETE
+Phase: 01 (discovery-association-core) — AWAITING HUMAN VERIFICATION
 Plan: 3 of 3
-Checkpoint: plan 01-03 completed; ready for the phase transition
+Checkpoint: implementation complete; `01-VERIFICATION.md` requires real Xcode and machine-level probe checks
 
 ## Performance Metrics
 
@@ -39,7 +39,7 @@ Checkpoint: plan 01-03 completed; ready for the phase transition
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Discovery & Association Core | 3/3 | Complete | - |
+| 1. Discovery & Association Core | 3/3 | Awaiting human verification | - |
 
 **Recent Trend:**
 
@@ -69,9 +69,10 @@ None yet.
 - Launch Services behavior is validated at the adapter level, but the real xcodebuild build/test commands remain blocked until a full Xcode.app is installed
 - Editor capability declarations may be inconsistent across IDEs and require fallback ranking logic
 - This workspace currently only has Command Line Tools installed; `xcodebuild` does not complete without a real Xcode.app installation
+- Phase 01 still needs human verification captured in `.planning/phases/01-discovery-association-core/01-HUMAN-UAT.md`
 
 ## Session Continuity
 
-Last session: 2026-03-25T12:10:24Z
-Stopped at: Phase 01 complete; plan 01-03 summary pending
+Last session: 2026-03-25T12:14:05Z
+Stopped at: Phase 01 code complete; waiting for human verification items
 Resume file: .planning/phases/01-discovery-association-core/01-CONTEXT.md
