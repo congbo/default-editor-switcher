@@ -46,6 +46,7 @@ final class MenuBarViewModel: ObservableObject {
     @Published private(set) var summary: MenuBarSummary
     @Published private(set) var sections: [MenuBarSection] = []
     @Published private(set) var lastSwitchReport: GlobalTextSwitchReport?
+    @Published private(set) var lastSwitchFeedback: GlobalTextSwitchFeedback?
     @Published private(set) var applyingBundleID: String?
     @Published private(set) var statusItemIconLookupPath: String?
     @Published private(set) var primaryRows: [MenuBarEditorRow] = []
@@ -57,6 +58,7 @@ final class MenuBarViewModel: ObservableObject {
     private let applicationLocator: ApplicationLocating
     private let recommendedAppsStore: any RecommendedMenuAppsStoring
     private let localizer: any AppTextLocalizing
+    private let switchFeedbackFormatter: any GlobalTextSwitchFeedbackFormatting
     private var hasLoadedOnce = false
     private var cancellables: Set<AnyCancellable> = []
 
@@ -66,7 +68,8 @@ final class MenuBarViewModel: ObservableObject {
         switchCoordinator: GlobalTextSwitchCoordinating? = GlobalTextSwitchCoordinator(),
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator(),
         recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
-        localizer: any AppTextLocalizing = PassthroughLocalizer()
+        localizer: any AppTextLocalizing = PassthroughLocalizer(),
+        switchFeedbackFormatter: (any GlobalTextSwitchFeedbackFormatting)? = nil
     ) {
         self.stateService = stateService
         self.appDiscovery = appDiscovery
@@ -74,6 +77,10 @@ final class MenuBarViewModel: ObservableObject {
         self.applicationLocator = applicationLocator
         self.recommendedAppsStore = recommendedAppsStore
         self.localizer = localizer
+        self.switchFeedbackFormatter = switchFeedbackFormatter ?? GlobalTextSwitchFeedbackFormatter(
+            localizer: localizer,
+            applicationLocator: applicationLocator
+        )
         self.summary = MenuBarSummary(
             title: localizer.string("Loading..."),
             detail: localizer.string("Checking the current global text editor.")
@@ -118,6 +125,7 @@ final class MenuBarViewModel: ObservableObject {
         )
         primaryRows = recommendedMenuRows(from: sections)
         overflowRows = overflowMenuRows(from: sections)
+        lastSwitchFeedback = feedback(from: lastSwitchReport, displayNames: displayNames)
     }
 
     func applyEditor(bundleID: String) {
@@ -130,6 +138,9 @@ final class MenuBarViewModel: ObservableObject {
 
         let report = switchCoordinator.apply(bundleID: bundleID)
         lastSwitchReport = report
+        if report.didFullyMatch {
+            lastSwitchFeedback = nil
+        }
         applyingBundleID = nil
         load()
     }
@@ -302,5 +313,23 @@ final class MenuBarViewModel: ObservableObject {
                 self.load()
             }
             .store(in: &cancellables)
+    }
+
+    private func feedback(
+        from report: GlobalTextSwitchReport?,
+        displayNames: [String: String]
+    ) -> GlobalTextSwitchFeedback? {
+        guard let report else {
+            return nil
+        }
+
+        if report.didFullyMatch {
+            return nil
+        }
+
+        return switchFeedbackFormatter.feedback(
+            for: report,
+            requestedEditorName: displayName(for: report.requestedBundleID, displayNames: displayNames)
+        )
     }
 }

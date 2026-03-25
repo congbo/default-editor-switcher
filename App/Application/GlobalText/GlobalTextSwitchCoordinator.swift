@@ -25,6 +25,7 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
 
     func apply(bundleID: String) -> GlobalTextSwitchReport {
         let declaredResolutions = declaredResolutions()
+        let scopeLabelsByContentType = scopeLabelsByContentType(from: declaredResolutions)
         let results = declaredContentTypes(from: declaredResolutions).map { contentType in
             verifier.verify(requestedBundleID: bundleID, for: contentType)
         }
@@ -37,7 +38,9 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
             writeFailedCount: results.filter { $0.aggregateStatus == .writeFailed }.count,
             processedContentTypeIdentifiers: results.map(\.contentTypeIdentifier),
             processedExtensions: declaredResolutions.map(\.normalizedExtension),
-            sampleFailures: results.compactMap(sampleFailure(for:)).prefix(3).map { $0 }
+            failures: results.compactMap {
+                failure(for: $0, scopeLabelsByContentType: scopeLabelsByContentType)
+            }
         )
     }
 
@@ -67,14 +70,34 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
         }
     }
 
-    private func sampleFailure(for result: AssociationVerificationResult) -> GlobalTextSwitchReport.SampleFailure? {
+    private func scopeLabelsByContentType(
+        from resolutions: [ContentTypeResolver.Resolution]
+    ) -> [String: String] {
+        var labels: [String: String] = [:]
+
+        for resolution in resolutions {
+            guard let type = resolution.type else {
+                continue
+            }
+
+            labels[type.identifier] = labels[type.identifier] ?? ".\(resolution.normalizedExtension)"
+        }
+
+        return labels
+    }
+
+    private func failure(
+        for result: AssociationVerificationResult,
+        scopeLabelsByContentType: [String: String]
+    ) -> GlobalTextSwitchReport.Failure? {
         guard let roleResult = result.primaryRoleResult else {
             return nil
         }
 
         let handler = roleResult.preferredHandler
-        return GlobalTextSwitchReport.SampleFailure(
+        return GlobalTextSwitchReport.Failure(
             contentTypeIdentifier: handler.contentTypeIdentifier,
+            scopeLabel: scopeLabelsByContentType[handler.contentTypeIdentifier] ?? handler.contentTypeIdentifier,
             role: handler.role,
             status: roleResult.status.rawValue,
             effectiveBundleID: handler.effectiveBundleID,

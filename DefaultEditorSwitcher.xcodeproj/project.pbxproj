@@ -54,6 +54,8 @@
 		A1B2C3D4E5F60718293A00DC /* AppLanguageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */; };
 		A1B2C3D4E5F60718293A00DD /* SettingsCopyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00ED /* SettingsCopyFormatter.swift */; };
 		A1B2C3D4E5F60718293A00DE /* SettingsCopyFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */; };
+		A1B2C3D4E5F60718293A0100 /* GlobalTextSwitchFeedbackFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0102 /* GlobalTextSwitchFeedbackFormatter.swift */; };
+		A1B2C3D4E5F60718293A0101 /* GlobalTextSwitchFeedbackFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0103 /* GlobalTextSwitchFeedbackFormatterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +113,8 @@
 		A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageStoreTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00ED /* SettingsCopyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyFormatter.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyFormatterTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0102 /* GlobalTextSwitchFeedbackFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchFeedbackFormatter.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0103 /* GlobalTextSwitchFeedbackFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchFeedbackFormatterTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -227,6 +231,7 @@
 			children = (
 				A1B2C3D4E5F60718293A00B0 /* MenuBarContentView.swift */,
 				A1B2C3D4E5F60718293A00B1 /* MenuBarViewModel.swift */,
+				A1B2C3D4E5F60718293A0102 /* GlobalTextSwitchFeedbackFormatter.swift */,
 				A1B2C3D4E5F60718293A00B2 /* MenuBarSection.swift */,
 				A1B2C3D4E5F60718293A00B3 /* RulesWindowPlaceholderView.swift */,
 			);
@@ -321,6 +326,7 @@
 				A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */,
 				A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */,
 				A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */,
+				A1B2C3D4E5F60718293A0103 /* GlobalTextSwitchFeedbackFormatterTests.swift */,
 				A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */,
 			);
 			path = DefaultEditorSwitcherTests;
@@ -477,6 +483,7 @@
 				A1B2C3D4E5F60718293A00A2 /* MenuBarSection.swift in Sources */,
 				A1B2C3D4E5F60718293A00A1 /* MenuBarViewModel.swift in Sources */,
 				A1B2C3D4E5F60718293A00A0 /* MenuBarContentView.swift in Sources */,
+				A1B2C3D4E5F60718293A0100 /* GlobalTextSwitchFeedbackFormatter.swift in Sources */,
 				A1B2C3D4E5F60718293A00A3 /* RulesWindowPlaceholderView.swift in Sources */,
 				A1B2C3D4E5F60718293A00D0 /* LaunchAtLoginService.swift in Sources */,
 				A1B2C3D4E5F60718293A00D1 /* GeneralSettingsViewModel.swift in Sources */,
@@ -505,6 +512,7 @@
 				A1B2C3D4E5F60718293A00DA /* LaunchAtLoginServiceTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00DB /* RecommendedMenuAppsStoreTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00DC /* AppLanguageStoreTests.swift in Sources */,
+				A1B2C3D4E5F60718293A0101 /* GlobalTextSwitchFeedbackFormatterTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00DE /* SettingsCopyFormatterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -616,12 +624,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				DEFINES_MODULE = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
 				INFOPLIST_KEY_LSUIElement = YES;

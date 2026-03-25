@@ -144,7 +144,7 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(coordinator.appliedBundleIDs, ["com.microsoft.VSCode"])
     }
 
-    func testApplyKeepsLatestReportWithoutPublishingMenuFeedback() {
+    func testApplyPublishesRecoveryFeedbackForFailedSwitches() {
         let successReport = GlobalTextSwitchReport(
             requestedBundleID: "com.microsoft.VSCode",
             matchedCount: 2,
@@ -166,6 +166,7 @@ final class MenuBarViewModelTests: XCTestCase {
             sampleFailures: [
                 .init(
                     contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
                     role: .viewer,
                     status: "mismatched",
                     effectiveBundleID: "com.apple.TextEdit",
@@ -190,6 +191,7 @@ final class MenuBarViewModelTests: XCTestCase {
         successViewModel.applyEditor(bundleID: "com.microsoft.VSCode")
 
         XCTAssertEqual(successViewModel.lastSwitchReport, successReport)
+        XCTAssertNil(successViewModel.lastSwitchFeedback)
 
         let failureViewModel = MenuBarViewModel(
             stateService: StubStateService(
@@ -211,6 +213,13 @@ final class MenuBarViewModelTests: XCTestCase {
         failureViewModel.applyEditor(bundleID: "com.example.partial")
 
         XCTAssertEqual(failureViewModel.lastSwitchReport, failureReport)
+        XCTAssertEqual(
+            failureViewModel.lastSwitchFeedback,
+            GlobalTextSwitchFeedback(
+                headline: "1 text types could not switch to Partial Editor.",
+                details: [".md: Still opens in TextEdit."]
+            )
+        )
         XCTAssertEqual(failureViewModel.summary.title, "Partial Editor")
         XCTAssertTrue(
             failureViewModel.sections
@@ -218,6 +227,69 @@ final class MenuBarViewModelTests: XCTestCase {
                 .first(where: { $0.bundleID == "com.example.partial" })?
                 .isCurrent == true
         )
+    }
+
+    func testLaterSuccessfulApplyClearsStaleRecoveryFeedback() {
+        let coordinator = StubSwitchCoordinator(
+            reportsByBundleID: [
+                "com.example.partial": [
+                    GlobalTextSwitchReport(
+                        requestedBundleID: "com.example.partial",
+                        matchedCount: 1,
+                        mismatchedCount: 1,
+                        unsupportedCount: 0,
+                        writeFailedCount: 0,
+                        processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                        processedExtensions: ["txt", "md"],
+                        sampleFailures: [
+                            .init(
+                                contentTypeIdentifier: "net.daringfireball.markdown",
+                                scopeLabel: ".md",
+                                role: .viewer,
+                                status: "mismatched",
+                                effectiveBundleID: "com.apple.TextEdit",
+                                statusCode: nil
+                            )
+                        ]
+                    ),
+                    GlobalTextSwitchReport(
+                        requestedBundleID: "com.example.partial",
+                        matchedCount: 2,
+                        mismatchedCount: 0,
+                        unsupportedCount: 0,
+                        writeFailedCount: 0,
+                        processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                        processedExtensions: ["txt", "md"],
+                        sampleFailures: []
+                    ),
+                ]
+            ]
+        )
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(
+                        status: .mixed(bundleIDs: ["com.example.partial", "com.apple.TextEdit"]),
+                        inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                        representativeBundleID: "com.example.partial"
+                    ),
+                    GlobalTextState(status: .single(bundleID: "com.example.partial"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: coordinator,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.example.partial")
+        XCTAssertNotNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(viewModel.lastSwitchReport?.matchedCount, 1)
+
+        viewModel.applyEditor(bundleID: "com.example.partial")
+        XCTAssertNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(viewModel.lastSwitchReport?.matchedCount, 2)
     }
 
     func testOpenSettingsWindowActionIsExposed() {
@@ -671,16 +743,24 @@ private struct StubApplicationLocator: ApplicationLocating {
 }
 
 private final class StubSwitchCoordinator: GlobalTextSwitchCoordinating {
-    private let reportsByBundleID: [String: GlobalTextSwitchReport]
+    private let reportsByBundleID: [String: [GlobalTextSwitchReport]]
+    private var applyCountsByBundleID: [String: Int] = [:]
     private(set) var appliedBundleIDs: [String] = []
 
-    init(reportsByBundleID: [String: GlobalTextSwitchReport]) {
+    convenience init(reportsByBundleID: [String: GlobalTextSwitchReport]) {
+        self.init(reportsByBundleID: reportsByBundleID.mapValues { [$0] })
+    }
+
+    init(reportsByBundleID: [String: [GlobalTextSwitchReport]]) {
         self.reportsByBundleID = reportsByBundleID
     }
 
     func apply(bundleID: String) -> GlobalTextSwitchReport {
         appliedBundleIDs.append(bundleID)
-        return reportsByBundleID[bundleID]
+        let index = applyCountsByBundleID[bundleID, default: 0]
+        applyCountsByBundleID[bundleID] = index + 1
+
+        return reportsByBundleID[bundleID]?[min(index, (reportsByBundleID[bundleID]?.count ?? 1) - 1)]
             ?? GlobalTextSwitchReport(
                 requestedBundleID: bundleID,
                 matchedCount: 0,

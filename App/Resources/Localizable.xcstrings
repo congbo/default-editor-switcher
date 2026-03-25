@@ -4,6 +4,74 @@
     "" : {
 
     },
+    "%@: macOS rejected the change (OSStatus %d)." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: macOS rejected the change (OSStatus %d)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: macOS 拒绝了这次变更（OSStatus %d）。"
+          }
+        }
+      }
+    },
+    "%@: Still opens in %@." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: Still opens in %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 仍然会在 %@ 中打开。"
+          }
+        }
+      }
+    },
+    "%@: This editor does not support this type on this Mac." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: This editor does not support this type on this Mac."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: 这个编辑器在这台 Mac 上不支持此类型。"
+          }
+        }
+      }
+    },
+    "%d text types could not switch to %@." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d text types could not switch to %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d 个文本类型未能切换到 %@。"
+          }
+        }
+      }
+    },
     "%lld editors" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -49,6 +117,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "高级规则窗口"
+          }
+        }
+      }
+    },
+    "another app" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "another app"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一个应用"
           }
         }
       }
