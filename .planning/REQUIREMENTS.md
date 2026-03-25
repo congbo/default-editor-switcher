@@ -92,30 +92,18 @@
 | GLOB-01 | Phase 2 | Pending |
 | GLOB-02 | Phase 1 | Validated |
 | GLOB-03 | Phase 2 | Pending |
-| LANG-01 | Phase 3 | Pending |
-| LANG-02 | Phase 3 | Pending |
-| LANG-03 | Phase 3 | Pending |
-| LANG-04 | Phase 3 | Pending |
-| LANG-05 | Phase 3 | Pending |
-| LANG-06 | Phase 3 | Pending |
-| LANG-07 | Phase 3 | Pending |
-| CUST-01 | Phase 3 | Pending |
-| CUST-02 | Phase 3 | Pending |
-| CUST-03 | Phase 3 | Pending |
-| RULE-01 | Phase 3 | Pending |
-| RULE-02 | Phase 3 | Pending |
-| STAT-01 | Phase 4 | Pending |
-| STAT-02 | Phase 4 | Pending |
-| STAT-03 | Phase 4 | Pending |
-| STAT-04 | Phase 4 | Pending |
-| DIST-01 | Phase 5 | Pending |
-| DIST-02 | Phase 5 | Pending |
+| STAT-01 | Phase 3 | Pending |
+| STAT-02 | Phase 3 | Pending |
+| STAT-03 | Phase 3 | Pending |
+| STAT-04 | Phase 3 | Pending |
+| DIST-01 | Phase 4 | Pending |
+| DIST-02 | Phase 4 | Pending |
 | DIST-03 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 28
-- Unmapped: 0 ✓
+- Mapped to phases: 16
+- Unmapped: 12
 
 ---
 *Requirements defined: 2026-03-25*

@@ -14,9 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
-- [ ] **Phase 3: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
-- [ ] **Phase 4: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
-- [ ] **Phase 5: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [ ] **Phase 3: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
+- [ ] **Phase 4: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
 
 ## Phase Details
 
@@ -57,26 +56,9 @@ Plans:
 Verification:
 - Automated checks and human verification passed; see `02-VERIFICATION.md` and `02-HUMAN-UAT.md`
 
-### Phase 3: Rules Window & Custom Extensions
-**Goal**: Provide the advanced configuration window for override management and custom extension rules.
-**Depends on**: Phase 2
-**Requirements**: [CUST-01, CUST-02, CUST-03, RULE-01, RULE-02]
-**UI hint**: yes
-**Success Criteria** (what must be TRUE):
-  1. User can open a main window dedicated to rule management.
-  2. User can create, edit, and delete custom extension rules.
-  3. The UI explains effective precedence when custom extension rules conflict with language or global rules.
-  4. User can preview the effective editor for each built-in language category before saving changes.
-**Plans**: 3 plans
-
-Plans:
-- [ ] 03-01: Build the rules window shell, navigation, and rule state models
-- [ ] 03-02: Implement custom extension CRUD, validation, and conflict messaging
-- [ ] 03-03: Surface effective bindings and apply flows in the advanced configuration UI
-
-### Phase 4: State, Snapshot, and Restore
+### Phase 3: State, Snapshot, and Restore
 **Goal**: Make changes safe and understandable with current-state visibility, restore snapshots, and baseline recovery.
-**Depends on**: Phase 3
+**Depends on**: Phase 2
 **Requirements**: [STAT-01, STAT-02, STAT-03, STAT-04]
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -87,12 +69,12 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Implement state inspection, snapshot persistence, and baseline capture
-- [ ] 04-02: Implement restore actions, verification, and user-facing recovery flows
+- [ ] 03-01: Implement state inspection, snapshot persistence, and baseline capture
+- [ ] 03-02: Implement restore actions, verification, and user-facing recovery flows
 
-### Phase 5: Release Hardening
+### Phase 4: Release Hardening
 **Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
-**Depends on**: Phase 4
+**Depends on**: Phase 3
 **Requirements**: [DIST-01, DIST-02]
 **UI hint**: no
 **Success Criteria** (what must be TRUE):
@@ -102,18 +84,17 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 05-02: Harden failure UX, error messaging, and release-check procedures
+- [ ] 04-01: Build the release pipeline for signing, notarization, and install verification
+- [ ] 04-02: Harden failure UX, error messaging, and release-check procedures
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 4 → 5
+Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
-| 3. Rules Window & Custom Extensions | 0/3 | Not started | - |
-| 4. State, Snapshot, and Restore | 0/2 | Not started | - |
-| 5. Release Hardening | 0/2 | Not started | - |
+| 3. State, Snapshot, and Restore | 0/2 | Not started | - |
+| 4. Release Hardening | 0/2 | Not started | - |
