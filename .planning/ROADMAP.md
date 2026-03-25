@@ -15,8 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
 - [ ] **Phase 3: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
-- [ ] **Phase 3: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
-- [ ] **Phase 3: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [ ] **Phase 4: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
+- [ ] **Phase 5: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
 
 ## Phase Details
 
@@ -59,7 +59,7 @@ Verification:
 
 ### Phase 3: Rules Window & Custom Extensions
 **Goal**: Provide the advanced configuration window for override management and custom extension rules.
-**Depends on**: Phase 3
+**Depends on**: Phase 2
 **Requirements**: [CUST-01, CUST-02, CUST-03, RULE-01, RULE-02]
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -74,7 +74,7 @@ Plans:
 - [ ] 03-02: Implement custom extension CRUD, validation, and conflict messaging
 - [ ] 03-03: Surface effective bindings and apply flows in the advanced configuration UI
 
-### Phase 3: State, Snapshot, and Restore
+### Phase 4: State, Snapshot, and Restore
 **Goal**: Make changes safe and understandable with current-state visibility, restore snapshots, and baseline recovery.
 **Depends on**: Phase 3
 **Requirements**: [STAT-01, STAT-02, STAT-03, STAT-04]
@@ -87,12 +87,12 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Implement state inspection, snapshot persistence, and baseline capture
-- [ ] 03-02: Implement restore actions, verification, and user-facing recovery flows
+- [ ] 04-01: Implement state inspection, snapshot persistence, and baseline capture
+- [ ] 04-02: Implement restore actions, verification, and user-facing recovery flows
 
-### Phase 3: Release Hardening
+### Phase 5: Release Hardening
 **Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
-**Depends on**: Phase 3
+**Depends on**: Phase 4
 **Requirements**: [DIST-01, DIST-02]
 **UI hint**: no
 **Success Criteria** (what must be TRUE):
@@ -102,18 +102,18 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 03-02: Harden failure UX, error messaging, and release-check procedures
+- [ ] 05-01: Build the release pipeline for signing, notarization, and install verification
+- [ ] 05-02: Harden failure UX, error messaging, and release-check procedures
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
+Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Discovery & Association Core | 3/3 | Complete | 2003-03-25 |
-| 2. Menu Bar Global Switch | 3/3 | Complete | 2003-03-25 |
+| 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
+| 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
 | 3. Rules Window & Custom Extensions | 0/3 | Not started | - |
-| 3. State, Snapshot, and Restore | 0/2 | Not started | - |
-| 3. Release Hardening | 0/2 | Not started | - |
+| 4. State, Snapshot, and Restore | 0/2 | Not started | - |
+| 5. Release Hardening | 0/2 | Not started | - |

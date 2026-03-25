@@ -4,9 +4,9 @@ milestone: v1.0
 milestone_name: milestone
 status: Phase 02 complete; ready for Phase 03
 stopped_at: Quick task 260326-1fr completed; Phase 03 planning remains the next milestone step
-last_updated: "2026-03-25T17:24:03.237Z"
+last_updated: "2026-03-26T01:24:03+08:00"
 progress:
-  total_phases: 3
+  total_phases: 5
   completed_phases: 2
   total_plans: 6
   completed_plans: 6
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Phase 03 — language-override-engine planning
+**Current focus:** Phase 03 — rules-window-custom-extensions planning
 
 ## Current Position
 
 Phase: 02 (menu-bar-global-switch) — COMPLETE
 Plan: 3 of 3
-Checkpoint: Automated checks and human UAT passed; next milestone work is Phase 03 planning
+Checkpoint: Automated checks and human UAT passed; next milestone work is Phase 03 roadmap/planning
 
 ## Performance Metrics
 
@@ -87,5 +87,5 @@ No pending todos recorded.
 ## Session Continuity
 
 Last session: 2026-03-26T01:05:27+08:00
-Stopped at: Quick task 260326-1fr completed; Phase 03 planning remains the next milestone step
-Resume file: .planning/phases/03-language-override-engine/03-CONTEXT.md
+Stopped at: Quick task 260326-1fr completed; Phase 03 roadmap/planning remains the next milestone step
+Resume file: .planning/ROADMAP.md
