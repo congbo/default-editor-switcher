@@ -136,13 +136,13 @@
 		A1B2C3D4E5F60718293A0039 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A0040 /* Workspace */,
+				A1B2C3D4E5F60718293A0090 /* Workspace */,
 				A1B2C3D4E5F60718293A003B /* LaunchServices */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
 		};
-		A1B2C3D4E5F60718293A0040 /* Workspace */ = {
+		A1B2C3D4E5F60718293A0090 /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A0018 /* BundleDocumentTypeReader.swift */,
@@ -404,8 +404,12 @@
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				DEFINES_MODULE = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -417,6 +421,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 			};
@@ -431,6 +436,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				DEFINES_MODULE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -455,8 +461,11 @@
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcherTests;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -469,6 +478,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcherTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DefaultEditorSwitcher.app/Contents/MacOS/DefaultEditorSwitcher";
@@ -510,8 +520,11 @@
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = AssociationProbe;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -523,6 +536,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.AssociationProbe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 			};

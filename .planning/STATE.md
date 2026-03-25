@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Phase 01 awaiting human verification
 stopped_at: Phase 01 implementation complete; waiting on full Xcode-backed verification
-last_updated: "2026-03-25T12:14:05Z"
+last_updated: "2026-03-25T12:57:02Z"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 
 Phase: 01 (discovery-association-core) — AWAITING HUMAN VERIFICATION
 Plan: 3 of 3
-Checkpoint: implementation complete; `01-VERIFICATION.md` requires real Xcode and machine-level probe checks
+Checkpoint: Xcode build/test passed; only the machine-level `AssociationProbe` smoke run remains
 
 ## Performance Metrics
 
@@ -66,13 +66,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- Launch Services behavior is validated at the adapter level, but the real xcodebuild build/test commands remain blocked until a full Xcode.app is installed
+- Launch Services behavior is validated at the adapter level, and Xcode build/test now pass locally; the remaining verification gap is the real-machine `AssociationProbe` smoke run
 - Editor capability declarations may be inconsistent across IDEs and require fallback ranking logic
-- This workspace currently only has Command Line Tools installed; `xcodebuild` does not complete without a real Xcode.app installation
 - Phase 01 still needs human verification captured in `.planning/phases/01-discovery-association-core/01-HUMAN-UAT.md`
 
 ## Session Continuity
 
-Last session: 2026-03-25T12:14:05Z
-Stopped at: Phase 01 code complete; waiting for human verification items
+Last session: 2026-03-25T12:57:02Z
+Stopped at: Phase 01 code complete; waiting for the final AssociationProbe smoke run
 Resume file: .planning/phases/01-discovery-association-core/01-CONTEXT.md
