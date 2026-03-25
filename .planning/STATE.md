@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 01 awaiting human verification
-stopped_at: Phase 01 implementation complete; waiting on full Xcode-backed verification
-last_updated: "2026-03-25T12:57:02Z"
+status: Phase 01 verified complete; ready for Phase 02 discussion
+stopped_at: Phase 2 context gathered
+last_updated: "2026-03-25T13:27:50.913Z"
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
   completed_plans: 3
 ---
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Phase 01 — discovery-association-core human verification
+**Current focus:** Phase 02 — menu-bar-global-switch discussion
 
 ## Current Position
 
-Phase: 01 (discovery-association-core) — AWAITING HUMAN VERIFICATION
-Plan: 3 of 3
-Checkpoint: Xcode build/test passed; only the machine-level `AssociationProbe` smoke run remains
+Phase: 02 (menu-bar-global-switch) — READY FOR DISCUSSION
+Plan: 0 of 3
+Checkpoint: Phase 01 passed the real-machine `AssociationProbe` smoke run for markdown and plain-text handlers, and the original handlers were restored
 
 ## Performance Metrics
 
@@ -39,7 +39,7 @@ Checkpoint: Xcode build/test passed; only the machine-level `AssociationProbe` s
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Discovery & Association Core | 3/3 | Awaiting human verification | - |
+| 1. Discovery & Association Core | 3/3 | Verified complete | - |
 
 **Recent Trend:**
 
@@ -66,12 +66,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- Launch Services behavior is validated at the adapter level, and Xcode build/test now pass locally; the remaining verification gap is the real-machine `AssociationProbe` smoke run
 - Editor capability declarations may be inconsistent across IDEs and require fallback ranking logic
-- Phase 01 still needs human verification captured in `.planning/phases/01-discovery-association-core/01-HUMAN-UAT.md`
+- Codex still cannot re-run `xcodebuild test -scheme DefaultEditorSwitcher` inside its sandbox because `testmanagerd` is blocked there, but the same command has now succeeded on the local machine and the machine-level Launch Services smoke run also passed outside the sandbox
 
 ## Session Continuity
 
-Last session: 2026-03-25T12:57:02Z
-Stopped at: Phase 01 code complete; waiting for the final AssociationProbe smoke run
-Resume file: .planning/phases/01-discovery-association-core/01-CONTEXT.md
+Last session: 2026-03-25T13:27:50.909Z
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-menu-bar-global-switch/02-CONTEXT.md
