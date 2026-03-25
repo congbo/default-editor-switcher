@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
+- [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [ ] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
 - [ ] **Phase 3: Language Override Engine** - Add developer-oriented language buckets and override precedence
 - [ ] **Phase 4: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
@@ -34,9 +34,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Define file taxonomy, language buckets, and precedence-ready domain models
-- [ ] 01-02: Build editor discovery and ranking using built-in preferences plus system eligibility
-- [ ] 01-03: Implement Launch Services read/write wrappers and verification probes
+- [x] 01-01: Define file taxonomy, language buckets, and precedence-ready domain models
+- [x] 01-02: Build editor discovery and ranking using built-in preferences plus system eligibility
+- [x] 01-03: Implement Launch Services read/write wrappers and verification probes
 
 ### Phase 2: Menu Bar Global Switch
 **Goal**: Deliver the simple `default-browser`-style menu bar flow for switching all text-like files to one editor.
@@ -125,7 +125,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Discovery & Association Core | 2/3 | In progress | - |
+| 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
 | 2. Menu Bar Global Switch | 0/3 | Not started | - |
 | 3. Language Override Engine | 0/2 | Not started | - |
 | 4. Rules Window & Custom Extensions | 0/3 | Not started | - |

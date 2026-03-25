@@ -83,14 +83,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISC-01 | Phase 1 | Pending |
-| DISC-02 | Phase 1 | Pending |
-| DISC-03 | Phase 1 | Pending |
+| DISC-01 | Phase 1 | Validated |
+| DISC-02 | Phase 1 | Validated |
+| DISC-03 | Phase 1 | Validated |
 | MENU-01 | Phase 2 | Pending |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
 | GLOB-01 | Phase 2 | Pending |
-| GLOB-02 | Phase 1 | Pending |
+| GLOB-02 | Phase 1 | Validated |
 | GLOB-03 | Phase 2 | Pending |
 | LANG-01 | Phase 3 | Pending |
 | LANG-02 | Phase 3 | Pending |
