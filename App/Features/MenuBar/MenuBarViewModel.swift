@@ -44,6 +44,8 @@ final class MenuBarViewModel: ObservableObject {
     static let settingsWindowID = "settings-window"
 
     @Published private(set) var summary: MenuBarSummary
+    @Published private(set) var currentState: GlobalTextState?
+    @Published private(set) var availableEditors: [EditorCandidate] = []
     @Published private(set) var sections: [MenuBarSection] = []
     @Published private(set) var lastSwitchReport: GlobalTextSwitchReport?
     @Published private(set) var lastSwitchFeedback: GlobalTextSwitchFeedback?
@@ -110,6 +112,8 @@ final class MenuBarViewModel: ObservableObject {
         let candidates = deduplicatedCandidates(
             appDiscovery.discoverEditors(for: .plainText, bucket: nil)
         )
+        currentState = state
+        availableEditors = candidates
         let displayNames = Dictionary(candidates.map { ($0.bundleID, $0.displayName) }, uniquingKeysWith: { first, _ in first })
         let iconPaths = Dictionary(candidates.map { ($0.bundleID, $0.iconLookupPath) }, uniquingKeysWith: { first, _ in first })
 

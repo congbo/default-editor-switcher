@@ -36,6 +36,7 @@ struct DefaultEditorSwitcherApp: App {
 
         WindowGroup("Settings", id: MenuBarViewModel.settingsWindowID) {
             SettingsWindowView(
+                menuBarViewModel: menuBarViewModel,
                 generalSettingsViewModel: generalSettingsViewModel,
                 recommendedAppsStore: recommendedMenuAppsStore,
                 languageStore: appLanguageStore,

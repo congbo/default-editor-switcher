@@ -24,6 +24,8 @@ final class MenuBarViewModelTests: XCTestCase {
         viewModel.load()
 
         XCTAssertEqual(viewModel.summary.title, "Visual Studio Code")
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.availableEditors.map(\.bundleID), sampleCandidates.map(\.bundleID))
         XCTAssertEqual(viewModel.statusItemIconLookupPath, "/Applications/Visual Studio Code.app")
         XCTAssertEqual(viewModel.sections.map(\.id), ["recommendedFullSupport", "otherEligible", "needsVerification"])
         XCTAssertEqual(viewModel.sections[0].rows.first?.bundleID, "com.microsoft.VSCode")
@@ -140,6 +142,8 @@ final class MenuBarViewModelTests: XCTestCase {
         viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
 
         XCTAssertEqual(viewModel.lastSwitchReport, report)
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.availableEditors.map(\.bundleID), sampleCandidates.map(\.bundleID))
         XCTAssertEqual(stateService.loadCount, 3)
         XCTAssertEqual(coordinator.appliedBundleIDs, ["com.microsoft.VSCode"])
     }

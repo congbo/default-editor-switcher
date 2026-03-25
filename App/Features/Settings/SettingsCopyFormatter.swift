@@ -13,17 +13,19 @@ struct SettingsCopyFormatter {
         self.applicationLocator = applicationLocator
     }
 
-    func currentDefaultEditorSnapshot(
+    func statusSnapshot(
         from state: GlobalTextState?,
+        lastSwitchReport: GlobalTextSwitchReport?,
         availableEditors: [EditorCandidate]
-    ) -> CurrentDefaultEditorSnapshot {
+    ) -> SettingsStatusSnapshot {
         guard let state else {
-            return CurrentDefaultEditorSnapshot(
+            return SettingsStatusSnapshot(
                 title: localizer.string("Loading..."),
                 summary: localizer.string("Checking the current global text editor."),
                 iconLookupPath: nil,
-                groups: [],
-                missingExtensions: []
+                distributionGroups: [],
+                pendingGroups: [],
+                recentSwitch: nil
             )
         }
 
@@ -36,57 +38,53 @@ struct SettingsCopyFormatter {
             uniquingKeysWith: { first, _ in first }
         )
 
+        let title: String
+        let summary: String
+        let titleIconLookupPath: String?
+        let distributionGroups: [CurrentDefaultEditorGroup]
+
         switch state.status {
         case .single(let bundleID):
-            let missingExtensions = missingExtensions(in: state)
             let exampleExtensions = exampleExtensions(in: state.extensionAssociations)
-            let summary = summaryWithMissingDetails(
-                localizer.formattedString(
-                    "Current editor covers %d declared text extensions, for example %@.",
-                    state.extensionAssociations.count,
-                    exampleExtensions
-                ),
-                missingExtensions: missingExtensions
+            title = displayName(for: bundleID, displayNames: displayNames)
+            summary = localizer.formattedString(
+                "Current editor covers %d declared text extensions, for example %@.",
+                state.extensionAssociations.count,
+                exampleExtensions
             )
-            return CurrentDefaultEditorSnapshot(
-                title: displayName(for: bundleID, displayNames: displayNames),
-                summary: summary,
-                iconLookupPath: iconLookupPath(for: bundleID, iconPaths: iconPaths),
-                groups: [],
-                missingExtensions: missingExtensions
-            )
+            titleIconLookupPath = iconLookupPath(for: bundleID, iconPaths: iconPaths)
+            distributionGroups = []
         case .mixed(let bundleIDs):
-            let missingExtensions = missingExtensions(in: state)
             let representativeBundleID = state.currentBundleID
-            let title = representativeBundleID.map { displayName(for: $0, displayNames: displayNames) }
+            title = representativeBundleID.map { displayName(for: $0, displayNames: displayNames) }
                 ?? localizer.string("Mixed Defaults")
-            let groups = currentDefaultEditorGroups(
+            distributionGroups = currentDefaultEditorGroups(
                 from: state,
                 bundleIDs: bundleIDs,
                 displayNames: displayNames,
                 iconPaths: iconPaths
             )
-            let summary = summaryWithMissingDetails(
-                localizer.string("Text file default apps are currently mixed."),
-                missingExtensions: missingExtensions
-            )
-
-            return CurrentDefaultEditorSnapshot(
-                title: title,
-                summary: summary,
-                iconLookupPath: representativeBundleID.flatMap { iconLookupPath(for: $0, iconPaths: iconPaths) },
-                groups: groups,
-                missingExtensions: missingExtensions
-            )
+            summary = localizer.string("Declared text types are currently split across multiple editors.")
+            titleIconLookupPath = representativeBundleID.flatMap { iconLookupPath(for: $0, iconPaths: iconPaths) }
         case .unavailable:
-            return CurrentDefaultEditorSnapshot(
+            return SettingsStatusSnapshot(
                 title: localizer.string("No Global Editor Detected"),
                 summary: localizer.string("No declared text type currently reports an editor handler."),
                 iconLookupPath: nil,
-                groups: [],
-                missingExtensions: []
+                distributionGroups: [],
+                pendingGroups: [],
+                recentSwitch: recentSwitchSnapshot(from: lastSwitchReport, displayNames: displayNames)
             )
         }
+
+        return SettingsStatusSnapshot(
+            title: title,
+            summary: summary,
+            iconLookupPath: titleIconLookupPath,
+            distributionGroups: distributionGroups,
+            pendingGroups: pendingAssignmentGroups(in: state),
+            recentSwitch: recentSwitchSnapshot(from: lastSwitchReport, displayNames: displayNames)
+        )
     }
 
     func launchAtLoginDetail(
@@ -107,6 +105,48 @@ struct SettingsCopyFormatter {
         case .unavailable:
             return localizer.string("Launch at login is unavailable for the current build.")
         }
+    }
+
+    private func recentSwitchSnapshot(
+        from report: GlobalTextSwitchReport?,
+        displayNames: [String: String]
+    ) -> SettingsStatusActivitySnapshot? {
+        guard let report else {
+            return nil
+        }
+
+        let requestedEditorName = displayName(for: report.requestedBundleID, displayNames: displayNames)
+
+        if report.didFullyMatch {
+            return SettingsStatusActivitySnapshot(
+                statusTitle: localizer.string("Completed"),
+                headline: localizer.formattedString(
+                    "Last switch to %@ completed for %d text types.",
+                    requestedEditorName,
+                    report.totalProcessedCount
+                ),
+                groups: []
+            )
+        }
+
+        let statusTitle: String
+        if report.matchedCount == 0 {
+            statusTitle = localizer.string("Not Completed")
+        } else {
+            statusTitle = localizer.string("Partially Completed")
+        }
+
+        return SettingsStatusActivitySnapshot(
+            statusTitle: statusTitle,
+            headline: localizer.formattedString(
+                "Last switch to %@ processed %d text types: %d succeeded, %d failed.",
+                requestedEditorName,
+                report.totalProcessedCount,
+                report.matchedCount,
+                report.affectedCount
+            ),
+            groups: lastSwitchLogGroups(from: report)
+        )
     }
 
     func recommendedEntries(
@@ -208,6 +248,63 @@ struct SettingsCopyFormatter {
         }
     }
 
+    private func pendingAssignmentGroups(in state: GlobalTextState) -> [SettingsStatusGroup] {
+        let missingExtensions = missingExtensions(in: state)
+
+        guard !missingExtensions.isEmpty else {
+            return []
+        }
+
+        return [
+            SettingsStatusGroup(
+                title: localizer.formattedString(
+                    "%d extensions are still missing a default app.",
+                    missingExtensions.count
+                ),
+                extensions: missingExtensions
+            )
+        ]
+    }
+
+    private func lastSwitchLogGroups(from report: GlobalTextSwitchReport) -> [SettingsStatusGroup] {
+        let unsupportedExtensions = report.failures
+            .filter { $0.status == AssociationVerificationStatus.unsupportedTarget.rawValue }
+            .map(\.scopeLabel)
+            .sorted()
+        let mismatchedExtensions = report.failures
+            .filter { $0.status == AssociationVerificationStatus.mismatched.rawValue }
+            .map(\.scopeLabel)
+            .sorted()
+        let writeFailedExtensions = report.failures
+            .filter { $0.status == AssociationVerificationStatus.writeFailed.rawValue }
+            .map(\.scopeLabel)
+            .sorted()
+
+        return [
+            unsupportedExtensions.isEmpty ? nil : SettingsStatusGroup(
+                title: localizer.formattedString(
+                    "This Mac does not currently declare support (%d)",
+                    unsupportedExtensions.count
+                ),
+                extensions: unsupportedExtensions
+            ),
+            mismatchedExtensions.isEmpty ? nil : SettingsStatusGroup(
+                title: localizer.formattedString(
+                    "Still using another default app (%d)",
+                    mismatchedExtensions.count
+                ),
+                extensions: mismatchedExtensions
+            ),
+            writeFailedExtensions.isEmpty ? nil : SettingsStatusGroup(
+                title: localizer.formattedString(
+                    "macOS did not accept this change (%d)",
+                    writeFailedExtensions.count
+                ),
+                extensions: writeFailedExtensions
+            ),
+        ].compactMap { $0 }
+    }
+
     private func exampleExtensions(in associations: [GlobalTextState.ExtensionAssociation]) -> String {
         associations
             .map(\.normalizedExtension)
@@ -223,19 +320,6 @@ struct SettingsCopyFormatter {
             .map(\.normalizedExtension)
             .sorted()
             .map { ".\($0)" }
-    }
-
-    private func summaryWithMissingDetails(_ base: String, missingExtensions: [String]) -> String {
-        guard !missingExtensions.isEmpty else {
-            return base
-        }
-
-        let separator = base.last == "。" ? "" : " "
-        return base + separator + localizer.formattedString(
-            "%d extensions do not currently report a default app: %@",
-            missingExtensions.count,
-            missingExtensions.joined(separator: ",")
-        )
     }
 }
 

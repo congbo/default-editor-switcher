@@ -1,33 +1,27 @@
 import SwiftUI
 
 struct SettingsWindowView: View {
+    @ObservedObject var menuBarViewModel: MenuBarViewModel
     @ObservedObject var generalSettingsViewModel: GeneralSettingsViewModel
     @ObservedObject var recommendedAppsStore: RecommendedMenuAppsStore
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var localizer: AppLocalizer
 
-    private let appDiscovery: EditorDiscovering
-    private let stateService: GlobalTextStateServicing
     private let applicationLocator: ApplicationLocating
 
-    @State private var availableEditors: [EditorCandidate] = []
-    @State private var currentState: GlobalTextState?
-
     init(
+        menuBarViewModel: MenuBarViewModel,
         generalSettingsViewModel: GeneralSettingsViewModel,
         recommendedAppsStore: RecommendedMenuAppsStore,
         languageStore: AppLanguageStore,
         localizer: AppLocalizer,
-        appDiscovery: EditorDiscovering = WorkspaceAppDiscovery(),
-        stateService: GlobalTextStateServicing = GlobalTextStateService(),
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator()
     ) {
+        self.menuBarViewModel = menuBarViewModel
         self.generalSettingsViewModel = generalSettingsViewModel
         self.recommendedAppsStore = recommendedAppsStore
         self.languageStore = languageStore
         self.localizer = localizer
-        self.appDiscovery = appDiscovery
-        self.stateService = stateService
         self.applicationLocator = applicationLocator
     }
 
@@ -38,13 +32,13 @@ struct SettingsWindowView: View {
             List {
                 GeneralSettingsSection(
                     viewModel: generalSettingsViewModel,
-                    currentDefaultEditor: currentDefaultEditorSnapshot,
+                    statusSnapshot: statusSnapshot,
                     localizer: localizer
                 )
 
                 RecommendedAppsSettingsSection(
                     recommendedAppsStore: recommendedAppsStore,
-                    availableEditors: availableEditors,
+                    availableEditors: menuBarViewModel.availableEditors,
                     localizer: localizer
                 )
 
@@ -54,7 +48,10 @@ struct SettingsWindowView: View {
         }
         .padding(20)
         .frame(minWidth: 680, minHeight: 560, alignment: .topLeading)
-        .onAppear(perform: reloadData)
+        .onAppear {
+            menuBarViewModel.loadIfNeeded()
+            generalSettingsViewModel.loadStatus()
+        }
     }
 
     private var header: some View {
@@ -70,33 +67,26 @@ struct SettingsWindowView: View {
         }
     }
 
-    private func reloadData() {
-        generalSettingsViewModel.loadStatus()
-
-        let discoveredEditors = appDiscovery.discoverEditors(for: .plainText, bucket: nil)
-        availableEditors = discoveredEditors
-        currentState = stateService.currentState()
-    }
-
-    private var currentDefaultEditorSnapshot: CurrentDefaultEditorSnapshot {
+    private var statusSnapshot: SettingsStatusSnapshot {
         SettingsCopyFormatter(
             localizer: localizer,
             applicationLocator: applicationLocator
         )
-        .currentDefaultEditorSnapshot(from: currentState, availableEditors: availableEditors)
+        .statusSnapshot(
+            from: menuBarViewModel.currentState,
+            lastSwitchReport: menuBarViewModel.lastSwitchReport,
+            availableEditors: menuBarViewModel.availableEditors
+        )
     }
 }
 
-struct CurrentDefaultEditorSnapshot: Equatable {
+struct SettingsStatusSnapshot: Equatable {
     let title: String
     let summary: String
     let iconLookupPath: String?
-    let groups: [CurrentDefaultEditorGroup]
-    let missingExtensions: [String]
-
-    var missingExtensionLines: [String] {
-        ExtensionLineChunker().chunk(missingExtensions)
-    }
+    let distributionGroups: [CurrentDefaultEditorGroup]
+    let pendingGroups: [SettingsStatusGroup]
+    let recentSwitch: SettingsStatusActivitySnapshot?
 }
 
 struct CurrentDefaultEditorGroup: Identifiable, Equatable {
@@ -112,6 +102,25 @@ struct CurrentDefaultEditorGroup: Identifiable, Equatable {
     var extensionLines: [String] {
         ExtensionLineChunker().chunk(extensions)
     }
+}
+
+struct SettingsStatusGroup: Identifiable, Equatable {
+    let title: String
+    let extensions: [String]
+
+    var id: String {
+        title
+    }
+
+    var extensionLines: [String] {
+        ExtensionLineChunker().chunk(extensions)
+    }
+}
+
+struct SettingsStatusActivitySnapshot: Equatable {
+    let statusTitle: String
+    let headline: String
+    let groups: [SettingsStatusGroup]
 }
 
 struct ExtensionLineChunker {
