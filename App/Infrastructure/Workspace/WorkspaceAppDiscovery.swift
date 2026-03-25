@@ -83,7 +83,8 @@ struct WorkspaceAppDiscovery {
             displayName: displayName,
             iconLookupPath: bundleInspector.iconLookupPath(for: bundleURL),
             source: source,
-            capability: capability(for: metadata, requestedContentType: requestedContentType)
+            capability: capability(for: metadata, requestedContentType: requestedContentType),
+            supportedTextExtensionCount: metadata.supportedExtensionCount(for: .allText)
         )
     }
 

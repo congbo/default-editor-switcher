@@ -13,7 +13,7 @@
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
-- [ ] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
+- [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
 - [ ] **Phase 3: Language Override Engine** - Add developer-oriented language buckets and override precedence
 - [ ] **Phase 4: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
 - [ ] **Phase 5: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
@@ -51,9 +51,12 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Build menu bar app shell, current-state summary, and editor list UI
-- [ ] 02-02: Wire global text switch actions through the verified association writer
-- [ ] 02-03: Add post-apply feedback, refresh, and entry points into the main window
+- [x] 02-01: Build menu bar app shell, current-state summary, and editor list UI
+- [x] 02-02: Wire global text switch actions through the verified association writer
+- [x] 02-03: Add post-apply feedback, refresh, and entry points into the main window
+
+Verification:
+- Automated checks and human verification passed; see `02-VERIFICATION.md` and `02-HUMAN-UAT.md`
 
 ### Phase 3: Language Override Engine
 **Goal**: Add built-in language categories and make language-specific defaults override the global text rule.
@@ -126,7 +129,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
-| 2. Menu Bar Global Switch | 0/3 | Not started | - |
+| 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
 | 3. Language Override Engine | 0/2 | Not started | - |
 | 4. Rules Window & Custom Extensions | 0/3 | Not started | - |
 | 5. State, Snapshot, and Restore | 0/2 | Not started | - |

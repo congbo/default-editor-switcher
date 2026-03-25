@@ -29,6 +29,16 @@
 		A1B2C3D4E5F60718293A0055 /* LaunchServicesClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A001E /* LaunchServicesClient.swift */; };
 		A1B2C3D4E5F60718293A0056 /* LaunchServicesAssociationVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A001F /* LaunchServicesAssociationVerifier.swift */; };
 		A1B2C3D4E5F60718293A0057 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0023 /* main.swift */; };
+		A1B2C3D4E5F60718293A00A0 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B0 /* MenuBarContentView.swift */; };
+		A1B2C3D4E5F60718293A00A1 /* MenuBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B1 /* MenuBarViewModel.swift */; };
+		A1B2C3D4E5F60718293A00A2 /* MenuBarSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B2 /* MenuBarSection.swift */; };
+		A1B2C3D4E5F60718293A00A3 /* RulesWindowPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B3 /* RulesWindowPlaceholderView.swift */; };
+		A1B2C3D4E5F60718293A00A4 /* GlobalTextStateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B4 /* GlobalTextStateService.swift */; };
+		A1B2C3D4E5F60718293A00A5 /* GlobalTextSwitchReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B5 /* GlobalTextSwitchReport.swift */; };
+		A1B2C3D4E5F60718293A00A6 /* GlobalTextSwitchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B6 /* GlobalTextSwitchCoordinator.swift */; };
+		A1B2C3D4E5F60718293A00A7 /* GlobalTextStateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */; };
+		A1B2C3D4E5F60718293A00A8 /* GlobalTextSwitchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */; };
+		A1B2C3D4E5F60718293A00A9 /* MenuBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +71,16 @@
 		A1B2C3D4E5F60718293A0022 /* LaunchServicesClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchServicesClientTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0023 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0024 /* AssociationProbe */ = {isa = PBXFileReference; explicitFileType = compiled.mach-o.executable; includeInIndex = 0; path = AssociationProbe; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A00B0 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B1 /* MenuBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B2 /* MenuBarSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSection.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B3 /* RulesWindowPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulesWindowPlaceholderView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B4 /* GlobalTextStateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextStateService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B5 /* GlobalTextSwitchReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchReport.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B6 /* GlobalTextSwitchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchCoordinator.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextStateServiceTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchCoordinatorTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarViewModelTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -80,6 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */,
+				A1B2C3D4E5F60718293A00C0 /* Features */,
+				A1B2C3D4E5F60718293A00C2 /* Application */,
 				A1B2C3D4E5F60718293A0037 /* Support */,
 				A1B2C3D4E5F60718293A0032 /* Domain */,
 				A1B2C3D4E5F60718293A0039 /* Infrastructure */,
@@ -160,6 +182,43 @@
 			path = LaunchServices;
 			sourceTree = "<group>";
 		};
+		A1B2C3D4E5F60718293A00C0 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00C1 /* MenuBar */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00C1 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00B0 /* MenuBarContentView.swift */,
+				A1B2C3D4E5F60718293A00B1 /* MenuBarViewModel.swift */,
+				A1B2C3D4E5F60718293A00B2 /* MenuBarSection.swift */,
+				A1B2C3D4E5F60718293A00B3 /* RulesWindowPlaceholderView.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00C2 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00C3 /* GlobalText */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00C3 /* GlobalText */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00B4 /* GlobalTextStateService.swift */,
+				A1B2C3D4E5F60718293A00B5 /* GlobalTextSwitchReport.swift */,
+				A1B2C3D4E5F60718293A00B6 /* GlobalTextSwitchCoordinator.swift */,
+			);
+			path = GlobalText;
+			sourceTree = "<group>";
+		};
 		A1B2C3D4E5F60718293A0034 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +234,9 @@
 				A1B2C3D4E5F60718293A001A /* EditorRankingPolicyTests.swift */,
 				A1B2C3D4E5F60718293A001B /* WorkspaceDiscoveryTests.swift */,
 				A1B2C3D4E5F60718293A0022 /* LaunchServicesClientTests.swift */,
+				A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */,
+				A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */,
+				A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */,
 			);
 			path = DefaultEditorSwitcherTests;
 			sourceTree = "<group>";
@@ -322,6 +384,13 @@
 				A1B2C3D4E5F60718293A004D /* AssociationVerificationResult.swift in Sources */,
 				A1B2C3D4E5F60718293A004E /* LaunchServicesClient.swift in Sources */,
 				A1B2C3D4E5F60718293A004F /* LaunchServicesAssociationVerifier.swift in Sources */,
+				A1B2C3D4E5F60718293A00A4 /* GlobalTextStateService.swift in Sources */,
+				A1B2C3D4E5F60718293A00A5 /* GlobalTextSwitchReport.swift in Sources */,
+				A1B2C3D4E5F60718293A00A6 /* GlobalTextSwitchCoordinator.swift in Sources */,
+				A1B2C3D4E5F60718293A00A2 /* MenuBarSection.swift in Sources */,
+				A1B2C3D4E5F60718293A00A1 /* MenuBarViewModel.swift in Sources */,
+				A1B2C3D4E5F60718293A00A0 /* MenuBarContentView.swift in Sources */,
+				A1B2C3D4E5F60718293A00A3 /* RulesWindowPlaceholderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +402,9 @@
 				A1B2C3D4E5F60718293A004A /* EditorRankingPolicyTests.swift in Sources */,
 				A1B2C3D4E5F60718293A004B /* WorkspaceDiscoveryTests.swift in Sources */,
 				A1B2C3D4E5F60718293A0052 /* LaunchServicesClientTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00A7 /* GlobalTextStateServiceTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00A8 /* GlobalTextSwitchCoordinatorTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00A9 /* MenuBarViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +484,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
+				INFOPLIST_KEY_LSUIElement = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -439,6 +512,7 @@
 				DEFINES_MODULE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
+				INFOPLIST_KEY_LSUIElement = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct BundleDocumentTypeDescriptor: Hashable {
     let contentTypeIdentifiers: [String]
+    let filenameExtensions: [String]
     let role: String?
     let handlerRank: String?
 }
@@ -16,12 +17,56 @@ struct BundleDocumentTypeMetadata: Hashable {
         Set(documentTypes.flatMap(\.contentTypeIdentifiers))
     }
 
+    var declaredFilenameExtensions: Set<String> {
+        Set(
+            documentTypes
+                .flatMap(\.filenameExtensions)
+                .map(ContentTypeResolver.normalizeExtension)
+        )
+    }
+
     var hasDocumentTypes: Bool {
         !documentTypes.isEmpty
     }
 
     func supports(contentType: UTType) -> Bool {
-        declaredContentTypeIdentifiers.contains(contentType.identifier)
+        if declaredContentTypeIdentifiers.contains(contentType.identifier) {
+            return true
+        }
+
+        let normalizedExtensions = contentType.tags[.filenameExtension, default: []]
+            .map(ContentTypeResolver.normalizeExtension)
+        return normalizedExtensions.contains(where: declaredFilenameExtensions.contains)
+    }
+
+    func supportedExtensionCount(for scope: FileScope) -> Int {
+        ContentTypeResolver.extensions(for: scope)
+            .filter(supports(filenameExtension:))
+            .count
+    }
+
+    private func supports(filenameExtension rawExtension: String) -> Bool {
+        let normalizedExtension = ContentTypeResolver.normalizeExtension(rawExtension)
+
+        if declaredFilenameExtensions.contains(normalizedExtension) {
+            return true
+        }
+
+        guard let resolvedType = UTType(filenameExtension: normalizedExtension) else {
+            return false
+        }
+
+        return contentTypeIdentifiersBroadlyMatch(resolvedType)
+    }
+
+    private func contentTypeIdentifiersBroadlyMatch(_ contentType: UTType) -> Bool {
+        declaredContentTypeIdentifiers.contains { identifier in
+            guard let declaredType = UTType(identifier) else {
+                return identifier == contentType.identifier
+            }
+
+            return contentType == declaredType || contentType.conforms(to: declaredType)
+        }
     }
 }
 
@@ -58,6 +103,7 @@ struct BundleDocumentTypeReader {
         let documentTypes = documentTypeDictionaries(from: rawDocumentTypes).map { dictionary in
             BundleDocumentTypeDescriptor(
                 contentTypeIdentifiers: stringArray(from: dictionary["LSItemContentTypes"]),
+                filenameExtensions: stringArray(from: dictionary["CFBundleTypeExtensions"]),
                 role: dictionary["CFBundleTypeRole"] as? String,
                 handlerRank: dictionary["LSHandlerRank"] as? String
             )

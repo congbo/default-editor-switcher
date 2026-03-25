@@ -14,6 +14,96 @@ struct KnownEditor: Hashable {
 enum KnownEditors {
     static let catalog: [KnownEditor] = [
         KnownEditor(
+            bundleID: "com.google.antigravity",
+            displayName: "Antigravity",
+            globalWeight: 118,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "com.todesktop.230313mzl4w4u92",
+            displayName: "Cursor",
+            globalWeight: 112,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "dev.kiro.desktop",
+            displayName: "Kiro",
+            globalWeight: 111,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "com.exafunction.windsurf",
+            displayName: "Windsurf",
+            globalWeight: 110,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "com.trae.app",
+            displayName: "Trae",
+            globalWeight: 108,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "com.tencent.codebuddy",
+            displayName: "CodeBuddy",
+            globalWeight: 104,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "dev.zed.Zed",
+            displayName: "Zed",
+            globalWeight: 106,
+            bucketWeights: [
+                .python: 6,
+                .web: 8,
+                .go: 6,
+                .rust: 10,
+                .markdown: 6,
+            ]
+        ),
+        KnownEditor(
             bundleID: "com.microsoft.VSCode",
             displayName: "Visual Studio Code",
             globalWeight: 100,
@@ -27,12 +117,30 @@ enum KnownEditors {
             ]
         ),
         KnownEditor(
+            bundleID: "com.apple.dt.Xcode",
+            displayName: "Xcode",
+            globalWeight: 98,
+            bucketWeights: [
+                .web: 4,
+                .go: 4,
+                .markdown: 2,
+            ]
+        ),
+        KnownEditor(
             bundleID: "com.sublimetext.4",
             displayName: "Sublime Text",
             globalWeight: 85,
             bucketWeights: [
                 .web: 6,
                 .markdown: 12,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "abnerworks.Typora",
+            displayName: "Typora",
+            globalWeight: 84,
+            bucketWeights: [
+                .markdown: 18,
             ]
         ),
         KnownEditor(
@@ -112,6 +220,10 @@ enum KnownEditors {
 
     static func isRecommended(bundleID: String) -> Bool {
         knownEditor(for: bundleID) != nil
+    }
+
+    static func menuSortOrder(for bundleID: String) -> Int? {
+        catalog.firstIndex { $0.bundleID == bundleID }
     }
 
     static func weight(for bundleID: String, bucket: LanguageBucket? = nil) -> Int {

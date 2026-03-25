@@ -28,9 +28,11 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(metadata.displayName, "Example Editor")
         XCTAssertEqual(metadata.documentTypes.count, 2)
         XCTAssertEqual(metadata.documentTypes[0].contentTypeIdentifiers, ["public.source-code", "public.python-script"])
+        XCTAssertEqual(metadata.documentTypes[0].filenameExtensions, [])
         XCTAssertEqual(metadata.documentTypes[0].role, "Editor")
         XCTAssertEqual(metadata.documentTypes[0].handlerRank, "Owner")
         XCTAssertEqual(metadata.documentTypes[1].contentTypeIdentifiers, ["public.plain-text"])
+        XCTAssertEqual(metadata.documentTypes[1].filenameExtensions, [])
         XCTAssertEqual(metadata.documentTypes[1].role, "Editor")
         XCTAssertEqual(metadata.documentTypes[1].handlerRank, "Alternate")
     }
@@ -105,6 +107,65 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(ranked[1].source, .systemEligible)
         XCTAssertEqual(ranked[2].source, .systemEligible)
         XCTAssertEqual(ranked[0].iconLookupPath, recommendedURL.path)
+    }
+
+    func testWorkspaceDiscoverySortsNonRecommendedEditorsBySupportedTextExtensionCount() {
+        let reader = BundleDocumentTypeReader()
+        let requestedType = UTType(filenameExtension: "txt")!
+        let broadURL = URL(fileURLWithPath: "/Applications/Broad Editor.app")
+        let narrowURL = URL(fileURLWithPath: "/Applications/Narrow Editor.app")
+
+        let broadMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "CFBundleTypeExtensions": ["txt", "md", "mdx", "json", "yaml", "yml"],
+                        "CFBundleTypeRole": "Editor",
+                        "LSHandlerRank": "Owner",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "com.example.broad",
+            displayName: "Broad Editor"
+        )
+
+        let narrowMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "CFBundleTypeExtensions": ["txt", "md"],
+                        "CFBundleTypeRole": "Editor",
+                        "LSHandlerRank": "Owner",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "com.example.narrow",
+            displayName: "Narrow Editor"
+        )
+
+        let discovery = WorkspaceAppDiscovery(
+            workspace: FakeWorkspaceApplicationURLProvider(urls: [narrowURL, broadURL]),
+            bundleInspector: FakeBundleInspector(
+                bundleIdentifiers: [
+                    broadURL: broadMetadata.bundleID,
+                    narrowURL: narrowMetadata.bundleID,
+                ],
+                displayNames: [
+                    broadURL: broadMetadata.displayName,
+                    narrowURL: narrowMetadata.displayName,
+                ],
+                metadata: [
+                    broadURL: broadMetadata,
+                    narrowURL: narrowMetadata,
+                ]
+            )
+        )
+
+        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+
+        XCTAssertEqual(ranked.map(\.bundleID), ["com.example.broad", "com.example.narrow"])
+        XCTAssertEqual(ranked.map(\.supportedTextExtensionCount), [6, 2])
+        XCTAssertEqual(ranked.map(\.capability), [.full, .full])
     }
 
     private struct FakeWorkspaceApplicationURLProvider: WorkspaceApplicationURLProviding {

@@ -17,6 +17,7 @@ struct EditorCandidate: Hashable {
     let iconLookupPath: String
     let source: EditorCandidateSource
     let capability: EditorCapability
+    let supportedTextExtensionCount: Int
     let isRecommended: Bool
 
     init(
@@ -24,13 +25,15 @@ struct EditorCandidate: Hashable {
         displayName: String,
         iconLookupPath: String = "<placeholder>",
         source: EditorCandidateSource,
-        capability: EditorCapability
+        capability: EditorCapability,
+        supportedTextExtensionCount: Int = 0
     ) {
         self.bundleID = bundleID
         self.displayName = displayName
         self.iconLookupPath = iconLookupPath
         self.source = source
         self.capability = capability
+        self.supportedTextExtensionCount = supportedTextExtensionCount
         self.isRecommended = source == .recommendedCatalog
     }
 }
