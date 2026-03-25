@@ -92,18 +92,14 @@
 | GLOB-01 | Phase 2 | Pending |
 | GLOB-02 | Phase 1 | Validated |
 | GLOB-03 | Phase 2 | Pending |
-| STAT-01 | Phase 3 | Pending |
-| STAT-02 | Phase 3 | Pending |
-| STAT-03 | Phase 3 | Pending |
-| STAT-04 | Phase 3 | Pending |
-| DIST-01 | Phase 4 | Pending |
-| DIST-02 | Phase 4 | Pending |
+| DIST-01 | Phase 3 | Pending |
+| DIST-02 | Phase 3 | Pending |
 | DIST-03 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 16
-- Unmapped: 12
+- Mapped to phases: 12
+- Unmapped: 16
 
 ---
 *Requirements defined: 2026-03-25*

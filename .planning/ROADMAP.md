@@ -14,8 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
-- [ ] **Phase 3: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
-- [ ] **Phase 4: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [ ] **Phase 3: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
 
 ## Phase Details
 
@@ -56,25 +55,9 @@ Plans:
 Verification:
 - Automated checks and human verification passed; see `02-VERIFICATION.md` and `02-HUMAN-UAT.md`
 
-### Phase 3: State, Snapshot, and Restore
-**Goal**: Make changes safe and understandable with current-state visibility, restore snapshots, and baseline recovery.
-**Depends on**: Phase 2
-**Requirements**: [STAT-01, STAT-02, STAT-03, STAT-04]
-**UI hint**: yes
-**Success Criteria** (what must be TRUE):
-  1. User can inspect the current global text editor and effective language bindings in the app.
-  2. The app captures a snapshot before batch updates that change multiple file associations.
-  3. User can restore either the latest snapshot or the original baseline from inside the product.
-  4. Restore operations are verified after apply and report any remaining mismatch.
-**Plans**: 2 plans
-
-Plans:
-- [ ] 03-01: Implement state inspection, snapshot persistence, and baseline capture
-- [ ] 03-02: Implement restore actions, verification, and user-facing recovery flows
-
-### Phase 4: Release Hardening
+### Phase 3: Release Hardening
 **Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
-**Depends on**: Phase 3
+**Depends on**: Phase 2
 **Requirements**: [DIST-01, DIST-02]
 **UI hint**: no
 **Success Criteria** (what must be TRUE):
@@ -84,17 +67,16 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 04-02: Harden failure UX, error messaging, and release-check procedures
+- [ ] 03-01: Build the release pipeline for signing, notarization, and install verification
+- [ ] 03-02: Harden failure UX, error messaging, and release-check procedures
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 4
+Phases execute in numeric order: 2 → 2.1 → 2.2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
-| 3. State, Snapshot, and Restore | 0/2 | Not started | - |
-| 4. Release Hardening | 0/2 | Not started | - |
+| 3. Release Hardening | 0/2 | Not started | - |
