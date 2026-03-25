@@ -2,18 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: "04"
-current_phase_name: release-hardening
-current_plan: "0"
-status: ready_to_plan
-stopped_at: Phase 04 context gathered
-last_updated: "2026-03-26T04:33:09+0800"
-last_activity: "2026-03-26"
+status: Milestone ready for archive
+stopped_at: Phase 05 verification complete; milestone ready for archive
+last_updated: "2026-03-26T09:05:00.000Z"
 progress:
-  total_phases: 4
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_phases: 5
+  completed_phases: 5
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # Project State
@@ -23,19 +19,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Phase 04 — release-hardening planning
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 04 (release-hardening) — READY TO PLAN
-Plan: Not started
-Checkpoint: Phase 04 context is captured; next milestone work is `gsd-plan-phase 04`
+Phase: 05 (milestone-verification-closure) — VERIFIED COMPLETE
+Plan: 3 of 3
+Status: v1.0 milestone archived; awaiting next milestone definition
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 14
 - Average duration: -
 - Total execution time: 0.0 hours
 
@@ -46,10 +42,12 @@ Checkpoint: Phase 04 context is captured; next milestone work is `gsd-plan-phase
 | 1. Discovery & Association Core | 3/3 | Verified complete | - |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
 | 3. Native Settings Window | 3/3 | Complete | 2026-03-26 |
+| 4. Release Hardening | 2/2 | Complete | 2026-03-26 |
+| 5. Milestone Verification Closure | 3/3 | Complete | 2026-03-26 |
 
 **Recent Trend:**
 
-- Last 5 plans: 03-01, 03-02, 03-03 completed
+- Last 5 plans: 04-01, 04-02, 05-01, 05-02, 05-03 completed
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -66,12 +64,15 @@ Recent decisions affecting current work:
 - [Phase 3]: Low-frequency product controls moved into a native `Settings` window, replacing the placeholder secondary window.
 - [Phase 3]: Recommended menu apps now come from a persisted user-configurable order instead of backfill-heavy menu heuristics.
 - [Phase 3]: App language now flows through a shared localization pipeline so menu and settings copy switch together.
+- [Phase 5]: The formal release-install blocker was closed by rebaselining `DIST-01` to the verified preview/direct-download release contract while preserving the documented Developer ID GA path.
 
 ### Roadmap Evolution
 
 - Phase 03 added after Phase 2: Native Settings Window for launch at login, recommended menu apps, and app language selection.
 - Former Phase 03 Release Hardening shifted to Phase 04.
-- Phase 03 is now verified complete; Phase 04 Release Hardening is the active next milestone step.
+- Phase 03 now has a canonical verification report reconstructed from its existing validation and UAT evidence.
+- Phase 04 Release Hardening is verified complete under the final v1.0 release contract.
+- Phase 05 synchronized roadmap, requirements, state, and audit artifacts for archival readiness.
 
 ### Pending Todos
 
@@ -79,7 +80,7 @@ No pending todos recorded.
 
 ### Blockers/Concerns
 
-- No active blockers recorded
+No active blockers remain for v1.0. Next work should start with a new milestone definition.
 
 ### Quick Tasks Completed
 
@@ -98,9 +99,13 @@ No pending todos recorded.
 | 260326-57i | 调整多语言 README 的价值段落结构，保留核心功能点，并把 Finder、Git 工具和项目切换场景并回 opening 文案 | 2026-03-26 | working-tree | [260326-57i-restructure-readme-value-bullets-and-mov](./quick/260326-57i-restructure-readme-value-bullets-and-mov/) |
 | 260326-5a3 | 删除 README 价值段落中的 handler 校验表述，并统一将开头中的 Vibe Coding 首字母大写 | 2026-03-26 | working-tree | [260326-5a3-remove-handler-verification-bullet-and-c](./quick/260326-5a3-remove-handler-verification-bullet-and-c/) |
 | 260326-5rt | 修正推荐编辑器设置与菜单栏不同步、取消一级菜单补齐逻辑，并更新默认推荐与相关文档 | 2026-03-26 | working-tree | [260326-5rt-recommended-menu-sync-rules](./quick/260326-5rt-recommended-menu-sync-rules/) |
+| 260326-7cf | add preview build packaging and GitHub prerelease publishing for ad-hoc signed release artifacts | 2026-03-26 | working-tree | [260326-7cf-add-preview-build-packaging-and-github-p](./quick/260326-7cf-add-preview-build-packaging-and-github-p/) |
+| 260326-86u | Generate packaged app icon assets and wire AppIcon into the Xcode target for DefaultEditorSwitcher | 2026-03-26 | working-tree | [260326-86u-generate-packaged-app-icon-assets-and-wi](./quick/260326-86u-generate-packaged-app-icon-assets-and-wi/) |
+| 260326-8jz | Redraw the app icon in a minimal style and aggressively reduce packaged icon asset sizes | 2026-03-26 | working-tree | [260326-8jz-redraw-the-app-icon-in-a-minimal-style-a](./quick/260326-8jz-redraw-the-app-icon-in-a-minimal-style-a/) |
+| 260326-8ix | 设置页状态卡片重构与菜单栏联动刷新：修复设置页未随菜单栏切换刷新，合并异常与日志为单一状态卡片，并优化通用页布局 | 2026-03-26 | working-tree | [260326-8ix-settings-status-card-refresh](./quick/260326-8ix-settings-status-card-refresh/) |
 
 ## Session Continuity
 
-Last session: 2026-03-26T04:33:09+08:00
-Stopped at: Phase 04 context gathered
-Resume file: .planning/phases/04-release-hardening/04-CONTEXT.md
+Last session: 2026-03-26T05:08:30+08:00
+Stopped at: v1.0 milestone archival complete
+Resume file: .planning/ROADMAP.md
