@@ -1,0 +1,379 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D4E5F60718293A0040 /* DefaultEditorSwitcherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */; };
+		A1B2C3D4E5F60718293A0041 /* FileScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0011 /* FileScope.swift */; };
+		A1B2C3D4E5F60718293A0042 /* LanguageBucket.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0012 /* LanguageBucket.swift */; };
+		A1B2C3D4E5F60718293A0043 /* ContentTypeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */; };
+		A1B2C3D4E5F60718293A0044 /* FileScopeCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1B2C3D4E5F60718293A0050 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F60718293A0001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4E5F60718293A0002;
+			remoteInfo = DefaultEditorSwitcher;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEditorSwitcherApp.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0011 /* FileScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileScope.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0012 /* LanguageBucket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageBucket.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypeResolver.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileScopeCatalogTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A1B2C3D4E5F60718293A0030 = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0031 /* App */,
+				A1B2C3D4E5F60718293A0034 /* Tests */,
+				A1B2C3D4E5F60718293A0036 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0031 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */,
+				A1B2C3D4E5F60718293A0032 /* Domain */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0032 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0033 /* Types */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0033 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0011 /* FileScope.swift */,
+				A1B2C3D4E5F60718293A0012 /* LanguageBucket.swift */,
+				A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0034 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0035 /* DefaultEditorSwitcherTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0035 /* DefaultEditorSwitcherTests */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */,
+			);
+			path = DefaultEditorSwitcherTests;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0036 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */,
+				A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3D4E5F60718293A0002 /* DefaultEditorSwitcher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F60718293A0071 /* Build configuration list for PBXNativeTarget "DefaultEditorSwitcher" */;
+			buildPhases = (
+				A1B2C3D4E5F60718293A0080 /* Sources */,
+				A1B2C3D4E5F60718293A0082 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DefaultEditorSwitcher;
+			productName = DefaultEditorSwitcher;
+			productReference = A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A1B2C3D4E5F60718293A0003 /* DefaultEditorSwitcherTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F60718293A0072 /* Build configuration list for PBXNativeTarget "DefaultEditorSwitcherTests" */;
+			buildPhases = (
+				A1B2C3D4E5F60718293A0081 /* Sources */,
+				A1B2C3D4E5F60718293A0083 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1B2C3D4E5F60718293A0051 /* PBXTargetDependency */,
+			);
+			name = DefaultEditorSwitcherTests;
+			productName = DefaultEditorSwitcherTests;
+			productReference = A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3D4E5F60718293A0001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				ORGANIZATIONNAME = congbo;
+				TargetAttributes = {
+					A1B2C3D4E5F60718293A0002 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					A1B2C3D4E5F60718293A0003 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = A1B2C3D4E5F60718293A0070 /* Build configuration list for PBXProject "DefaultEditorSwitcher" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3D4E5F60718293A0030;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 60;
+			productRefGroup = A1B2C3D4E5F60718293A0036 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3D4E5F60718293A0002 /* DefaultEditorSwitcher */,
+				A1B2C3D4E5F60718293A0003 /* DefaultEditorSwitcherTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3D4E5F60718293A0080 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718293A0040 /* DefaultEditorSwitcherApp.swift in Sources */,
+				A1B2C3D4E5F60718293A0041 /* FileScope.swift in Sources */,
+				A1B2C3D4E5F60718293A0042 /* LanguageBucket.swift in Sources */,
+				A1B2C3D4E5F60718293A0043 /* ContentTypeResolver.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F60718293A0081 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718293A0044 /* FileScopeCatalogTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1B2C3D4E5F60718293A0082 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F60718293A0083 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1B2C3D4E5F60718293A0051 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B2C3D4E5F60718293A0002 /* DefaultEditorSwitcher */;
+			targetProxy = A1B2C3D4E5F60718293A0050 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F60718293A0060 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = DefaultEditorSwitcher;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F60718293A0061 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = DefaultEditorSwitcher;
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F60718293A0062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F60718293A0063 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcher;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F60718293A0064 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcherTests;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcherTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DefaultEditorSwitcher.app/Contents/MacOS/DefaultEditorSwitcher";
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F60718293A0065 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DefaultEditorSwitcherTests;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.congbo.DefaultEditorSwitcherTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DefaultEditorSwitcher.app/Contents/MacOS/DefaultEditorSwitcher";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3D4E5F60718293A0070 /* Build configuration list for PBXProject "DefaultEditorSwitcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F60718293A0060 /* Debug */,
+				A1B2C3D4E5F60718293A0061 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F60718293A0071 /* Build configuration list for PBXNativeTarget "DefaultEditorSwitcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F60718293A0062 /* Debug */,
+				A1B2C3D4E5F60718293A0063 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F60718293A0072 /* Build configuration list for PBXNativeTarget "DefaultEditorSwitcherTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F60718293A0064 /* Debug */,
+				A1B2C3D4E5F60718293A0065 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1B2C3D4E5F60718293A0001 /* Project object */;
+}
