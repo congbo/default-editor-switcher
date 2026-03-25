@@ -1,4 +1,5 @@
 .DS_Store
 .build/
 .codex/
+build/
 DefaultEditorSwitcher.xcodeproj/project.xcworkspace/xcuserdata/
