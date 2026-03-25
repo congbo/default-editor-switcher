@@ -57,7 +57,7 @@ enum MenuBarSection: Identifiable, Equatable {
     }
 }
 
-struct RulesWindowAction: Equatable {
+struct SettingsWindowAction: Equatable {
     let title: String
     let windowID: String
 }

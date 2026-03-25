@@ -1,3 +1,4 @@
+import Combine
 import XCTest
 import UniformTypeIdentifiers
 @testable import DefaultEditorSwitcher
@@ -86,6 +87,30 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.sections[1].rows.map(\.displayName), ["Postico"])
     }
 
+    func testSummaryFallsBackToApplicationLocatorDisplayName() {
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(
+                        status: .single(bundleID: "company.thebrowser.Browser"),
+                        inspectedContentTypeIdentifiers: ["public.html"]
+                    )
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: []),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(
+                iconPathsByBundleID: ["company.thebrowser.Browser": "/Applications/TRAE.app"],
+                displayNamesByBundleID: ["company.thebrowser.Browser": "TRAE"]
+            )
+        )
+
+        viewModel.load()
+
+        XCTAssertEqual(viewModel.summary.title, "TRAE")
+        XCTAssertEqual(viewModel.statusItemIconLookupPath, "/Applications/TRAE.app")
+    }
+
     func testApplyEditorStoresLatestAggregateReportAndTriggersReload() {
         let report = GlobalTextSwitchReport(
             requestedBundleID: "com.microsoft.VSCode",
@@ -141,6 +166,7 @@ final class MenuBarViewModelTests: XCTestCase {
             sampleFailures: [
                 .init(
                     contentTypeIdentifier: "net.daringfireball.markdown",
+                    role: .viewer,
                     status: "mismatched",
                     effectiveBundleID: "com.apple.TextEdit",
                     statusCode: nil
@@ -194,7 +220,7 @@ final class MenuBarViewModelTests: XCTestCase {
         )
     }
 
-    func testOpenRulesWindowActionIsExposed() {
+    func testOpenSettingsWindowActionIsExposed() {
         let viewModel = MenuBarViewModel(
             stateService: StubStateService(
                 snapshots: [
@@ -206,11 +232,11 @@ final class MenuBarViewModelTests: XCTestCase {
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
-        XCTAssertEqual(viewModel.rulesWindowAction.title, "Settings...")
-        XCTAssertEqual(viewModel.rulesWindowAction.windowID, "rules-window")
+        XCTAssertEqual(viewModel.settingsWindowAction.title, "Settings...")
+        XCTAssertEqual(viewModel.settingsWindowAction.windowID, "settings-window")
     }
 
-    func testPrimaryRowsUseTopTwelveInstalledAvailableEditors() {
+    func testPrimaryRowsUseDefaultEnabledInstalledRecommendedEditors() {
         let viewModel = MenuBarViewModel(
             stateService: StubStateService(
                 snapshots: [
@@ -234,69 +260,71 @@ final class MenuBarViewModelTests: XCTestCase {
                 "com.trae.app",
                 "com.tencent.codebuddy",
                 "dev.zed.Zed",
+                "com.qoder.ide",
                 "com.microsoft.VSCode",
                 "com.apple.dt.Xcode",
                 "com.sublimetext.4",
-                "abnerworks.Typora",
-                "com.macromates.TextMate",
+                "com.apple.TextEdit",
             ]
         )
         XCTAssertEqual(
             viewModel.overflowRows.map(\.bundleID),
             [
+                "abnerworks.Typora",
+                "com.macromates.TextMate",
                 "com.coteditor.CotEditor",
-                "com.apple.TextEdit",
                 "com.openai.atlas",
             ]
         )
     }
 
-    func testPrimaryRowsBackfillWithOtherEligibleEditorsWhenRecommendedListIsShort() {
-        let candidates = Array(rankedMenuCandidates.prefix(10)) + [
-            EditorCandidate(
-                bundleID: "com.apple.TextEdit",
-                displayName: "TextEdit",
-                iconLookupPath: "/System/Applications/TextEdit.app",
-                source: .systemEligible,
-                capability: .full
-            ),
-            EditorCandidate(
-                bundleID: "com.openai.atlas",
-                displayName: "ChatGPT Atlas",
-                iconLookupPath: "/Applications/ChatGPT Atlas.app",
-                source: .systemEligible,
-                capability: .full
-            ),
-            EditorCandidate(
-                bundleID: "com.example.notepad",
-                displayName: "Notepad",
-                iconLookupPath: "/Applications/Notepad.app",
-                source: .systemEligible,
-                capability: .full
-            ),
-        ]
+    func testPrimaryRowsOnlyShowEnabledAvailableEditorsWithoutBackfill() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        for bundleID in KnownEditors.defaultEnabledRecommendedBundleIDs where bundleID != "com.microsoft.VSCode" {
+            store.setEnabled(bundleID: bundleID, isEnabled: false)
+        }
+
         let viewModel = MenuBarViewModel(
             stateService: StubStateService(
                 snapshots: [
                     GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])
                 ]
             ),
-            appDiscovery: StubEditorDiscovery(candidates: candidates),
+            appDiscovery: StubEditorDiscovery(candidates: [
+                EditorCandidate(
+                    bundleID: "com.microsoft.VSCode",
+                    displayName: "Visual Studio Code",
+                    iconLookupPath: "/Applications/Visual Studio Code.app",
+                    source: .recommendedCatalog,
+                    capability: .full
+                ),
+                EditorCandidate(
+                    bundleID: "com.openai.atlas",
+                    displayName: "ChatGPT Atlas",
+                    iconLookupPath: "/Applications/ChatGPT Atlas.app",
+                    source: .systemEligible,
+                    capability: .full
+                ),
+            ]),
             switchCoordinator: nil,
-            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
         )
 
         viewModel.load()
 
-        XCTAssertEqual(viewModel.primaryRows.count, 12)
-        XCTAssertEqual(
-            viewModel.primaryRows.suffix(2).map(\.bundleID),
-            ["com.apple.TextEdit", "com.openai.atlas"]
-        )
-        XCTAssertEqual(viewModel.overflowRows.map(\.bundleID), ["com.example.notepad"])
+        XCTAssertEqual(viewModel.primaryRows.map(\.bundleID), ["com.microsoft.VSCode"])
+        XCTAssertEqual(viewModel.overflowRows.map(\.bundleID), ["com.openai.atlas"])
     }
 
-    func testCurrentEditorIsInjectedIntoPrimaryRowsWhenOutsideTopTwelve() {
+    func testCurrentEditorRemainsInMoreWhenNotEnabledForFirstLevelMenu() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        store.setEnabled(bundleID: "com.apple.TextEdit", isEnabled: false)
+
         let viewModel = MenuBarViewModel(
             stateService: StubStateService(
                 snapshots: [
@@ -308,23 +336,137 @@ final class MenuBarViewModelTests: XCTestCase {
             ),
             appDiscovery: StubEditorDiscovery(candidates: rankedMenuCandidates),
             switchCoordinator: nil,
-            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
         )
 
         viewModel.load()
 
-        XCTAssertEqual(viewModel.primaryRows.first?.bundleID, "com.apple.TextEdit")
-        XCTAssertTrue(viewModel.primaryRows.first?.isCurrent == true)
-        XCTAssertEqual(viewModel.primaryRows.count, 12)
-        XCTAssertFalse(viewModel.overflowRows.map(\.bundleID).contains("com.apple.TextEdit"))
+        XCTAssertFalse(viewModel.primaryRows.map(\.bundleID).contains("com.apple.TextEdit"))
         XCTAssertEqual(
-            viewModel.overflowRows.map(\.bundleID),
-            [
-                "com.macromates.TextMate",
-                "com.coteditor.CotEditor",
-                "com.openai.atlas",
+            viewModel.overflowRows.first(where: { $0.bundleID == "com.apple.TextEdit" })?.bundleID,
+            "com.apple.TextEdit"
+        )
+        XCTAssertTrue(
+            viewModel.overflowRows.first(where: { $0.bundleID == "com.apple.TextEdit" })?.isCurrent == true
+        )
+    }
+
+    func testPrimaryRowsRespectConfiguredRecommendedAppOrder() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        store.move(bundleID: "com.microsoft.VSCode", beforeBundleID: "com.google.antigravity")
+        store.move(bundleID: "dev.zed.Zed", beforeBundleID: "com.google.antigravity")
+
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: rankedMenuCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
+        )
+
+        viewModel.load()
+
+        XCTAssertEqual(
+            Array(viewModel.primaryRows.prefix(3).map(\.bundleID)),
+            ["com.microsoft.VSCode", "dev.zed.Zed", "com.google.antigravity"]
+        )
+    }
+
+    func testPrimaryRowsSkipDisabledRecommendedEditorsAfterRecommendationUpdate() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        store.setEnabled(bundleID: "com.google.antigravity", isEnabled: false)
+        store.move(bundleID: "com.microsoft.VSCode", beforeBundleID: "com.google.antigravity")
+
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: rankedMenuCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
+        )
+
+        viewModel.load()
+
+        XCTAssertEqual(viewModel.primaryRows.first?.bundleID, "com.microsoft.VSCode")
+        XCTAssertFalse(viewModel.primaryRows.map(\.bundleID).contains("com.google.antigravity"))
+    }
+
+    func testPrimaryRowsReactImmediatelyToRecommendationUpdates() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: rankedMenuCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
+        )
+
+        viewModel.load()
+        store.move(bundleID: "com.microsoft.VSCode", beforeBundleID: "com.google.antigravity")
+        store.setEnabled(bundleID: "com.google.antigravity", isEnabled: false)
+
+        XCTAssertEqual(viewModel.primaryRows.first?.bundleID, "com.microsoft.VSCode")
+        XCTAssertFalse(viewModel.primaryRows.map(\.bundleID).contains("com.google.antigravity"))
+    }
+
+    func testLocalizedMenuLabelsFollowSelectedAppLanguage() {
+        let localizer = StubLocalizer(
+            stringsByLanguage: [
+                "en": [
+                    "Settings...": "Settings...",
+                    "No Global Editor Detected": "No Global Editor Detected",
+                    "No declared text type currently reports an editor handler.": "No declared text type currently reports an editor handler.",
+                ],
+                "zh-Hans": [
+                    "Settings...": "设置...",
+                    "No Global Editor Detected": "未检测到全局编辑器",
+                    "No declared text type currently reports an editor handler.": "当前没有已声明的文本类型报告编辑器处理器。",
+                ],
             ]
         )
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            localizer: localizer
+        )
+
+        viewModel.load()
+        XCTAssertEqual(viewModel.settingsWindowAction.title, "Settings...")
+        XCTAssertEqual(viewModel.summary.title, "No Global Editor Detected")
+
+        localizer.languageCode = "zh-Hans"
+        localizer.sendChange()
+
+        XCTAssertEqual(viewModel.settingsWindowAction.title, "设置...")
+        XCTAssertEqual(viewModel.summary.title, "未检测到全局编辑器")
     }
 
     private var sampleCandidates: [EditorCandidate] {
@@ -340,6 +482,13 @@ final class MenuBarViewModelTests: XCTestCase {
                 bundleID: "com.apple.TextEdit",
                 displayName: "TextEdit",
                 iconLookupPath: "/System/Applications/TextEdit.app",
+                source: .recommendedCatalog,
+                capability: .full
+            ),
+            EditorCandidate(
+                bundleID: "com.openai.atlas",
+                displayName: "ChatGPT Atlas",
+                iconLookupPath: "/Applications/ChatGPT Atlas.app",
                 source: .systemEligible,
                 capability: .full
             ),
@@ -412,6 +561,13 @@ final class MenuBarViewModelTests: XCTestCase {
                 capability: .full
             ),
             EditorCandidate(
+                bundleID: "com.qoder.ide",
+                displayName: "Qoder",
+                iconLookupPath: "/Applications/Qoder.app",
+                source: .recommendedCatalog,
+                capability: .full
+            ),
+            EditorCandidate(
                 bundleID: "com.microsoft.VSCode",
                 displayName: "Visual Studio Code",
                 iconLookupPath: "/Applications/Visual Studio Code.app",
@@ -429,6 +585,13 @@ final class MenuBarViewModelTests: XCTestCase {
                 bundleID: "com.sublimetext.4",
                 displayName: "Sublime Text",
                 iconLookupPath: "/Applications/Sublime Text.app",
+                source: .recommendedCatalog,
+                capability: .full
+            ),
+            EditorCandidate(
+                bundleID: "com.apple.TextEdit",
+                displayName: "TextEdit",
+                iconLookupPath: "/System/Applications/TextEdit.app",
                 source: .recommendedCatalog,
                 capability: .full
             ),
@@ -451,13 +614,6 @@ final class MenuBarViewModelTests: XCTestCase {
                 displayName: "CotEditor",
                 iconLookupPath: "/Applications/CotEditor.app",
                 source: .recommendedCatalog,
-                capability: .full
-            ),
-            EditorCandidate(
-                bundleID: "com.apple.TextEdit",
-                displayName: "TextEdit",
-                iconLookupPath: "/System/Applications/TextEdit.app",
-                source: .systemEligible,
                 capability: .full
             ),
             EditorCandidate(
@@ -495,9 +651,22 @@ private struct StubEditorDiscovery: EditorDiscovering {
 
 private struct StubApplicationLocator: ApplicationLocating {
     let iconPathsByBundleID: [String: String]
+    let displayNamesByBundleID: [String: String]
+
+    init(
+        iconPathsByBundleID: [String: String],
+        displayNamesByBundleID: [String: String] = [:]
+    ) {
+        self.iconPathsByBundleID = iconPathsByBundleID
+        self.displayNamesByBundleID = displayNamesByBundleID
+    }
 
     func iconLookupPath(for bundleID: String) -> String? {
         iconPathsByBundleID[bundleID]
+    }
+
+    func displayName(for bundleID: String) -> String? {
+        displayNamesByBundleID[bundleID]
     }
 }
 
@@ -522,5 +691,31 @@ private final class StubSwitchCoordinator: GlobalTextSwitchCoordinating {
                 processedExtensions: [],
                 sampleFailures: []
             )
+    }
+}
+
+private final class StubLocalizer: AppTextLocalizing {
+    var languageCode: String = "en"
+    let stringsByLanguage: [String: [String: String]]
+    private let subject = PassthroughSubject<Void, Never>()
+
+    init(stringsByLanguage: [String: [String: String]]) {
+        self.stringsByLanguage = stringsByLanguage
+    }
+
+    var objectWillChangePublisher: AnyPublisher<Void, Never> {
+        subject.eraseToAnyPublisher()
+    }
+
+    func string(_ key: String) -> String {
+        stringsByLanguage[languageCode]?[key] ?? key
+    }
+
+    func formattedString(_ key: String, _ arguments: CVarArg...) -> String {
+        String(format: string(key), locale: Locale(identifier: languageCode), arguments: arguments)
+    }
+
+    func sendChange() {
+        subject.send(())
     }
 }

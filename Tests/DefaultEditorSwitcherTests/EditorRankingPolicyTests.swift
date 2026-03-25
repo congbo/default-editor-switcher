@@ -104,6 +104,24 @@ final class EditorRankingPolicyTests: XCTestCase {
         )
     }
 
+    func testExplicitRecommendationOverrideOrderBeatsDefaultCatalogOrder() {
+        let candidates = [
+            candidate(bundleID: "com.google.antigravity", source: .recommendedCatalog, weightName: "Antigravity"),
+            candidate(bundleID: "com.microsoft.VSCode", source: .recommendedCatalog, weightName: "VS Code"),
+            candidate(bundleID: "dev.kiro.desktop", source: .recommendedCatalog, weightName: "Kiro"),
+        ]
+
+        let ranked = policy.rank(
+            candidates,
+            preferredBundleIDs: ["com.microsoft.VSCode", "dev.kiro.desktop", "com.google.antigravity"]
+        )
+
+        XCTAssertEqual(
+            ranked.map(\.bundleID),
+            ["com.microsoft.VSCode", "dev.kiro.desktop", "com.google.antigravity"]
+        )
+    }
+
     private func candidate(
         bundleID: String,
         source: EditorCandidateSource,

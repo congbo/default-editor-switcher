@@ -3,55 +3,61 @@ import Foundation
 import UniformTypeIdentifiers
 
 protocol LaunchServicesClienting {
-    func currentEditorBundleID(for contentType: UTType) -> String?
-    func allEditorBundleIDs(for contentType: UTType) -> [String]
-    func setDefaultEditor(bundleID: String, for contentType: UTType) throws
+    func currentHandlerBundleID(for contentType: UTType, role: PreferredHandlerRole) -> String?
+    func allHandlerBundleIDs(for contentType: UTType, role: PreferredHandlerRole) -> [String]
+    func setDefaultHandler(bundleID: String, for contentType: UTType, role: PreferredHandlerRole) throws
 }
 
 enum LaunchServicesClientError: Error, Hashable {
-    case failedToSetDefaultEditor(status: OSStatus, contentTypeIdentifier: String, bundleID: String)
+    case failedToSetDefaultHandler(
+        status: OSStatus,
+        contentTypeIdentifier: String,
+        bundleID: String,
+        role: PreferredHandlerRole
+    )
 
     var status: OSStatus {
         switch self {
-        case .failedToSetDefaultEditor(let status, _, _):
+        case .failedToSetDefaultHandler(let status, _, _, _):
             return status
         }
     }
 }
 
 struct LaunchServicesClient: LaunchServicesClienting {
-    func currentEditorBundleID(for contentType: UTType) -> String? {
+    func currentHandlerBundleID(for contentType: UTType, role: PreferredHandlerRole) -> String? {
         string(
             from: LSCopyDefaultRoleHandlerForContentType(
                 contentType.identifier as CFString,
-                .editor
+                role.lsRolesMask
             )
         )
     }
 
-    func allEditorBundleIDs(for contentType: UTType) -> [String] {
+    func allHandlerBundleIDs(for contentType: UTType, role: PreferredHandlerRole) -> [String] {
         deduplicating(
             strings(
                 from: LSCopyAllRoleHandlersForContentType(
                     contentType.identifier as CFString,
-                    .editor
+                    role.lsRolesMask
                 )
             )
         )
     }
 
-    func setDefaultEditor(bundleID: String, for contentType: UTType) throws {
+    func setDefaultHandler(bundleID: String, for contentType: UTType, role: PreferredHandlerRole) throws {
         let status = LSSetDefaultRoleHandlerForContentType(
             contentType.identifier as CFString,
-            .editor,
+            role.lsRolesMask,
             bundleID as CFString
         )
 
         guard status == noErr else {
-            throw LaunchServicesClientError.failedToSetDefaultEditor(
+            throw LaunchServicesClientError.failedToSetDefaultHandler(
                 status: status,
                 contentTypeIdentifier: contentType.identifier,
-                bundleID: bundleID
+                bundleID: bundleID,
+                role: role
             )
         }
     }
@@ -71,5 +77,18 @@ struct LaunchServicesClient: LaunchServicesClienting {
     private func deduplicating(_ bundleIDs: [String]) -> [String] {
         var seen = Set<String>()
         return bundleIDs.filter { seen.insert($0).inserted }
+    }
+}
+
+private extension PreferredHandlerRole {
+    var lsRolesMask: LSRolesMask {
+        switch self {
+        case .all:
+            return .all
+        case .viewer:
+            return .viewer
+        case .editor:
+            return .editor
+        }
     }
 }

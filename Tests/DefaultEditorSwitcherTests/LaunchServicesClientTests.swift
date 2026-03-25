@@ -5,10 +5,13 @@ import UniformTypeIdentifiers
 final class LaunchServicesClientTests: XCTestCase {
     func testVerificationReturnsMatchedWhenReadbackMatchesRequestedHandler() {
         let contentType = UTType(filenameExtension: "txt")!
+        var writtenRoles: [PreferredHandlerRole] = []
         let mock = MockLaunchServicesClient(
-            currentEditorBundleID: { _ in "com.example.editor" },
-            allEditorBundleIDs: { _ in ["com.example.editor"] },
-            setDefaultEditor: { _, _ in }
+            currentHandlerBundleID: { _, _ in "com.example.editor" },
+            allHandlerBundleIDs: { _, _ in ["com.example.editor"] },
+            setDefaultHandler: { _, _, role in
+                writtenRoles.append(role)
+            }
         )
         let verifier = LaunchServicesAssociationVerifier(client: mock)
 
@@ -17,14 +20,17 @@ final class LaunchServicesClientTests: XCTestCase {
         XCTAssertEqual(result.status, "matched")
         XCTAssertEqual(result.requestedBundleID, "com.example.editor")
         XCTAssertEqual(result.effectiveBundleID, "com.example.editor")
+        XCTAssertEqual(writtenRoles, PreferredHandlerRole.verificationOrder)
     }
 
-    func testVerificationReturnsMismatchedWhenEffectiveHandlerDiffers() {
+    func testVerificationReturnsMismatchedWhenOneRoleReadbackDiffers() {
         let contentType = UTType(filenameExtension: "md")!
         let mock = MockLaunchServicesClient(
-            currentEditorBundleID: { _ in "com.example.other" },
-            allEditorBundleIDs: { _ in ["com.example.editor", "com.example.other"] },
-            setDefaultEditor: { _, _ in }
+            currentHandlerBundleID: { _, role in
+                role == .viewer ? "com.example.other" : "com.example.editor"
+            },
+            allHandlerBundleIDs: { _, _ in ["com.example.editor", "com.example.other"] },
+            setDefaultHandler: { _, _, _ in }
         )
         let verifier = LaunchServicesAssociationVerifier(client: mock)
 
@@ -33,15 +39,20 @@ final class LaunchServicesClientTests: XCTestCase {
         XCTAssertEqual(result.status, "mismatched")
         XCTAssertEqual(result.requestedBundleID, "com.example.editor")
         XCTAssertEqual(result.effectiveBundleID, "com.example.other")
+        XCTAssertEqual(result.primaryRoleResult?.preferredHandler.role, .viewer)
     }
 
-    func testVerificationReturnsUnsupportedTargetWhenNoEligibleHandlersExist() {
+    func testVerificationReturnsUnsupportedTargetWhenOneRoleCannotUseRequestedApp() {
         let contentType = UTType(filenameExtension: "py")!
-        var writeAttempted = false
+        var writtenRoles: [PreferredHandlerRole] = []
         let mock = MockLaunchServicesClient(
-            currentEditorBundleID: { _ in "com.example.editor" },
-            allEditorBundleIDs: { _ in [] },
-            setDefaultEditor: { _, _ in writeAttempted = true }
+            currentHandlerBundleID: { _, _ in "com.example.editor" },
+            allHandlerBundleIDs: { _, role in
+                role == .editor ? [] : ["com.example.editor"]
+            },
+            setDefaultHandler: { _, _, role in
+                writtenRoles.append(role)
+            }
         )
         let verifier = LaunchServicesAssociationVerifier(client: mock)
 
@@ -50,19 +61,29 @@ final class LaunchServicesClientTests: XCTestCase {
         XCTAssertEqual(result.status, "unsupportedTarget")
         XCTAssertEqual(result.requestedBundleID, "com.example.editor")
         XCTAssertEqual(result.effectiveBundleID, "com.example.editor")
-        XCTAssertFalse(writeAttempted)
+        XCTAssertEqual(result.primaryRoleResult?.preferredHandler.role, .editor)
+        XCTAssertEqual(writtenRoles, [.all, .viewer])
     }
 
-    func testVerificationReturnsWriteFailedWhenSetOperationThrows() {
+    func testVerificationReturnsWriteFailedWhenOneRoleSetOperationThrows() {
         let contentType = UTType(filenameExtension: "rs")!
+        var writtenRoles: [PreferredHandlerRole] = []
         let mock = MockLaunchServicesClient(
-            currentEditorBundleID: { _ in "com.example.other" },
-            allEditorBundleIDs: { _ in ["com.example.editor"] },
-            setDefaultEditor: { bundleID, type in
-                throw LaunchServicesClientError.failedToSetDefaultEditor(
+            currentHandlerBundleID: { _, role in
+                role == .viewer ? "com.example.other" : "com.example.editor"
+            },
+            allHandlerBundleIDs: { _, _ in ["com.example.editor"] },
+            setDefaultHandler: { bundleID, type, role in
+                writtenRoles.append(role)
+                guard role == .viewer else {
+                    return
+                }
+
+                throw LaunchServicesClientError.failedToSetDefaultHandler(
                     status: -10810,
                     contentTypeIdentifier: type.identifier,
-                    bundleID: bundleID
+                    bundleID: bundleID,
+                    role: role
                 )
             }
         )
@@ -73,33 +94,36 @@ final class LaunchServicesClientTests: XCTestCase {
         XCTAssertEqual(result.status, "writeFailed")
         XCTAssertEqual(result.requestedBundleID, "com.example.editor")
         XCTAssertEqual(result.effectiveBundleID, "com.example.other")
+        XCTAssertEqual(result.primaryRoleResult?.preferredHandler.role, .viewer)
+        XCTAssertEqual(result.primaryRoleResult?.statusCode, -10810)
+        XCTAssertEqual(writtenRoles, PreferredHandlerRole.verificationOrder)
     }
 }
 
 private struct MockLaunchServicesClient: LaunchServicesClienting {
-    let currentEditorBundleIDProvider: (UTType) -> String?
-    let allEditorBundleIDsProvider: (UTType) -> [String]
-    let setDefaultEditorProvider: (String, UTType) throws -> Void
+    let currentHandlerBundleIDProvider: (UTType, PreferredHandlerRole) -> String?
+    let allHandlerBundleIDsProvider: (UTType, PreferredHandlerRole) -> [String]
+    let setDefaultHandlerProvider: (String, UTType, PreferredHandlerRole) throws -> Void
 
     init(
-        currentEditorBundleID: @escaping (UTType) -> String?,
-        allEditorBundleIDs: @escaping (UTType) -> [String],
-        setDefaultEditor: @escaping (String, UTType) throws -> Void
+        currentHandlerBundleID: @escaping (UTType, PreferredHandlerRole) -> String?,
+        allHandlerBundleIDs: @escaping (UTType, PreferredHandlerRole) -> [String],
+        setDefaultHandler: @escaping (String, UTType, PreferredHandlerRole) throws -> Void
     ) {
-        self.currentEditorBundleIDProvider = currentEditorBundleID
-        self.allEditorBundleIDsProvider = allEditorBundleIDs
-        self.setDefaultEditorProvider = setDefaultEditor
+        self.currentHandlerBundleIDProvider = currentHandlerBundleID
+        self.allHandlerBundleIDsProvider = allHandlerBundleIDs
+        self.setDefaultHandlerProvider = setDefaultHandler
     }
 
-    func currentEditorBundleID(for contentType: UTType) -> String? {
-        currentEditorBundleIDProvider(contentType)
+    func currentHandlerBundleID(for contentType: UTType, role: PreferredHandlerRole) -> String? {
+        currentHandlerBundleIDProvider(contentType, role)
     }
 
-    func allEditorBundleIDs(for contentType: UTType) -> [String] {
-        allEditorBundleIDsProvider(contentType)
+    func allHandlerBundleIDs(for contentType: UTType, role: PreferredHandlerRole) -> [String] {
+        allHandlerBundleIDsProvider(contentType, role)
     }
 
-    func setDefaultEditor(bundleID: String, for contentType: UTType) throws {
-        try setDefaultEditorProvider(bundleID, contentType)
+    func setDefaultHandler(bundleID: String, for contentType: UTType, role: PreferredHandlerRole) throws {
+        try setDefaultHandlerProvider(bundleID, contentType, role)
     }
 }

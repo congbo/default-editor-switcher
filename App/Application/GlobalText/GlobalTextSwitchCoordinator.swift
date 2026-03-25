@@ -31,11 +31,11 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
 
         return GlobalTextSwitchReport(
             requestedBundleID: bundleID,
-            matchedCount: results.filter { $0.status == "matched" }.count,
-            mismatchedCount: results.filter { $0.status == "mismatched" }.count,
-            unsupportedCount: results.filter { $0.status == "unsupportedTarget" }.count,
-            writeFailedCount: results.filter { $0.status == "writeFailed" }.count,
-            processedContentTypeIdentifiers: results.map { $0.preferredHandler.contentTypeIdentifier },
+            matchedCount: results.filter { $0.aggregateStatus == .matched }.count,
+            mismatchedCount: results.filter { $0.aggregateStatus == .mismatched }.count,
+            unsupportedCount: results.filter { $0.aggregateStatus == .unsupportedTarget }.count,
+            writeFailedCount: results.filter { $0.aggregateStatus == .writeFailed }.count,
+            processedContentTypeIdentifiers: results.map(\.contentTypeIdentifier),
             processedExtensions: declaredResolutions.map(\.normalizedExtension),
             sampleFailures: results.compactMap(sampleFailure(for:)).prefix(3).map { $0 }
         )
@@ -68,30 +68,17 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
     }
 
     private func sampleFailure(for result: AssociationVerificationResult) -> GlobalTextSwitchReport.SampleFailure? {
-        switch result {
-        case .matched:
+        guard let roleResult = result.primaryRoleResult else {
             return nil
-        case .mismatched(let handler):
-            return GlobalTextSwitchReport.SampleFailure(
-                contentTypeIdentifier: handler.contentTypeIdentifier,
-                status: result.status,
-                effectiveBundleID: handler.effectiveBundleID,
-                statusCode: nil
-            )
-        case .unsupportedTarget(let handler):
-            return GlobalTextSwitchReport.SampleFailure(
-                contentTypeIdentifier: handler.contentTypeIdentifier,
-                status: result.status,
-                effectiveBundleID: handler.effectiveBundleID,
-                statusCode: nil
-            )
-        case .writeFailed(let handler, let status):
-            return GlobalTextSwitchReport.SampleFailure(
-                contentTypeIdentifier: handler.contentTypeIdentifier,
-                status: result.status,
-                effectiveBundleID: handler.effectiveBundleID,
-                statusCode: status
-            )
         }
+
+        let handler = roleResult.preferredHandler
+        return GlobalTextSwitchReport.SampleFailure(
+            contentTypeIdentifier: handler.contentTypeIdentifier,
+            role: handler.role,
+            status: roleResult.status.rawValue,
+            effectiveBundleID: handler.effectiveBundleID,
+            statusCode: roleResult.statusCode
+        )
     }
 }

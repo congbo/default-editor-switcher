@@ -39,6 +39,21 @@
 		A1B2C3D4E5F60718293A00A7 /* GlobalTextStateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */; };
 		A1B2C3D4E5F60718293A00A8 /* GlobalTextSwitchCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */; };
 		A1B2C3D4E5F60718293A00A9 /* MenuBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */; };
+		A1B2C3D4E5F60718293A00D0 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E0 /* LaunchAtLoginService.swift */; };
+		A1B2C3D4E5F60718293A00D1 /* GeneralSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E1 /* GeneralSettingsViewModel.swift */; };
+		A1B2C3D4E5F60718293A00D2 /* RecommendedMenuAppsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E2 /* RecommendedMenuAppsStore.swift */; };
+		A1B2C3D4E5F60718293A00D3 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E3 /* AppLanguage.swift */; };
+		A1B2C3D4E5F60718293A00D4 /* AppLanguageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E4 /* AppLanguageStore.swift */; };
+		A1B2C3D4E5F60718293A00D5 /* SettingsWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E5 /* SettingsWindowView.swift */; };
+		A1B2C3D4E5F60718293A00D6 /* GeneralSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E6 /* GeneralSettingsSection.swift */; };
+		A1B2C3D4E5F60718293A00D7 /* RecommendedAppsSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E7 /* RecommendedAppsSettingsSection.swift */; };
+		A1B2C3D4E5F60718293A00D8 /* LanguageSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E8 /* LanguageSettingsSection.swift */; };
+		A1B2C3D4E5F60718293A00D9 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */; };
+		A1B2C3D4E5F60718293A00DA /* LaunchAtLoginServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */; };
+		A1B2C3D4E5F60718293A00DB /* RecommendedMenuAppsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */; };
+		A1B2C3D4E5F60718293A00DC /* AppLanguageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */; };
+		A1B2C3D4E5F60718293A00DD /* SettingsCopyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00ED /* SettingsCopyFormatter.swift */; };
+		A1B2C3D4E5F60718293A00DE /* SettingsCopyFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +96,21 @@
 		A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextStateServiceTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTextSwitchCoordinatorTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E0 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E1 /* GeneralSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E2 /* RecommendedMenuAppsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedMenuAppsStore.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E3 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E4 /* AppLanguageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageStore.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E5 /* SettingsWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E6 /* GeneralSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsSection.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E7 /* RecommendedAppsSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedAppsSettingsSection.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E8 /* LanguageSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSettingsSection.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginServiceTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedMenuAppsStoreTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageStoreTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00ED /* SettingsCopyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyFormatter.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyFormatterTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -102,6 +132,7 @@
 				A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */,
 				A1B2C3D4E5F60718293A00C0 /* Features */,
 				A1B2C3D4E5F60718293A00C2 /* Application */,
+				A1B2C3D4E5F60718293A00F4 /* Resources */,
 				A1B2C3D4E5F60718293A0037 /* Support */,
 				A1B2C3D4E5F60718293A0032 /* Domain */,
 				A1B2C3D4E5F60718293A0039 /* Infrastructure */,
@@ -186,6 +217,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A00C1 /* MenuBar */,
+				A1B2C3D4E5F60718293A00F3 /* Settings */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -205,6 +237,9 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A00C3 /* GlobalText */,
+				A1B2C3D4E5F60718293A00F0 /* Startup */,
+				A1B2C3D4E5F60718293A00F1 /* Settings */,
+				A1B2C3D4E5F60718293A00F2 /* Localization */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -217,6 +252,52 @@
 				A1B2C3D4E5F60718293A00B6 /* GlobalTextSwitchCoordinator.swift */,
 			);
 			path = GlobalText;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00F0 /* Startup */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00E0 /* LaunchAtLoginService.swift */,
+				A1B2C3D4E5F60718293A00E1 /* GeneralSettingsViewModel.swift */,
+			);
+			path = Startup;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00F1 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00E2 /* RecommendedMenuAppsStore.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00F2 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00E3 /* AppLanguage.swift */,
+				A1B2C3D4E5F60718293A00E4 /* AppLanguageStore.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00F3 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00ED /* SettingsCopyFormatter.swift */,
+				A1B2C3D4E5F60718293A00E5 /* SettingsWindowView.swift */,
+				A1B2C3D4E5F60718293A00E6 /* GeneralSettingsSection.swift */,
+				A1B2C3D4E5F60718293A00E7 /* RecommendedAppsSettingsSection.swift */,
+				A1B2C3D4E5F60718293A00E8 /* LanguageSettingsSection.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A00F4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60718293A0034 /* Tests */ = {
@@ -237,6 +318,10 @@
 				A1B2C3D4E5F60718293A00B7 /* GlobalTextStateServiceTests.swift */,
 				A1B2C3D4E5F60718293A00B8 /* GlobalTextSwitchCoordinatorTests.swift */,
 				A1B2C3D4E5F60718293A00B9 /* MenuBarViewModelTests.swift */,
+				A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */,
+				A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */,
+				A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */,
+				A1B2C3D4E5F60718293A00EE /* SettingsCopyFormatterTests.swift */,
 			);
 			path = DefaultEditorSwitcherTests;
 			sourceTree = "<group>";
@@ -275,6 +360,7 @@
 			buildConfigurationList = A1B2C3D4E5F60718293A0071 /* Build configuration list for PBXNativeTarget "DefaultEditorSwitcher" */;
 			buildPhases = (
 				A1B2C3D4E5F60718293A0080 /* Sources */,
+				A1B2C3D4E5F60718293A00FD /* Resources */,
 				A1B2C3D4E5F60718293A0082 /* Frameworks */,
 			);
 			buildRules = (
@@ -347,6 +433,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				zh-Hans,
 				Base,
 			);
 			mainGroup = A1B2C3D4E5F60718293A0030;
@@ -391,6 +478,16 @@
 				A1B2C3D4E5F60718293A00A1 /* MenuBarViewModel.swift in Sources */,
 				A1B2C3D4E5F60718293A00A0 /* MenuBarContentView.swift in Sources */,
 				A1B2C3D4E5F60718293A00A3 /* RulesWindowPlaceholderView.swift in Sources */,
+				A1B2C3D4E5F60718293A00D0 /* LaunchAtLoginService.swift in Sources */,
+				A1B2C3D4E5F60718293A00D1 /* GeneralSettingsViewModel.swift in Sources */,
+				A1B2C3D4E5F60718293A00D2 /* RecommendedMenuAppsStore.swift in Sources */,
+				A1B2C3D4E5F60718293A00D3 /* AppLanguage.swift in Sources */,
+				A1B2C3D4E5F60718293A00D4 /* AppLanguageStore.swift in Sources */,
+				A1B2C3D4E5F60718293A00DD /* SettingsCopyFormatter.swift in Sources */,
+				A1B2C3D4E5F60718293A00D5 /* SettingsWindowView.swift in Sources */,
+				A1B2C3D4E5F60718293A00D6 /* GeneralSettingsSection.swift in Sources */,
+				A1B2C3D4E5F60718293A00D7 /* RecommendedAppsSettingsSection.swift in Sources */,
+				A1B2C3D4E5F60718293A00D8 /* LanguageSettingsSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,6 +502,10 @@
 				A1B2C3D4E5F60718293A00A7 /* GlobalTextStateServiceTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00A8 /* GlobalTextSwitchCoordinatorTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00A9 /* MenuBarViewModelTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00DA /* LaunchAtLoginServiceTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00DB /* RecommendedMenuAppsStoreTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00DC /* AppLanguageStoreTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00DE /* SettingsCopyFormatterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,6 +522,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F60718293A00FD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718293A00D9 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A1B2C3D4E5F60718293A0082 /* Frameworks */ = {

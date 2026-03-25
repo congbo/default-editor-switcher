@@ -25,7 +25,7 @@ This phase delivers the menu bar utility flow for quickly switching the product'
 - **D-05:** The switcher list should surface fully eligible editors as immediate one-click actions, preserving the product promise that the common path finishes in a single short interaction.
 - **D-06:** Recommended editors should appear before other system-eligible editors, and non-curated apps in the global menu should default to descending order by how many developer-text extensions they declare support for.
 - **D-07:** Partially supported or unverified editors should not masquerade as primary switch actions; they should be visibly separated or explained so the menu stays fast without hiding capability caveats.
-- **D-10:** The top-level menu should expose up to 12 primary app choices before falling back to overflow, keeping recommended editors first and backfilling with other fully eligible apps when the curated list is shorter; the curated global order should keep `Kiro` immediately after `Cursor`.
+- **D-10:** The top-level menu should keep checked recommended editors first, show only installed full-support selections at the first level, and leave unchecked or unavailable editors in overflow instead of backfilling or forcing the current editor upward; the default seed keeps `Kiro` immediately after `Cursor`, adds `Qoder` after `Zed`, and includes `TextEdit`.
 
 ### Feedback and Advanced Access
 - **D-08:** After a global switch attempt, the menu should refresh the visible current-state summary without forcing the main window to open or adding extra inline feedback rows.

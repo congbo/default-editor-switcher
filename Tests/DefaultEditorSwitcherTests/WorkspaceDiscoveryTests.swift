@@ -168,6 +168,66 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(ranked.map(\.capability), [.full, .full])
     }
 
+    func testWorkspaceDiscoveryCollapsesDuplicateBundleIdentifiers() {
+        let reader = BundleDocumentTypeReader()
+        let requestedType = UTType(filenameExtension: "txt")!
+        let duplicatePartialURL = URL(fileURLWithPath: "/Applications/Postico Partial.app")
+        let duplicateFullURL = URL(fileURLWithPath: "/Applications/Postico Full.app")
+
+        let partialMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "LSItemContentTypes": ["public.data"],
+                        "CFBundleTypeRole": "Viewer",
+                        "LSHandlerRank": "Alternate",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "at.eggerapps.Postico",
+            displayName: "Postico"
+        )
+
+        let fullMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "CFBundleTypeExtensions": ["txt", "md", "json"],
+                        "CFBundleTypeRole": "Editor",
+                        "LSHandlerRank": "Owner",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "at.eggerapps.Postico",
+            displayName: "Postico"
+        )
+
+        let discovery = WorkspaceAppDiscovery(
+            workspace: FakeWorkspaceApplicationURLProvider(urls: [duplicatePartialURL, duplicateFullURL]),
+            bundleInspector: FakeBundleInspector(
+                bundleIdentifiers: [
+                    duplicatePartialURL: partialMetadata.bundleID,
+                    duplicateFullURL: fullMetadata.bundleID,
+                ],
+                displayNames: [
+                    duplicatePartialURL: "Postico Duplicate",
+                    duplicateFullURL: fullMetadata.displayName,
+                ],
+                metadata: [
+                    duplicatePartialURL: partialMetadata,
+                    duplicateFullURL: fullMetadata,
+                ]
+            )
+        )
+
+        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+
+        XCTAssertEqual(ranked.count, 1)
+        XCTAssertEqual(ranked[0].bundleID, "at.eggerapps.Postico")
+        XCTAssertEqual(ranked[0].capability, .full)
+        XCTAssertEqual(ranked[0].supportedTextExtensionCount, 3)
+    }
+
     private struct FakeWorkspaceApplicationURLProvider: WorkspaceApplicationURLProviding {
         let urls: [URL]
 

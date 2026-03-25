@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -11,23 +12,38 @@ extension WorkspaceAppDiscovery: EditorDiscovering {}
 
 protocol ApplicationLocating {
     func iconLookupPath(for bundleID: String) -> String?
+    func displayName(for bundleID: String) -> String?
 }
 
 struct WorkspaceApplicationLocator: ApplicationLocating {
     func iconLookupPath(for bundleID: String) -> String? {
-        NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)?.path
+        applicationURL(for: bundleID)?.path
+    }
+
+    func displayName(for bundleID: String) -> String? {
+        guard let applicationURL = applicationURL(for: bundleID) else {
+            return nil
+        }
+
+        guard let bundle = Bundle(url: applicationURL) else {
+            return applicationURL.deletingPathExtension().lastPathComponent
+        }
+
+        return bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+            ?? bundle.object(forInfoDictionaryKey: "CFBundleName") as? String
+            ?? applicationURL.deletingPathExtension().lastPathComponent
+    }
+
+    private func applicationURL(for bundleID: String) -> URL? {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)
     }
 }
 
 @MainActor
 final class MenuBarViewModel: ObservableObject {
-    static let rulesWindowID = "rules-window"
-    static let primaryMenuLimit = 12
+    static let settingsWindowID = "settings-window"
 
-    @Published private(set) var summary = MenuBarSummary(
-        title: "Loading...",
-        detail: "Checking the current global text editor."
-    )
+    @Published private(set) var summary: MenuBarSummary
     @Published private(set) var sections: [MenuBarSection] = []
     @Published private(set) var lastSwitchReport: GlobalTextSwitchReport?
     @Published private(set) var applyingBundleID: String?
@@ -35,27 +51,41 @@ final class MenuBarViewModel: ObservableObject {
     @Published private(set) var primaryRows: [MenuBarEditorRow] = []
     @Published private(set) var overflowRows: [MenuBarEditorRow] = []
 
-    let rulesWindowAction = RulesWindowAction(
-        title: "Settings...",
-        windowID: MenuBarViewModel.rulesWindowID
-    )
-
     private let stateService: GlobalTextStateServicing
     private let appDiscovery: EditorDiscovering
     private let switchCoordinator: GlobalTextSwitchCoordinating?
     private let applicationLocator: ApplicationLocating
+    private let recommendedAppsStore: any RecommendedMenuAppsStoring
+    private let localizer: any AppTextLocalizing
     private var hasLoadedOnce = false
+    private var cancellables: Set<AnyCancellable> = []
 
     init(
         stateService: GlobalTextStateServicing = GlobalTextStateService(),
         appDiscovery: EditorDiscovering = WorkspaceAppDiscovery(),
         switchCoordinator: GlobalTextSwitchCoordinating? = GlobalTextSwitchCoordinator(),
-        applicationLocator: ApplicationLocating = WorkspaceApplicationLocator()
+        applicationLocator: ApplicationLocating = WorkspaceApplicationLocator(),
+        recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
+        localizer: any AppTextLocalizing = PassthroughLocalizer()
     ) {
         self.stateService = stateService
         self.appDiscovery = appDiscovery
         self.switchCoordinator = switchCoordinator
         self.applicationLocator = applicationLocator
+        self.recommendedAppsStore = recommendedAppsStore
+        self.localizer = localizer
+        self.summary = MenuBarSummary(
+            title: localizer.string("Loading..."),
+            detail: localizer.string("Checking the current global text editor.")
+        )
+        bindPreferenceUpdates()
+    }
+
+    var settingsWindowAction: SettingsWindowAction {
+        SettingsWindowAction(
+            title: localizer.string("Settings..."),
+            windowID: Self.settingsWindowID
+        )
     }
 
     func loadIfNeeded() {
@@ -86,15 +116,8 @@ final class MenuBarViewModel: ObservableObject {
             currentBundleID: state.currentBundleID,
             applyingBundleID: applyingBundleID
         )
-        let allRows = orderedRows(
-            from: candidates,
-            currentBundleID: state.currentBundleID,
-            applyingBundleID: applyingBundleID
-        )
-        primaryRows = primaryRows(from: allRows, currentBundleID: state.currentBundleID)
-        let primaryIDs = Set(primaryRows.map(\.id))
-        overflowRows = allRows.filter { !primaryIDs.contains($0.id) }
-
+        primaryRows = recommendedMenuRows(from: sections)
+        overflowRows = overflowMenuRows(from: sections)
     }
 
     func applyEditor(bundleID: String) {
@@ -119,19 +142,30 @@ final class MenuBarViewModel: ObservableObject {
         case .single(let bundleID):
             return MenuBarSummary(
                 title: displayName(for: bundleID, displayNames: displayNames),
-                detail: "Current global text editor across \(state.inspectedContentTypeIdentifiers.count) declared text types."
+                detail: localizer.formattedString(
+                    "Current global text editor across %d declared text types.",
+                    state.inspectedContentTypeIdentifiers.count
+                )
             )
         case .mixed(let bundleIDs):
-            let highlightedName = state.currentBundleID.map { displayName(for: $0, displayNames: displayNames) } ?? "Mixed Defaults"
+            let highlightedName = state.currentBundleID.map { displayName(for: $0, displayNames: displayNames) }
+                ?? localizer.string("Mixed Defaults")
             let remainingNames = bundleIDs
                 .filter { $0 != state.currentBundleID }
                 .map { displayName(for: $0, displayNames: displayNames) }
                 .joined(separator: ", ")
             let detail: String
             if remainingNames.isEmpty {
-                detail = "Mixed defaults across declared text types. Current plain text opens in \(highlightedName)."
+                detail = localizer.formattedString(
+                    "Mixed defaults across declared text types. Current plain text opens in %@.",
+                    highlightedName
+                )
             } else {
-                detail = "Mixed defaults across declared text types. Current plain text opens in \(highlightedName), while other types still use: \(remainingNames)."
+                detail = localizer.formattedString(
+                    "Mixed defaults across declared text types. Current plain text opens in %@, while other types still use: %@.",
+                    highlightedName,
+                    remainingNames
+                )
             }
             return MenuBarSummary(
                 title: highlightedName,
@@ -139,8 +173,8 @@ final class MenuBarViewModel: ObservableObject {
             )
         case .unavailable:
             return MenuBarSummary(
-                title: "No Global Editor Detected",
-                detail: "No declared text type currently reports an editor handler."
+                title: localizer.string("No Global Editor Detected"),
+                detail: localizer.string("No declared text type currently reports an editor handler.")
             )
         }
     }
@@ -150,12 +184,20 @@ final class MenuBarViewModel: ObservableObject {
         currentBundleID: String?,
         applyingBundleID: String?
     ) -> [MenuBarSection] {
-        let recommendedRows = candidates
-            .filter { $0.isRecommended && $0.capability == .full }
+        let recommendedBundleIDs = recommendedAppsStore.resolvedRecommendedBundleIDs(
+            availableBundleIDs: candidates
+                .filter { $0.capability == .full }
+                .map(\.bundleID)
+        )
+        let recommendedBundleIDSet = Set(recommendedBundleIDs)
+        let recommendedRows = recommendedBundleIDs
+            .compactMap { bundleID in
+                candidates.first(where: { $0.bundleID == bundleID && $0.capability == .full })
+            }
             .map { row(from: $0, currentBundleID: currentBundleID, applyingBundleID: applyingBundleID) }
 
         let otherEligibleRows = candidates
-            .filter { !$0.isRecommended && $0.capability == .full }
+            .filter { $0.capability == .full && !recommendedBundleIDSet.contains($0.bundleID) }
             .map { row(from: $0, currentBundleID: currentBundleID, applyingBundleID: applyingBundleID) }
 
         let verificationRows = candidates
@@ -178,7 +220,10 @@ final class MenuBarViewModel: ObservableObject {
             bundleID: candidate.bundleID,
             displayName: candidate.displayName,
             iconLookupPath: candidate.iconLookupPath,
-            actionTitle: "Use \(candidate.displayName) for All Text Files",
+            actionTitle: localizer.formattedString(
+                "Use %@ for All Text Files",
+                candidate.displayName
+            ),
             capabilityNote: capabilityNote(for: candidate),
             isCurrent: candidate.bundleID == currentBundleID,
             isBusy: candidate.bundleID == applyingBundleID,
@@ -186,47 +231,21 @@ final class MenuBarViewModel: ObservableObject {
         )
     }
 
-    private func orderedRows(
-        from candidates: [EditorCandidate],
-        currentBundleID: String?,
-        applyingBundleID: String?
-    ) -> [MenuBarEditorRow] {
-        candidates.map { row(from: $0, currentBundleID: currentBundleID, applyingBundleID: applyingBundleID) }
-    }
-
-    private func primaryRows(
-        from rows: [MenuBarEditorRow],
-        currentBundleID: String?
-    ) -> [MenuBarEditorRow] {
-        guard let currentRow = rows.first(where: { $0.bundleID == currentBundleID }) else {
-            return Array(rows.prefix(Self.primaryMenuLimit))
-        }
-
-        if rows.prefix(Self.primaryMenuLimit).contains(where: { $0.id == currentRow.id }) {
-            return Array(rows.prefix(Self.primaryMenuLimit))
-        }
-
-        let fallbackRows = rows
-            .filter { $0.id != currentRow.id }
-            .prefix(max(Self.primaryMenuLimit - 1, 0))
-
-        return [currentRow] + fallbackRows
-    }
-
     private func capabilityNote(for candidate: EditorCandidate) -> String? {
         switch candidate.capability {
         case .full:
-            return candidate.isRecommended ? nil : "Available through macOS registration"
+            return candidate.isRecommended ? nil : localizer.string("Available through macOS registration")
         case .partial:
-            return "Partial support"
+            return localizer.string("Partial support")
         case .unverified:
-            return "Needs verification"
+            return localizer.string("Needs verification")
         }
     }
 
     private func displayName(for bundleID: String, displayNames: [String: String]) -> String {
         displayNames[bundleID]
             ?? KnownEditors.knownEditor(for: bundleID)?.displayName
+            ?? applicationLocator.displayName(for: bundleID)
             ?? bundleID
     }
 
@@ -237,9 +256,25 @@ final class MenuBarViewModel: ObservableObject {
         }
     }
 
-    private func uniqueRows(_ rows: [MenuBarEditorRow]) -> [MenuBarEditorRow] {
-        var seen = Set<String>()
-        return rows.filter { seen.insert($0.id).inserted }
+    private func recommendedMenuRows(from sections: [MenuBarSection]) -> [MenuBarEditorRow] {
+        for section in sections {
+            if case .recommendedFullSupport(let rows) = section {
+                return rows
+            }
+        }
+
+        return []
+    }
+
+    private func overflowMenuRows(from sections: [MenuBarSection]) -> [MenuBarEditorRow] {
+        sections.compactMap { section -> [MenuBarEditorRow]? in
+            if case .recommendedFullSupport = section {
+                return nil
+            }
+
+            return section.rows
+        }
+        .flatMap { $0 }
     }
 
     private func currentIconLookupPath(
@@ -251,5 +286,21 @@ final class MenuBarViewModel: ObservableObject {
         }
 
         return iconPaths[bundleID] ?? applicationLocator.iconLookupPath(for: bundleID)
+    }
+
+    private func bindPreferenceUpdates() {
+        recommendedAppsStore.objectWillChangePublisher
+            .sink { [weak self] in
+                guard let self, self.hasLoadedOnce else { return }
+                self.load()
+            }
+            .store(in: &cancellables)
+
+        localizer.objectWillChangePublisher
+            .sink { [weak self] in
+                guard let self, self.hasLoadedOnce else { return }
+                self.load()
+            }
+            .store(in: &cancellables)
     }
 }

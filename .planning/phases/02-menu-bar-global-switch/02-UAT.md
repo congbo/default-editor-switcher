@@ -27,7 +27,7 @@ expected: Opening the menu should show the current global editor summary plus ap
 result: pass
 
 ### 3. First-Level App Count
-expected: The first-level menu should show up to 12 app choices. If the curated recommendation list is shorter, other fully eligible apps should backfill so the visible list still reaches 12 whenever enough apps exist.
+expected: The first-level menu should show only checked recommended editors that are currently installed and full-support. It should not backfill other eligible apps to reach 12, and unchecked editors should remain in `More`.
 result: pass
 
 ### 4. Non-Curated App Ordering

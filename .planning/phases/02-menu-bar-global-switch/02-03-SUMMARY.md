@@ -27,7 +27,7 @@ key-decisions:
   - "The footer action targets a stable `rules-window` scene id so the app remains menu-bar-first while exposing a real secondary window."
 patterns-established:
   - "Top-level menu density is capped so high-frequency recommended actions stay within a short scan."
-  - "Current-row injection must still keep the top-level app list capped at the configured limit."
+  - "Current-editor state is indicated on the relevant row without forcing that row into the first-level action list."
   - "Rules-window access is exposed through a simple view-facing action model instead of ad hoc environment calls spread through tests."
 requirements-completed: [MENU-03, DIST-03]
 duration: 9 min

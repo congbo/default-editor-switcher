@@ -10,25 +10,43 @@ struct LaunchServicesAssociationVerifier {
     }
 
     func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult {
-        let existingEffectiveBundleID = client.currentEditorBundleID(for: contentType)
+        let roleResults = PreferredHandlerRole.verificationOrder.map { role in
+            verify(requestedBundleID: requestedBundleID, for: contentType, role: role)
+        }
+
+        return AssociationVerificationResult(
+            contentType: contentType,
+            requestedBundleID: requestedBundleID,
+            roleResults: roleResults
+        )
+    }
+
+    private func verify(
+        requestedBundleID: String,
+        for contentType: UTType,
+        role: PreferredHandlerRole
+    ) -> AssociationRoleVerificationResult {
+        let existingEffectiveBundleID = client.currentHandlerBundleID(for: contentType, role: role)
         let handler = PreferredHandler(
             contentType: contentType,
             requestedBundleID: requestedBundleID,
-            effectiveBundleID: existingEffectiveBundleID
+            effectiveBundleID: existingEffectiveBundleID,
+            role: role
         )
 
-        let eligibleBundleIDs = client.allEditorBundleIDs(for: contentType)
+        let eligibleBundleIDs = client.allHandlerBundleIDs(for: contentType, role: role)
         guard !eligibleBundleIDs.isEmpty, eligibleBundleIDs.contains(requestedBundleID) else {
             return .unsupportedTarget(handler)
         }
 
         do {
-            try client.setDefaultEditor(bundleID: requestedBundleID, for: contentType)
+            try client.setDefaultHandler(bundleID: requestedBundleID, for: contentType, role: role)
         } catch let error as LaunchServicesClientError {
             let verifiedHandler = PreferredHandler(
                 contentType: contentType,
                 requestedBundleID: requestedBundleID,
-                effectiveBundleID: client.currentEditorBundleID(for: contentType)
+                effectiveBundleID: client.currentHandlerBundleID(for: contentType, role: role),
+                role: role
             )
 
             return .writeFailed(verifiedHandler, status: error.status)
@@ -36,17 +54,19 @@ struct LaunchServicesAssociationVerifier {
             let verifiedHandler = PreferredHandler(
                 contentType: contentType,
                 requestedBundleID: requestedBundleID,
-                effectiveBundleID: client.currentEditorBundleID(for: contentType)
+                effectiveBundleID: client.currentHandlerBundleID(for: contentType, role: role),
+                role: role
             )
 
             return .writeFailed(verifiedHandler, status: OSStatus(-1))
         }
 
-        let effectiveBundleID = client.currentEditorBundleID(for: contentType)
+        let effectiveBundleID = client.currentHandlerBundleID(for: contentType, role: role)
         let verifiedHandler = PreferredHandler(
             contentType: contentType,
             requestedBundleID: requestedBundleID,
-            effectiveBundleID: effectiveBundleID
+            effectiveBundleID: effectiveBundleID,
+            role: role
         )
 
         guard let effectiveBundleID else {

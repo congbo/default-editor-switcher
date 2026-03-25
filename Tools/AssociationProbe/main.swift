@@ -53,10 +53,16 @@ func parseArguments(_ arguments: [String]) throws -> ProbeArguments {
 }
 
 func printMachineReadableResult(_ result: AssociationVerificationResult) {
-    let effective = result.effectiveBundleID ?? "nil"
     print("requested=\(result.requestedBundleID)")
-    print("effective=\(effective)")
     print("status=\(result.status)")
+    print("effective=\(result.effectiveBundleID ?? "nil")")
+
+    for role in PreferredHandlerRole.verificationOrder {
+        let roleResult = result.roleResults.first { $0.preferredHandler.role == role }
+        print("\(role.rawValue)_requested=\(result.requestedBundleID)")
+        print("\(role.rawValue)_effective=\(roleResult?.preferredHandler.effectiveBundleID ?? "nil")")
+        print("\(role.rawValue)_status=\(roleResult?.status.rawValue ?? "nil")")
+    }
 }
 
 do {
@@ -74,7 +80,9 @@ do {
 
     defer {
         if let restoreBundleID = arguments.restoreBundleID {
-            try? client.setDefaultEditor(bundleID: restoreBundleID, for: contentType)
+            for role in PreferredHandlerRole.verificationOrder {
+                try? client.setDefaultHandler(bundleID: restoreBundleID, for: contentType, role: role)
+            }
         }
     }
 

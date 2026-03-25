@@ -104,6 +104,19 @@ enum KnownEditors {
             ]
         ),
         KnownEditor(
+            bundleID: "com.qoder.ide",
+            displayName: "Qoder",
+            globalWeight: 103,
+            bucketWeights: [
+                .python: 8,
+                .web: 10,
+                .go: 6,
+                .java: 6,
+                .rust: 6,
+                .markdown: 8,
+            ]
+        ),
+        KnownEditor(
             bundleID: "com.microsoft.VSCode",
             displayName: "Visual Studio Code",
             globalWeight: 100,
@@ -133,6 +146,14 @@ enum KnownEditors {
             bucketWeights: [
                 .web: 6,
                 .markdown: 12,
+            ]
+        ),
+        KnownEditor(
+            bundleID: "com.apple.TextEdit",
+            displayName: "TextEdit",
+            globalWeight: 70,
+            bucketWeights: [
+                .markdown: 4,
             ]
         ),
         KnownEditor(
@@ -213,6 +234,24 @@ enum KnownEditors {
     static let catalogByBundleID: [String: KnownEditor] = Dictionary(
         uniqueKeysWithValues: catalog.map { ($0.bundleID, $0) }
     )
+
+    static let defaultRecommendedBundleIDs = catalog.map(\.bundleID)
+    static let defaultEnabledRecommendedBundleIDs = [
+        "com.google.antigravity",
+        "com.todesktop.230313mzl4w4u92",
+        "dev.kiro.desktop",
+        "com.exafunction.windsurf",
+        "com.trae.app",
+        "com.tencent.codebuddy",
+        "dev.zed.Zed",
+        "com.qoder.ide",
+        "com.microsoft.VSCode",
+        "com.apple.dt.Xcode",
+        "com.sublimetext.4",
+        "com.apple.TextEdit",
+    ]
+
+    static let defaultRecommendedEditors = catalog
 
     static func knownEditor(for bundleID: String) -> KnownEditor? {
         catalogByBundleID[bundleID]

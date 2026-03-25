@@ -2,18 +2,19 @@ import SwiftUI
 
 struct RulesWindowPlaceholderView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Advanced Rules Window")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.title2)
+                .fontWeight(.semibold)
 
             Text("Advanced language and custom extension rules arrive in later phases. Phase 02 keeps the resident menu utility focused on one-click global text switching.")
-                .font(.system(size: 13))
+                .font(.body)
                 .foregroundStyle(.secondary)
 
             Spacer()
         }
-        .padding(32)
+        .padding(24)
         .frame(minWidth: 420, minHeight: 260, alignment: .topLeading)
-        .background(Color(red: 0.957, green: 0.945, blue: 0.918))
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 }

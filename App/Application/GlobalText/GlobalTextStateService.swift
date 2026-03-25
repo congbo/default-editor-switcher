@@ -6,6 +6,12 @@ protocol GlobalTextStateServicing {
 }
 
 struct GlobalTextState: Equatable {
+    struct ExtensionAssociation: Equatable {
+        let normalizedExtension: String
+        let contentTypeIdentifier: String
+        let bundleID: String?
+    }
+
     enum Status: Equatable {
         case single(bundleID: String)
         case mixed(bundleIDs: [String])
@@ -14,15 +20,18 @@ struct GlobalTextState: Equatable {
 
     let status: Status
     let inspectedContentTypeIdentifiers: [String]
+    let extensionAssociations: [ExtensionAssociation]
     let representativeBundleID: String?
 
     init(
         status: Status,
         inspectedContentTypeIdentifiers: [String],
+        extensionAssociations: [ExtensionAssociation] = [],
         representativeBundleID: String? = nil
     ) {
         self.status = status
         self.inspectedContentTypeIdentifiers = inspectedContentTypeIdentifiers
+        self.extensionAssociations = extensionAssociations
         self.representativeBundleID = representativeBundleID
     }
 
@@ -51,15 +60,16 @@ struct GlobalTextStateService: GlobalTextStateServicing {
     }
 
     func currentState() -> GlobalTextState {
-        let contentTypes = declaredContentTypes()
-        let inspectedContentTypeIdentifiers = contentTypes.map(\.identifier)
-        let bundleIDs = contentTypes.compactMap { client.currentEditorBundleID(for: $0) }
+        let associations = declaredExtensionAssociations()
+        let inspectedContentTypeIdentifiers = orderedUnique(associations.map(\.contentTypeIdentifier))
+        let bundleIDs = associations.compactMap(\.bundleID)
         let representativeBundleID = representativeCurrentBundleID(bundleIDs: bundleIDs)
 
         guard !bundleIDs.isEmpty else {
             return GlobalTextState(
                 status: .unavailable,
                 inspectedContentTypeIdentifiers: inspectedContentTypeIdentifiers,
+                extensionAssociations: associations,
                 representativeBundleID: nil
             )
         }
@@ -69,6 +79,7 @@ struct GlobalTextStateService: GlobalTextStateServicing {
             return GlobalTextState(
                 status: .single(bundleID: bundleID),
                 inspectedContentTypeIdentifiers: inspectedContentTypeIdentifiers,
+                extensionAssociations: associations,
                 representativeBundleID: bundleID
             )
         }
@@ -76,21 +87,23 @@ struct GlobalTextStateService: GlobalTextStateServicing {
         return GlobalTextState(
             status: .mixed(bundleIDs: uniqueBundleIDs),
             inspectedContentTypeIdentifiers: inspectedContentTypeIdentifiers,
+            extensionAssociations: associations,
             representativeBundleID: representativeBundleID
         )
     }
 
-    private func declaredContentTypes() -> [UTType] {
-        orderedUnique(
-            resolutionsProvider(.allText).compactMap { resolution in
-                guard resolution.isDeclared, let type = resolution.type else {
-                    return nil
-                }
+    private func declaredExtensionAssociations() -> [GlobalTextState.ExtensionAssociation] {
+        resolutionsProvider(.allText).compactMap { resolution in
+            guard resolution.isDeclared, let type = resolution.type else {
+                return nil
+            }
 
-                return type
-            },
-            by: \.identifier
-        )
+            return GlobalTextState.ExtensionAssociation(
+                normalizedExtension: resolution.normalizedExtension,
+                contentTypeIdentifier: type.identifier,
+                bundleID: client.currentHandlerBundleID(for: type, role: .editor)
+            )
+        }
     }
 
     private func orderedUnique(_ values: [String]) -> [String] {
@@ -103,7 +116,7 @@ struct GlobalTextStateService: GlobalTextStateServicing {
     }
 
     private func representativeCurrentBundleID(bundleIDs: [String]) -> String? {
-        if let plainTextBundleID = client.currentEditorBundleID(for: .plainText) {
+        if let plainTextBundleID = client.currentHandlerBundleID(for: .plainText, role: .editor) {
             return plainTextBundleID
         }
 

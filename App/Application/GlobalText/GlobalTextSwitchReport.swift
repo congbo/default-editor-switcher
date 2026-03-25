@@ -4,6 +4,7 @@ import Foundation
 struct GlobalTextSwitchReport: Equatable {
     struct SampleFailure: Equatable, Hashable {
         let contentTypeIdentifier: String
+        let role: PreferredHandlerRole
         let status: String
         let effectiveBundleID: String?
         let statusCode: OSStatus?

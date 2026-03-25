@@ -9,14 +9,19 @@ struct MenuBarContentView: View {
 
     @Environment(\.openWindow) private var openWindow
     @StateObject private var viewModel: MenuBarViewModel
+    @ObservedObject private var localizer: AppLocalizer
 
-    init(viewModel: MenuBarViewModel = MenuBarViewModel()) {
+    init(
+        viewModel: MenuBarViewModel = MenuBarViewModel(),
+        localizer: AppLocalizer
+    ) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.localizer = localizer
     }
 
     var body: some View {
         if viewModel.primaryRows.isEmpty {
-            Text("No Eligible Editors Found")
+            Text(localizer.string("No Eligible Editors Found"))
                 .disabled(true)
         } else {
             ForEach(viewModel.primaryRows) { row in
@@ -39,20 +44,20 @@ struct MenuBarContentView: View {
                 Divider()
             }
 
-            Button(viewModel.rulesWindowAction.title) {
+            Button(viewModel.settingsWindowAction.title) {
                 NSApp.activate(ignoringOtherApps: true)
-                openWindow(id: viewModel.rulesWindowAction.windowID)
+                openWindow(id: viewModel.settingsWindowAction.windowID)
             }
             .keyboardShortcut(",", modifiers: .command)
 
             Divider()
 
-            Button("Quit Default Editor Switcher") {
+            Button(localizer.string("Quit Default Editor Switcher")) {
                 NSApp.terminate(nil)
             }
             .keyboardShortcut("q", modifiers: .command)
         } label: {
-            Label("More", systemImage: "ellipsis")
+            Label(localizer.string("More"), systemImage: "ellipsis")
         }
     }
 

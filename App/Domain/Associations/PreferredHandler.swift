@@ -1,8 +1,16 @@
 import Foundation
 import UniformTypeIdentifiers
 
-enum PreferredHandlerRole: String, Hashable {
+enum PreferredHandlerRole: String, CaseIterable, Hashable {
+    case all
+    case viewer
     case editor
+
+    static let verificationOrder: [PreferredHandlerRole] = [
+        .all,
+        .viewer,
+        .editor,
+    ]
 }
 
 struct PreferredHandler: Hashable {

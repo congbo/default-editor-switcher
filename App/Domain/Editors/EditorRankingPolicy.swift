@@ -1,8 +1,31 @@
 import Foundation
 
 struct EditorRankingPolicy {
-    func rank(_ candidates: [EditorCandidate], for bucket: LanguageBucket? = nil) -> [EditorCandidate] {
-        candidates.sorted { lhs, rhs in
+    func rank(
+        _ candidates: [EditorCandidate],
+        for bucket: LanguageBucket? = nil,
+        preferredBundleIDs: [String] = []
+    ) -> [EditorCandidate] {
+        let preferredOrder = Dictionary(
+            uniqueKeysWithValues: preferredBundleIDs.enumerated().map { ($1, $0) }
+        )
+
+        return candidates.sorted { lhs, rhs in
+            let lhsPreferredOrder = preferredOrder[lhs.bundleID]
+            let rhsPreferredOrder = preferredOrder[rhs.bundleID]
+
+            if let lhsPreferredOrder, let rhsPreferredOrder, lhsPreferredOrder != rhsPreferredOrder {
+                return lhsPreferredOrder < rhsPreferredOrder
+            }
+
+            if lhsPreferredOrder != nil, rhsPreferredOrder == nil {
+                return true
+            }
+
+            if lhsPreferredOrder == nil, rhsPreferredOrder != nil {
+                return false
+            }
+
             if lhs.isRecommended != rhs.isRecommended {
                 return lhs.isRecommended && !rhs.isRecommended
             }

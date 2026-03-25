@@ -67,7 +67,7 @@ struct WorkspaceAppDiscovery {
             candidate(for: bundleURL, requestedContentType: contentType)
         }
 
-        return rankingPolicy.rank(candidates, for: bucket)
+        return rankingPolicy.rank(deduplicatedCandidates(candidates), for: bucket)
     }
 
     func candidate(for bundleURL: URL, requestedContentType: UTType) -> EditorCandidate {
@@ -112,5 +112,48 @@ struct WorkspaceAppDiscovery {
         }
 
         return .partial
+    }
+
+    private func deduplicatedCandidates(_ candidates: [EditorCandidate]) -> [EditorCandidate] {
+        var candidatesByBundleID: [String: EditorCandidate] = [:]
+        var orderedBundleIDs: [String] = []
+
+        for candidate in candidates {
+            if let existing = candidatesByBundleID[candidate.bundleID] {
+                if shouldReplace(existing, with: candidate) {
+                    candidatesByBundleID[candidate.bundleID] = candidate
+                }
+            } else {
+                orderedBundleIDs.append(candidate.bundleID)
+                candidatesByBundleID[candidate.bundleID] = candidate
+            }
+        }
+
+        return orderedBundleIDs.compactMap { candidatesByBundleID[$0] }
+    }
+
+    private func shouldReplace(_ existing: EditorCandidate, with candidate: EditorCandidate) -> Bool {
+        let existingCapabilityScore = capabilityScore(existing.capability)
+        let candidateCapabilityScore = capabilityScore(candidate.capability)
+        if candidateCapabilityScore != existingCapabilityScore {
+            return candidateCapabilityScore > existingCapabilityScore
+        }
+
+        if candidate.supportedTextExtensionCount != existing.supportedTextExtensionCount {
+            return candidate.supportedTextExtensionCount > existing.supportedTextExtensionCount
+        }
+
+        return false
+    }
+
+    private func capabilityScore(_ capability: EditorCapability) -> Int {
+        switch capability {
+        case .full:
+            return 3
+        case .partial:
+            return 2
+        case .unverified:
+            return 1
+        }
     }
 }

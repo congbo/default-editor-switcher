@@ -8,11 +8,33 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         let markdownType = UTType(filenameExtension: "md")!
         let verifier = StubAssociationVerifier(
             resultsByIdentifier: [
-                textType.identifier: .matched(
-                    PreferredHandler(contentType: textType, requestedBundleID: "com.microsoft.VSCode", effectiveBundleID: "com.microsoft.VSCode")
+                textType.identifier: makeResult(
+                    for: textType,
+                    requestedBundleID: "com.microsoft.VSCode",
+                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                        .matched(
+                            PreferredHandler(
+                                contentType: textType,
+                                requestedBundleID: "com.microsoft.VSCode",
+                                effectiveBundleID: "com.microsoft.VSCode",
+                                role: $0
+                            )
+                        )
+                    }
                 ),
-                markdownType.identifier: .matched(
-                    PreferredHandler(contentType: markdownType, requestedBundleID: "com.microsoft.VSCode", effectiveBundleID: "com.microsoft.VSCode")
+                markdownType.identifier: makeResult(
+                    for: markdownType,
+                    requestedBundleID: "com.microsoft.VSCode",
+                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                        .matched(
+                            PreferredHandler(
+                                contentType: markdownType,
+                                requestedBundleID: "com.microsoft.VSCode",
+                                effectiveBundleID: "com.microsoft.VSCode",
+                                role: $0
+                            )
+                        )
+                    }
                 ),
             ]
         )
@@ -43,18 +65,110 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         let rustType = UTType(filenameExtension: "rs")!
         let verifier = StubAssociationVerifier(
             resultsByIdentifier: [
-                textType.identifier: .matched(
-                    PreferredHandler(contentType: textType, requestedBundleID: "com.example.editor", effectiveBundleID: "com.example.editor")
+                textType.identifier: makeResult(
+                    for: textType,
+                    requestedBundleID: "com.example.editor",
+                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                        .matched(
+                            PreferredHandler(
+                                contentType: textType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: $0
+                            )
+                        )
+                    }
                 ),
-                markdownType.identifier: .mismatched(
-                    PreferredHandler(contentType: markdownType, requestedBundleID: "com.example.editor", effectiveBundleID: "com.apple.TextEdit")
+                markdownType.identifier: makeResult(
+                    for: markdownType,
+                    requestedBundleID: "com.example.editor",
+                    roleResults: [
+                        .matched(
+                            PreferredHandler(
+                                contentType: markdownType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .all
+                            )
+                        ),
+                        .mismatched(
+                            PreferredHandler(
+                                contentType: markdownType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.apple.TextEdit",
+                                role: .viewer
+                            )
+                        ),
+                        .matched(
+                            PreferredHandler(
+                                contentType: markdownType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .editor
+                            )
+                        ),
+                    ]
                 ),
-                pythonType.identifier: .unsupportedTarget(
-                    PreferredHandler(contentType: pythonType, requestedBundleID: "com.example.editor", effectiveBundleID: nil)
+                pythonType.identifier: makeResult(
+                    for: pythonType,
+                    requestedBundleID: "com.example.editor",
+                    roleResults: [
+                        .matched(
+                            PreferredHandler(
+                                contentType: pythonType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .all
+                            )
+                        ),
+                        .matched(
+                            PreferredHandler(
+                                contentType: pythonType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .viewer
+                            )
+                        ),
+                        .unsupportedTarget(
+                            PreferredHandler(
+                                contentType: pythonType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: nil,
+                                role: .editor
+                            )
+                        ),
+                    ]
                 ),
-                rustType.identifier: .writeFailed(
-                    PreferredHandler(contentType: rustType, requestedBundleID: "com.example.editor", effectiveBundleID: "com.apple.TextEdit"),
-                    status: -10810
+                rustType.identifier: makeResult(
+                    for: rustType,
+                    requestedBundleID: "com.example.editor",
+                    roleResults: [
+                        .matched(
+                            PreferredHandler(
+                                contentType: rustType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .all
+                            )
+                        ),
+                        .writeFailed(
+                            PreferredHandler(
+                                contentType: rustType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.apple.TextEdit",
+                                role: .viewer
+                            ),
+                            status: -10810
+                        ),
+                        .matched(
+                            PreferredHandler(
+                                contentType: rustType,
+                                requestedBundleID: "com.example.editor",
+                                effectiveBundleID: "com.example.editor",
+                                role: .editor
+                            )
+                        ),
+                    ]
                 ),
             ]
         )
@@ -78,6 +192,7 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         XCTAssertEqual(report.writeFailedCount, 1)
         XCTAssertEqual(report.processedExtensions, ["txt", "md", "py", "rs"])
         XCTAssertEqual(report.sampleFailures.map(\.status), ["mismatched", "unsupportedTarget", "writeFailed"])
+        XCTAssertEqual(report.sampleFailures.map(\.role), [.viewer, .editor, .viewer])
         XCTAssertEqual(report.sampleFailures.last?.statusCode, -10810)
     }
 }
@@ -93,8 +208,47 @@ private final class StubAssociationVerifier: LaunchServicesAssociationVerifying 
     func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult {
         verifiedIdentifiers.append(contentType.identifier)
         return resultsByIdentifier[contentType.identifier]
-            ?? .unsupportedTarget(
-                PreferredHandler(contentType: contentType, requestedBundleID: requestedBundleID, effectiveBundleID: nil)
+            ?? makeResult(
+                for: contentType,
+                requestedBundleID: requestedBundleID,
+                roleResults: [
+                    .unsupportedTarget(
+                        PreferredHandler(
+                            contentType: contentType,
+                            requestedBundleID: requestedBundleID,
+                            effectiveBundleID: nil,
+                            role: .all
+                        )
+                    ),
+                    .unsupportedTarget(
+                        PreferredHandler(
+                            contentType: contentType,
+                            requestedBundleID: requestedBundleID,
+                            effectiveBundleID: nil,
+                            role: .viewer
+                        )
+                    ),
+                    .unsupportedTarget(
+                        PreferredHandler(
+                            contentType: contentType,
+                            requestedBundleID: requestedBundleID,
+                            effectiveBundleID: nil,
+                            role: .editor
+                        )
+                    ),
+                ]
             )
     }
+}
+
+private func makeResult(
+    for contentType: UTType,
+    requestedBundleID: String,
+    roleResults: [AssociationRoleVerificationResult]
+) -> AssociationVerificationResult {
+    AssociationVerificationResult(
+        contentType: contentType,
+        requestedBundleID: requestedBundleID,
+        roleResults: roleResults
+    )
 }

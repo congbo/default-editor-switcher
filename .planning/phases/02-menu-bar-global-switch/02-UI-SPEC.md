@@ -29,11 +29,11 @@ reviewed_at: 2026-03-25T14:30:00Z
 | Area | Contract |
 |------|----------|
 | Primary focal point | The first visible block in the menu is the current global editor summary, including the effective editor name and a one-line state note. |
-| Secondary focal point | The primary app action list appears immediately below the summary and stays fully text labeled, with recommended editors first and other fully eligible apps filling any remaining top-level slots. |
+| Secondary focal point | The primary app action list appears immediately below the summary and stays fully text labeled, with checked recommended editors first and all other eligible apps deferred to `More`. |
 | Tertiary content | System-eligible but non-recommended or partially supported editors appear in a visually separated lower section. |
 | Persistent footer | A final footer row labeled `Open Rules Window...` remains pinned as the last action after a separator. |
 | Accessibility rule | No icon-only interactive control is allowed in this phase; every action row includes a text label, and any status glyph is supplementary only. |
-| Menu density | The top-level menu surfaces up to 12 primary app choices before the overflow submenu takes over, backfilling with other fully eligible apps if fewer than 12 curated recommendations are installed. |
+| Menu density | The top-level menu surfaces the checked recommended editors that are actually installed and fully supported on this Mac, without backfilling missing slots. |
 
 ## Interaction Contract
 
@@ -41,7 +41,7 @@ reviewed_at: 2026-03-25T14:30:00Z
 |---------|----------|
 | Menu order | Current state summary -> Recommended Editors section -> Other Eligible Editors section -> separator -> `Open Rules Window...` |
 | Current editor affordance | The active editor is marked inline inside the editor list with a checkmark and `Current` suffix. |
-| Global recommendation order | The curated global order keeps `Kiro` immediately after `Cursor` in the recommended list, and that ordering is preserved before any non-curated backfill apps appear. |
+| Global recommendation order | The curated default order keeps `Kiro` immediately after `Cursor`, inserts `Qoder` after `Zed`, includes `TextEdit` in the default first-level seed, and preserves that order before unchecked apps move to `More`. |
 | Other eligible ordering | Outside the curated recommendation block, global-menu candidates sort by the number of supported developer-text filename extensions, highest first. |
 | Partial or unverified options | These rows remain visible but non-primary, grouped under an `Other Eligible Editors` or `Needs Verification` heading with a capability note. |
 | Post-switch behavior | After a switch attempt, refresh the current-state summary and checked row state, but do not show success, failure, or extension-preview messaging in the dropdown. |
