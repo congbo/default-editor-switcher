@@ -12,6 +12,9 @@
 		A1B2C3D4E5F60718293A0042 /* LanguageBucket.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0012 /* LanguageBucket.swift */; };
 		A1B2C3D4E5F60718293A0043 /* ContentTypeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */; };
 		A1B2C3D4E5F60718293A0044 /* FileScopeCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */; };
+		A1B2C3D4E5F60718293A0045 /* KnownEditors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0015 /* KnownEditors.swift */; };
+		A1B2C3D4E5F60718293A0046 /* EditorCandidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0016 /* EditorCandidate.swift */; };
+		A1B2C3D4E5F60718293A0047 /* EditorRankingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0017 /* EditorRankingPolicy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +33,9 @@
 		A1B2C3D4E5F60718293A0012 /* LanguageBucket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageBucket.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypeResolver.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileScopeCatalogTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0015 /* KnownEditors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownEditors.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0016 /* EditorCandidate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorCandidate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0017 /* EditorRankingPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorRankingPolicy.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -48,15 +54,25 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A0010 /* DefaultEditorSwitcherApp.swift */,
+				A1B2C3D4E5F60718293A0037 /* Support */,
 				A1B2C3D4E5F60718293A0032 /* Domain */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0037 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0015 /* KnownEditors.swift */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60718293A0032 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A0033 /* Types */,
+				A1B2C3D4E5F60718293A0038 /* Editors */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -69,6 +85,15 @@
 				A1B2C3D4E5F60718293A0013 /* ContentTypeResolver.swift */,
 			);
 			path = Types;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A0038 /* Editors */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A0016 /* EditorCandidate.swift */,
+				A1B2C3D4E5F60718293A0017 /* EditorRankingPolicy.swift */,
+			);
+			path = Editors;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60718293A0034 /* Tests */ = {
@@ -184,6 +209,9 @@
 				A1B2C3D4E5F60718293A0041 /* FileScope.swift in Sources */,
 				A1B2C3D4E5F60718293A0042 /* LanguageBucket.swift in Sources */,
 				A1B2C3D4E5F60718293A0043 /* ContentTypeResolver.swift in Sources */,
+				A1B2C3D4E5F60718293A0045 /* KnownEditors.swift in Sources */,
+				A1B2C3D4E5F60718293A0046 /* EditorCandidate.swift in Sources */,
+				A1B2C3D4E5F60718293A0047 /* EditorRankingPolicy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
