@@ -49,6 +49,7 @@
 		A1B2C3D4E5F60718293A00D7 /* RecommendedAppsSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E7 /* RecommendedAppsSettingsSection.swift */; };
 		A1B2C3D4E5F60718293A00D8 /* LanguageSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E8 /* LanguageSettingsSection.swift */; };
 		A1B2C3D4E5F60718293A00D9 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */; };
+		A1B2C3D4E5F60718293A0110 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0111 /* Assets.xcassets */; };
 		A1B2C3D4E5F60718293A00DA /* LaunchAtLoginServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */; };
 		A1B2C3D4E5F60718293A00DB /* RecommendedMenuAppsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */; };
 		A1B2C3D4E5F60718293A00DC /* AppLanguageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */; };
@@ -108,6 +109,7 @@
 		A1B2C3D4E5F60718293A00E7 /* RecommendedAppsSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedAppsSettingsSection.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00E8 /* LanguageSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSettingsSection.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A0111 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00EA /* LaunchAtLoginServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginServiceTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00EB /* RecommendedMenuAppsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedMenuAppsStoreTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A00EC /* AppLanguageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageStoreTests.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 		A1B2C3D4E5F60718293A00F4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A0111 /* Assets.xcassets */,
 				A1B2C3D4E5F60718293A00E9 /* Localizable.xcstrings */,
 			);
 			path = Resources;
@@ -536,6 +539,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D4E5F60718293A0110 /* Assets.xcassets in Resources */,
 				A1B2C3D4E5F60718293A00D9 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,6 +596,7 @@
 		A1B2C3D4E5F60718293A0062 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
@@ -623,6 +628,7 @@
 		A1B2C3D4E5F60718293A0063 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGNING_ALLOWED = YES;
