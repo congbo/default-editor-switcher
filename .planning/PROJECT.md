@@ -59,6 +59,9 @@
 | 语言规则覆盖全局文本规则 | 用户已经明确需要“全局默认 + 特定语言例外”的模型 | — Pending |
 | 优先面向开发者并内置常见编辑器 | 用户群体明确，能减少首次使用时的扫描与理解成本 | — Pending |
 | 发布方式优先官网直装 | 文件关联能力和产品定位都更适合不受 App Store 限制的分发方式 | — Pending |
+| 设置能力统一收敛到原生 `Settings` 窗口 | 菜单栏必须保持高频极简，启动项、推荐应用和语言切换属于低频配置 | Phase 3 shipped |
+| 推荐应用配置独立于内置编辑器目录存储 | 需要保留稳定的默认推荐顺序，同时允许用户重排和启停且不污染内置目录 | Phase 3 shipped |
+| 应用语言通过场景级 locale 注入和统一本地化管线驱动 | 菜单栏与设置窗口都要跟随同一个语言选择变化，不能依赖零散字符串拼接 | Phase 3 shipped |
 
 ## Evolution
 
@@ -78,4 +81,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-26 after Phase 03*

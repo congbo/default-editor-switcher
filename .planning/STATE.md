@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: "03"
-current_phase_name: native-settings-window
-current_plan: "3"
-status: verifying
-stopped_at: Phase 03 execution completed; verify-work 03 is the next milestone step
-last_updated: "2026-03-26T04:01:00+08:00"
+current_phase: "04"
+current_phase_name: release-hardening
+current_plan: "0"
+status: ready_to_plan
+stopped_at: Phase 04 context gathered
+last_updated: "2026-03-26T04:33:09+0800"
 last_activity: "2026-03-26"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
   completed_plans: 9
 ---
@@ -20,16 +20,16 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-25)
+See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Phase 03 — native-settings-window verification
+**Current focus:** Phase 04 — release-hardening planning
 
 ## Current Position
 
-Phase: 03 (native-settings-window) — EXECUTED
-Plan: 3 of 3 executed
-Checkpoint: Phase 03 summaries and automated validation are in place; next milestone work is `gsd-verify-work 03`
+Phase: 04 (release-hardening) — READY TO PLAN
+Plan: Not started
+Checkpoint: Phase 04 context is captured; next milestone work is `gsd-plan-phase 04`
 
 ## Performance Metrics
 
@@ -45,7 +45,7 @@ Checkpoint: Phase 03 summaries and automated validation are in place; next miles
 |-------|-------|-------|----------|
 | 1. Discovery & Association Core | 3/3 | Verified complete | - |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
-| 3. Native Settings Window | 3/3 | Awaiting verification | 2026-03-26 |
+| 3. Native Settings Window | 3/3 | Complete | 2026-03-26 |
 
 **Recent Trend:**
 
@@ -61,33 +61,17 @@ Checkpoint: Phase 03 summaries and automated validation are in place; next miles
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [Init]: Product shape is menu bar first for quick switching, with a separate main window for advanced rules
-- [Init]: Language-specific rules override the global text rule; custom extension rules override both
-- [Init]: Direct-download distribution is the primary release model, not the Mac App Store
-- [Phase 1]: Launch Services association changes are modeled as requested-vs-effective outcomes with structured matched, mismatched, unsupportedTarget, and writeFailed results
-- [Phase 2]: Global text current state is derived from the full declared `.allText` scope rather than a sample extension
-- [Phase 2]: The menu reloads current state after every global switch attempt while keeping the dropdown focused on app choices
-- [Quick 260326-0xt]: The top-level menu now shows 12 curated recommended editors, partial-failure feedback is count-based, and `Kiro` is ordered immediately after `Cursor`
-- [Quick 260326-18g]: The first-level dropdown is capped at 12 app choices total and no longer shows any post-switch feedback row
-- [Quick 260326-1cj]: When recommended editors are fewer than 12, the first-level dropdown backfills with other fully eligible apps so the visible app list still reaches 12 choices when possible
-- [Quick 260326-1fr]: Non-curated apps in the global menu are now ordered by how many supported developer-text extensions they declare, while curated recommendations keep their fixed order at the front
-- [Quick 260326-3vz]: Repository documentation now has a GitHub-facing multilingual README set with English as default plus Simplified Chinese and Japanese translations
-- [Quick 260326-4bs]: README copy now emphasizes the real-world AI-editor switching pain on developer Macs, drops roadmap-style sections, and credits the GSD workflow used to build the project
-- [Quick 260326-4it]: README copy is now a compact marketing-style landing page in English, Simplified Chinese, and Japanese, and the repository now ships with an MIT license
-- [Quick 260326-4wi]: README hero copy now frames the product around vibe coding, multiple installed AI editor apps, token pressure, and one-click switching for groups of file types
-- [Quick 260326-508]: README hero copy is now phrased more naturally across English, Simplified Chinese, and Japanese while keeping the same vibe-coding and multi-file-type switching message
-- [Quick 260326-53g]: README value sections now emphasize real user outcomes, including Finder/Git quick-open flows and switching editor habits across project contexts
-- [Quick 260326-57i]: README value sections now keep a tighter core capability list, while Finder/Git/project-switching scenarios were folded back into the opening narrative
-- [Quick 260326-5a3]: README value sections dropped the handler-verification bullet, and opening copy now uses `Vibe Coding` capitalization consistently
-- [Quick 260326-5rt]: Recommended menu apps now publish changes after persistence, enforce at least one checked editor, seed from a 12-app default including `TextEdit` and `Qoder`, and keep unchecked editors in `More` without backfill or current-editor injection
-- [Phase 3]: The app root owns shared settings stores for launch-at-login, recommended apps, and language so menu and settings scenes react to the same state.
-- [Phase 3]: App-owned menu and settings copy localizes through `Localizable.xcstrings` plus a dedicated app localizer instead of ad hoc string literals.
+- [Phase 1]: Launch Services association changes are modeled as requested-vs-effective outcomes with structured matched, mismatched, unsupportedTarget, and writeFailed results.
+- [Phase 2]: The global menu reloads current state after every switch while keeping the interaction menu-first and low-friction.
+- [Phase 3]: Low-frequency product controls moved into a native `Settings` window, replacing the placeholder secondary window.
+- [Phase 3]: Recommended menu apps now come from a persisted user-configurable order instead of backfill-heavy menu heuristics.
+- [Phase 3]: App language now flows through a shared localization pipeline so menu and settings copy switch together.
 
 ### Roadmap Evolution
 
-- Phase 03 added after Phase 2: Native Settings Window for launch at login, recommended menu apps, and app language selection
-- Former Phase 03 Release Hardening shifted to Phase 04
-- Phase 03 execution completed with native settings UI, persisted recommendation controls, and app-language localization; next step is manual verification
+- Phase 03 added after Phase 2: Native Settings Window for launch at login, recommended menu apps, and app language selection.
+- Former Phase 03 Release Hardening shifted to Phase 04.
+- Phase 03 is now verified complete; Phase 04 Release Hardening is the active next milestone step.
 
 ### Pending Todos
 
@@ -117,6 +101,6 @@ No pending todos recorded.
 
 ## Session Continuity
 
-Last session: 2026-03-26T02:08:17+08:00
-Stopped at: Phase 03 execution completed; `$gsd-verify-work 03` is the next milestone step
-Resume file: .planning/phases/03-native-settings-window/03-03-SUMMARY.md
+Last session: 2026-03-26T04:33:09+08:00
+Stopped at: Phase 04 context gathered
+Resume file: .planning/phases/04-release-hardening/04-CONTEXT.md

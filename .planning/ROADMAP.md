@@ -7,14 +7,15 @@
 ## Phases
 
 **Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
+- Integer phases (1, 2, 3, 4): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
-- [ ] **Phase 3: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [x] **Phase 3: Native Settings Window** - Add a native settings window for startup behavior, recommended apps, and language preferences
+- [ ] **Phase 4: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
 
 ## Phase Details
 
@@ -55,9 +56,28 @@ Plans:
 Verification:
 - Automated checks and human verification passed; see `02-VERIFICATION.md` and `02-HUMAN-UAT.md`
 
-### Phase 3: Release Hardening
-**Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
+### Phase 3: Native Settings Window
+**Goal**: Deliver a native settings window using macOS-native components for startup behavior, recommended app configuration, and language preferences.
 **Depends on**: Phase 2
+**Requirements**: [PROD-02, DIST-03]
+**UI hint**: yes
+**Success Criteria** (what must be TRUE):
+  1. User can enable or disable launch at login from the settings window.
+  2. User can configure which recommended apps appear in the menu bar first-level dropdown, where only checked and installed full-support editors appear there and unchecked ones move to `More`.
+  3. User can choose app language between Chinese, English, and follow-system mode, with system language as the default.
+**Plans**: 3/3 plans executed
+
+Plans:
+- [x] 03-01: Build the settings window shell and launch-at-login controls
+- [x] 03-02: Add configurable recommended menu apps and menu integration
+- [x] 03-03: Add app-language selection and localize menu/settings copy
+
+Verification:
+- Automated test coverage is green, and manual verification passed; see `03-VALIDATION.md` and `03-UAT.md`
+
+### Phase 4: Release Hardening
+**Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
+**Depends on**: Phase 3
 **Requirements**: [DIST-01, DIST-02]
 **UI hint**: no
 **Success Criteria** (what must be TRUE):
@@ -67,16 +87,17 @@ Verification:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 03-02: Harden failure UX, error messaging, and release-check procedures
+- [ ] 04-01: Build the release pipeline for signing, notarization, and install verification
+- [ ] 04-02: Harden failure UX, error messaging, and release-check procedures
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 2 → 2.1 → 2.2 → 3
+Phases execute in numeric order: 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
-| 3. Release Hardening | 0/2 | Not started | - |
+| 3. Native Settings Window | 3/3 | Complete | 2026-03-26 |
+| 4. Release Hardening | 0/2 | Not started | - |
