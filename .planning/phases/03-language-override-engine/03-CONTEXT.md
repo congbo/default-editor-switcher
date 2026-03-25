@@ -21,20 +21,23 @@ This phase delivers the built-in language override engine for Python, Web, Go, J
 ### Editing Surface
 - **D-04:** Language override editing should live in the existing Settings/Rules window path, keeping the menu bar focused on the one-click global switch rather than adding per-language controls to the menu itself.
 - **D-05:** The Phase 3 window should stay narrowly scoped to built-in language rows that show current/effective editor state and let the user assign a preferred editor. Custom extension CRUD, multi-pane navigation, and broader rules-management chrome stay deferred to Phase 4.
+- **D-06:** The Settings window layout should take structural inspiration from the provided `Default Browser Settings` reference image, but only as a layout reference. Phase 3 should favor native macOS controls and patterns over reproducing that app's bespoke visual skin.
+- **D-07:** Each built-in language row should use a native right-side `Picker` control rather than a custom floating chooser, inline action list, or drill-in detail page.
+- **D-08:** The window should include concise secondary helper text beneath setting groups or rows so precedence and behavior are explained in-context, similar to the reference layout's explanatory copy rhythm.
 
 ### Precedence and Apply Flow
-- **D-06:** The precedence model should be implemented now as `custom extension > language override > global text`, even though the custom-extension layer is not user-editable until Phase 4.
-- **D-07:** Any operation that changes the global text editor must immediately reapply all stored language overrides afterward so `LANG-07` remains true and a global switch never erases existing per-language exceptions.
-- **D-08:** Applying a language override should touch only the content types and extensions that belong to that bucket, leaving the global text association as the fallback for the rest of the developer-text scope.
+- **D-09:** The precedence model should be implemented now as `custom extension > language override > global text`, even though the custom-extension layer is not user-editable until Phase 4.
+- **D-10:** Any operation that changes the global text editor must immediately reapply all stored language overrides afterward so `LANG-07` remains true and a global switch never erases existing per-language exceptions.
+- **D-11:** Applying a language override should touch only the content types and extensions that belong to that bucket, leaving the global text association as the fallback for the rest of the developer-text scope.
 
 ### State and Verification
-- **D-09:** Each language bucket should have an aggregated current/effective state derived from all declared content types in that bucket, not from a single representative extension.
-- **D-10:** Language override apply results should reuse the verified aggregate-report pattern from Phases 1 and 2, surfacing matched, mismatched, unsupported-target, and write-failed outcomes per bucket so mixed or partial states remain explainable.
-- **D-11:** Bucket editor discovery should reuse the Phase 1 ranking model with bucket-specific weights so the UI can recommend language-appropriate editors without inventing a separate catalog or sorting system.
+- **D-12:** Each language bucket should have an aggregated current/effective state derived from all declared content types in that bucket, not from a single representative extension.
+- **D-13:** Language override apply results should reuse the verified aggregate-report pattern from Phases 1 and 2, surfacing matched, mismatched, unsupported-target, and write-failed outcomes per bucket so mixed or partial states remain explainable.
+- **D-14:** Bucket editor discovery should reuse the Phase 1 ranking model with bucket-specific weights so the UI can recommend language-appropriate editors without inventing a separate catalog or sorting system.
 
 ### the agent's Discretion
-- Exact control choice for each language row, such as picker versus inline actions, can be decided during planning as long as assignment stays quick and understandable.
-- Exact copy and visual treatment for mixed bucket states can be decided during planning as long as precedence and failures remain legible.
+- Exact wording of helper copy and section headers can be decided during planning as long as precedence and behavior remain legible.
+- Exact visual finish, including whether the window is plain native, subtly tinted, or lightly translucent, can be decided during planning as long as layout follows the reference direction and controls remain native-first.
 - Whether bucket edits apply immediately per row or through a per-bucket confirmation can be decided during planning, provided persisted intent and verification outcomes stay deterministic.
 
 </decisions>
@@ -82,6 +85,7 @@ This phase delivers the built-in language override engine for Python, Web, Go, J
 - Phase 3 needs a new rules or override application layer that composes persisted language intents with the existing Launch Services verification flow.
 - The Settings window should replace `RulesWindowPlaceholderView` with a built-in language override view model and one row per `LanguageBucket`.
 - Global text actions in the menu-bar flow will need to honor persisted language overrides when computing final effective bindings, even though the menu UI itself should remain global-only.
+- The window UI should be organized as grouped settings sections with native pickers and secondary explanatory text, not as a custom browser-style selector surface.
 
 </code_context>
 
@@ -91,6 +95,7 @@ This phase delivers the built-in language override engine for Python, Web, Go, J
 - Keep the `default-browser` spirit intact: the menu bar remains the fast global action, while language exceptions live in the fuller window.
 - Treat Markdown as a first-class language bucket even though `.md` and `.mdx` also belong to the global text set, because that overlap is the clearest user-facing proof that precedence is working.
 - The language override surface should feel like a deterministic rule list, not a loose preferences panel.
+- Visual reference from discussion: follow the layout rhythm of the provided `Default Browser Settings` screenshot, but do not clone its styling; prefer native macOS components and spacing.
 
 </specifics>
 

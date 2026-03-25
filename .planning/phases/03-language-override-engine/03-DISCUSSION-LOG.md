@@ -5,7 +5,7 @@
 
 **Date:** 2026-03-26
 **Phase:** 03-language-override-engine
-**Areas discussed:** Override intent model, editing surface, precedence and apply strategy, state and verification model
+**Areas discussed:** Override intent model, editing surface, precedence and apply strategy, state and verification model, settings window layout direction
 
 ---
 
@@ -32,6 +32,58 @@
 
 **User's choice:** Use the existing Settings/Rules window for built-in language rows
 **Notes:** [auto] Selected the recommended default because Phase 2 already established that advanced rule editing belongs in the fuller window path, not in the menu-bar switcher.
+
+---
+
+## Settings Window Layout Direction
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Reference the provided `Default Browser Settings` screenshot for layout only, while keeping controls native macOS | Preserves the grouped utility-panel structure and explanatory rhythm without copying another app's custom styling. | ✓ |
+| Match the screenshot's dark visual treatment closely | Stronger visual imitation, but risks drifting away from native macOS utility patterns. | |
+| Ignore the screenshot and use a generic form layout | Simpler, but loses the specific layout direction the user asked to carry into planning. | |
+
+**User's choice:** Reference the provided screenshot for layout only, while keeping controls native macOS
+**Notes:** User explicitly said "只参考布局，尽量使用原生的组件".
+
+---
+
+## Language Row Control
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Left label with native `Picker` on the right | Native, compact, and consistent with the requested settings-style window. | ✓ |
+| Left label with custom chooser / popover trigger on the right | More visual flexibility, but unnecessary if native controls are preferred. | |
+| Drill into a dedicated detail page per language | Useful for deeper configuration, but too heavy for Phase 3's built-in override scope. | |
+
+**User's choice:** Left label with native `Picker` on the right
+**Notes:** User selected option `B`.
+
+---
+
+## Editor Selection Surface
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Native selection control behavior | Keeps the experience aligned with the "use native components" constraint. | ✓ |
+| Custom floating chooser like the screenshot popover | More stylized, but conflicts with the stated native-first preference. | |
+| Full sheet / custom popover with richer metadata | Potentially useful later, but too heavy for the current phase. | |
+
+**User's choice:** Native selection control behavior
+**Notes:** User answered "原生".
+
+---
+
+## Helper Copy Density
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Include concise helper text under each group or relevant row | Makes precedence and side effects legible in-place and matches the reference layout rhythm. | ✓ |
+| Show helper text only for complex rows | Lower visual density, but leaves simpler rows without context. | |
+| Omit helper text for a minimal form | Cleaner at a glance, but misses the requested explanatory style. | |
+
+**User's choice:** Include concise helper text under each group or relevant row
+**Notes:** User selected option `A`.
 
 ---
 
