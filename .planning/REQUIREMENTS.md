@@ -85,7 +85,7 @@
 |-------------|-------|--------|
 | DISC-01 | Phase 1 | Validated |
 | DISC-02 | Phase 1 | Validated |
-| DISC-03 | Phase 1 | Awaiting verification |
+| DISC-03 | Phase 1 | Validated |
 | MENU-01 | Phase 2 | Pending |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
