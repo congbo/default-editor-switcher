@@ -15,7 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
 - [x] **Phase 3: Native Settings Window** - Add a native settings window for startup behavior, recommended apps, and language preferences
-- [ ] **Phase 4: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [x] **Phase 4: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [ ] **Phase 5: Milestone Verification Closure** - Close the remaining milestone blockers before archiving v1.0
 
 ## Phase Details
 
@@ -87,17 +88,38 @@ Verification:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 04-02: Harden failure UX, error messaging, and release-check procedures
+- [x] 04-01: Build the release pipeline for signing, notarization, and install verification
+- [x] 04-02: Harden failure UX, error messaging, and release-check procedures
+
+Verification:
+- Implementation, automated checks, and preview-scope UAT are complete; remaining milestone-closure blockers move to Phase 5 so formal release validation and planning artifacts can be closed explicitly.
+
+### Phase 5: Milestone Verification Closure
+**Goal**: Close the remaining milestone blockers by reconstructing missing verification artifacts, resolving the formal release validation requirement, and syncing planning records with the verified milestone state.
+**Depends on**: Phase 4
+**Requirements**: [DIST-01]
+**Gap Closure**: Closes gaps from `v1.0-MILESTONE-AUDIT.md`
+**UI hint**: no
+**Success Criteria** (what must be TRUE):
+  1. Phase 03 has a canonical verification report aligned with its existing validation and UAT evidence.
+  2. `DIST-01` is either satisfied by a credentialed signed/notarized install run or explicitly rebaselined with a verified replacement release requirement.
+  3. `STATE.md`, `ROADMAP.md`, and `REQUIREMENTS.md` match the verified milestone record without stale phase or traceability entries.
+**Plans**: 3 plans
+
+Plans:
+- [ ] 05-01: Reconstruct Phase 03 verification artifacts from existing validation and UAT evidence
+- [ ] 05-02: Close the formal release validation gap for `DIST-01` or explicitly rebaseline the requirement
+- [ ] 05-03: Synchronize milestone planning documents with the final verified record
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 2 → 3 → 4
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
 | 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
 | 3. Native Settings Window | 3/3 | Complete | 2026-03-26 |
-| 4. Release Hardening | 0/2 | Not started | - |
+| 4. Release Hardening | 2/2 | Complete | 2026-03-26 |
+| 5. Milestone Verification Closure | 0/3 | Planned | - |
