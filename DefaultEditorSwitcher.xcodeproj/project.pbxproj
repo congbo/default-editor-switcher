@@ -17,6 +17,8 @@
 		A1B2C3D4E5F60718293A0047 /* EditorRankingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0017 /* EditorRankingPolicy.swift */; };
 		A1B2C3D4E5F60718293A0048 /* BundleDocumentTypeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0018 /* BundleDocumentTypeReader.swift */; };
 		A1B2C3D4E5F60718293A0049 /* WorkspaceAppDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0019 /* WorkspaceAppDiscovery.swift */; };
+		A1B2C3D4E5F60718293A004A /* EditorRankingPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A001A /* EditorRankingPolicyTests.swift */; };
+		A1B2C3D4E5F60718293A004B /* WorkspaceDiscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A001B /* WorkspaceDiscoveryTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,8 @@
 		A1B2C3D4E5F60718293A0017 /* EditorRankingPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorRankingPolicy.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0018 /* BundleDocumentTypeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleDocumentTypeReader.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0019 /* WorkspaceAppDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAppDiscovery.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A001A /* EditorRankingPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorRankingPolicyTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A001B /* WorkspaceDiscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceDiscoveryTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A0020 /* DefaultEditorSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefaultEditorSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A0021 /* DefaultEditorSwitcherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DefaultEditorSwitcherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -130,6 +134,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A0014 /* FileScopeCatalogTests.swift */,
+				A1B2C3D4E5F60718293A001A /* EditorRankingPolicyTests.swift */,
+				A1B2C3D4E5F60718293A001B /* WorkspaceDiscoveryTests.swift */,
 			);
 			path = DefaultEditorSwitcherTests;
 			sourceTree = "<group>";
@@ -244,6 +250,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60718293A0044 /* FileScopeCatalogTests.swift in Sources */,
+				A1B2C3D4E5F60718293A004A /* EditorRankingPolicyTests.swift in Sources */,
+				A1B2C3D4E5F60718293A004B /* WorkspaceDiscoveryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
