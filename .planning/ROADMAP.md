@@ -125,7 +125,7 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Discovery & Association Core | 1/3 | In progress | - |
+| 1. Discovery & Association Core | 2/3 | In progress | - |
 | 2. Menu Bar Global Switch | 0/3 | Not started | - |
 | 3. Language Override Engine | 0/2 | Not started | - |
 | 4. Rules Window & Custom Extensions | 0/3 | Not started | - |
