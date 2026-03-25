@@ -14,10 +14,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Discovery & Association Core** - Build the type catalog, editor discovery, and Launch Services foundation
 - [x] **Phase 2: Menu Bar Global Switch** - Deliver the fast global text-editor switching experience
-- [ ] **Phase 3: Language Override Engine** - Add developer-oriented language buckets and override precedence
-- [ ] **Phase 4: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
-- [ ] **Phase 5: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
-- [ ] **Phase 6: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
+- [ ] **Phase 3: Rules Window & Custom Extensions** - Ship the advanced rules-management UI and custom extension bindings
+- [ ] **Phase 3: State, Snapshot, and Restore** - Make the utility trustworthy with visibility and recovery
+- [ ] **Phase 3: Release Hardening** - Prepare direct-download shipping, signing, notarization, and failure handling
 
 ## Phase Details
 
@@ -58,22 +57,7 @@ Plans:
 Verification:
 - Automated checks and human verification passed; see `02-VERIFICATION.md` and `02-HUMAN-UAT.md`
 
-### Phase 3: Language Override Engine
-**Goal**: Add built-in language categories and make language-specific defaults override the global text rule.
-**Depends on**: Phase 2
-**Requirements**: [LANG-01, LANG-02, LANG-03, LANG-04, LANG-05, LANG-06, LANG-07]
-**UI hint**: yes
-**Success Criteria** (what must be TRUE):
-  1. User can assign dedicated editors for Python, Web, Go, Java, Rust, and Markdown.
-  2. Files in those categories open with the language-specific editor even when a different global text editor is active.
-  3. The precedence model is deterministic and testable for overlapping file scopes.
-**Plans**: 2 plans
-
-Plans:
-- [ ] 03-01: Implement language bucket definitions and effective-binding precedence logic
-- [ ] 03-02: Apply and verify language-specific overrides against the system association layer
-
-### Phase 4: Rules Window & Custom Extensions
+### Phase 3: Rules Window & Custom Extensions
 **Goal**: Provide the advanced configuration window for override management and custom extension rules.
 **Depends on**: Phase 3
 **Requirements**: [CUST-01, CUST-02, CUST-03, RULE-01, RULE-02]
@@ -86,13 +70,13 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Build the rules window shell, navigation, and rule state models
-- [ ] 04-02: Implement custom extension CRUD, validation, and conflict messaging
-- [ ] 04-03: Surface effective bindings and apply flows in the advanced configuration UI
+- [ ] 03-01: Build the rules window shell, navigation, and rule state models
+- [ ] 03-02: Implement custom extension CRUD, validation, and conflict messaging
+- [ ] 03-03: Surface effective bindings and apply flows in the advanced configuration UI
 
-### Phase 5: State, Snapshot, and Restore
+### Phase 3: State, Snapshot, and Restore
 **Goal**: Make changes safe and understandable with current-state visibility, restore snapshots, and baseline recovery.
-**Depends on**: Phase 4
+**Depends on**: Phase 3
 **Requirements**: [STAT-01, STAT-02, STAT-03, STAT-04]
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -103,12 +87,12 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Implement state inspection, snapshot persistence, and baseline capture
-- [ ] 05-02: Implement restore actions, verification, and user-facing recovery flows
+- [ ] 03-01: Implement state inspection, snapshot persistence, and baseline capture
+- [ ] 03-02: Implement restore actions, verification, and user-facing recovery flows
 
-### Phase 6: Release Hardening
+### Phase 3: Release Hardening
 **Goal**: Ship a trustworthy direct-download macOS product with clear failure handling and validated release artifacts.
-**Depends on**: Phase 5
+**Depends on**: Phase 3
 **Requirements**: [DIST-01, DIST-02]
 **UI hint**: no
 **Success Criteria** (what must be TRUE):
@@ -118,8 +102,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: Build the release pipeline for signing, notarization, and install verification
-- [ ] 06-02: Harden failure UX, error messaging, and release-check procedures
+- [ ] 03-01: Build the release pipeline for signing, notarization, and install verification
+- [ ] 03-02: Harden failure UX, error messaging, and release-check procedures
 
 ## Progress
 
@@ -128,9 +112,8 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Discovery & Association Core | 3/3 | Complete | 2026-03-25 |
-| 2. Menu Bar Global Switch | 3/3 | Complete | 2026-03-25 |
-| 3. Language Override Engine | 0/2 | Not started | - |
-| 4. Rules Window & Custom Extensions | 0/3 | Not started | - |
-| 5. State, Snapshot, and Restore | 0/2 | Not started | - |
-| 6. Release Hardening | 0/2 | Not started | - |
+| 1. Discovery & Association Core | 3/3 | Complete | 2003-03-25 |
+| 2. Menu Bar Global Switch | 3/3 | Complete | 2003-03-25 |
+| 3. Rules Window & Custom Extensions | 0/3 | Not started | - |
+| 3. State, Snapshot, and Restore | 0/2 | Not started | - |
+| 3. Release Hardening | 0/2 | Not started | - |
