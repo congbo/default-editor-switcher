@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 import XCTest
 import UniformTypeIdentifiers
@@ -543,6 +544,64 @@ final class MenuBarViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.settingsWindowAction.title, "设置...")
         XCTAssertEqual(viewModel.summary.title, "未检测到全局编辑器")
+    }
+
+    func testAboutMenuTitleUsesLocalizedFormat() {
+        let localizer = StubLocalizer(
+            stringsByLanguage: [
+                "en": ["About %@": "About %@"],
+                "zh-Hans": ["About %@": "关于 %@"],
+            ]
+        )
+
+        XCTAssertEqual(
+            StandardAboutPanelConfiguration.menuTitle(
+                localizer: localizer,
+                applicationName: "Default Editor Switcher"
+            ),
+            "About Default Editor Switcher"
+        )
+
+        localizer.languageCode = "zh-Hans"
+
+        XCTAssertEqual(
+            StandardAboutPanelConfiguration.menuTitle(
+                localizer: localizer,
+                applicationName: "Default Editor Switcher"
+            ),
+            "关于 Default Editor Switcher"
+        )
+    }
+
+    func testAboutPanelOptionsIncludeClickableProjectLinkCredits() throws {
+        let localizer = StubLocalizer(
+            stringsByLanguage: [
+                "en": ["Project Home": "Project Home"],
+            ]
+        )
+
+        let options = StandardAboutPanelConfiguration.options(
+            localizer: localizer,
+            applicationName: "Default Editor Switcher"
+        )
+
+        XCTAssertEqual(options[.applicationName] as? String, "Default Editor Switcher")
+
+        let credits = try XCTUnwrap(options[.credits] as? NSAttributedString)
+        XCTAssertEqual(
+            credits.string,
+            "Project Home\nhttps://github.com/congbo/default-editor-switcher"
+        )
+
+        let linkLocation = ("Project Home\n" as NSString).length
+        XCTAssertEqual(
+            credits.attribute(.link, at: linkLocation, effectiveRange: nil) as? URL,
+            StandardAboutPanelConfiguration.projectURL
+        )
+        XCTAssertEqual(
+            (credits.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle)?.alignment,
+            .center
+        )
     }
 
     private var sampleCandidates: [EditorCandidate] {

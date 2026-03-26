@@ -44,6 +44,12 @@ struct MenuBarContentView: View {
                 Divider()
             }
 
+            Button(StandardAboutPanelConfiguration.menuTitle(localizer: localizer)) {
+                StandardAboutPanelConfiguration.present(localizer: localizer)
+            }
+
+            Divider()
+
             Button(viewModel.settingsWindowAction.title) {
                 NSApp.activate(ignoringOtherApps: true)
                 openWindow(id: viewModel.settingsWindowAction.windowID)
@@ -92,6 +98,66 @@ struct MenuBarContentView: View {
                 cornerRadius: Layout.menuIconCornerRadius
             )
         }
+    }
+}
+
+@MainActor
+struct StandardAboutPanelConfiguration {
+    static let projectURL = URL(string: "https://github.com/congbo/default-editor-switcher")!
+
+    static func menuTitle(
+        localizer: any AppTextLocalizing,
+        applicationName: String = applicationName()
+    ) -> String {
+        localizer.formattedString("About %@", applicationName)
+    }
+
+    static func present(localizer: any AppTextLocalizing) {
+        NSApp.activate()
+        NSApp.orderFrontStandardAboutPanel(options: options(localizer: localizer))
+    }
+
+    static func options(
+        localizer: any AppTextLocalizing,
+        applicationName: String = applicationName()
+    ) -> [NSApplication.AboutPanelOptionKey: Any] {
+        [
+            .applicationName: applicationName,
+            .credits: credits(localizer: localizer),
+        ]
+    }
+
+    static func credits(
+        localizer: any AppTextLocalizing,
+        projectURL: URL = projectURL
+    ) -> NSAttributedString {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let urlString = projectURL.absoluteString
+        let content = "\(localizer.string("Project Home"))\n\(urlString)"
+        let attributedString = NSMutableAttributedString(
+            string: content,
+            attributes: [
+                .paragraphStyle: paragraphStyle,
+            ]
+        )
+        let urlRange = NSRange(content.range(of: urlString)!, in: content)
+        attributedString.addAttributes(
+            [
+                .link: projectURL,
+                .foregroundColor: NSColor.linkColor,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+            ],
+            range: urlRange
+        )
+        return attributedString
+    }
+
+    static func applicationName(bundle: Bundle = .main) -> String {
+        (bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+            ?? (bundle.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String)
+            ?? ProcessInfo.processInfo.processName
     }
 }
 
