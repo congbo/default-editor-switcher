@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Milestone ready for archive
 stopped_at: Phase 05 verification complete; milestone ready for archive
-last_updated: "2026-03-26T04:48:48.902Z"
+last_updated: "2026-03-26T04:56:01Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -76,8 +76,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- `2026-03-26` [ui] Add native about dialog
-  Add an "About" item under the menu bar "More" submenu that opens the native macOS about panel and includes a clickable project link: `https://github.com/congbo/default-editor-switcher`. Relevant file: `App/Features/MenuBar/MenuBarContentView.swift:27`.
+No pending todos recorded.
 
 ### Blockers/Concerns
 
@@ -106,6 +105,7 @@ No active blockers remain for v1.0. Next work should start with a new milestone 
 | 260326-8ix | 设置页状态卡片重构与菜单栏联动刷新：修复设置页未随菜单栏切换刷新，合并异常与日志为单一状态卡片，并优化通用页布局 | 2026-03-26 | working-tree | [260326-8ix-settings-status-card-refresh](./quick/260326-8ix-settings-status-card-refresh/) |
 | 260326-hlr | Rename GitHub release artifacts to include Universal | 2026-03-26 | working-tree | [260326-hlr-rename-github-release-artifacts-to-inclu](./quick/260326-hlr-rename-github-release-artifacts-to-inclu/) |
 | 260326-hh7 | fix Xcode shown unavailable in settings | 2026-03-26 | 8654120 | [260326-hh7-fix-xcode-shown-unavailable-in-settings](./quick/260326-hh7-fix-xcode-shown-unavailable-in-settings/) |
+| 260326-hv4 | add native about dialog in menu bar more menu | 2026-03-26 | cca5678 | [260326-hv4-add-native-about-dialog-in-menu-bar-more](./quick/260326-hv4-add-native-about-dialog-in-menu-bar-more/) |
 
 ## Session Continuity
 

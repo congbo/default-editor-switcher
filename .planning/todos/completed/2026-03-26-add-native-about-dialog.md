@@ -1,5 +1,6 @@
 ---
 created: 2026-03-26T04:48:48.902Z
+completed: 2026-03-26T04:56:01Z
 title: Add native about dialog
 area: ui
 files:
@@ -13,3 +14,5 @@ The menu bar "More" submenu currently exposes settings and quit actions but does
 ## Solution
 
 Add a localized "About" action to the "More" submenu in `MenuBarContentView` and wire it to the native AppKit about panel API instead of building a custom SwiftUI window. Pass custom about panel options so the panel includes the GitHub project address as clickable content while preserving the standard macOS presentation for icon, app name, and version/build metadata.
+
+Implemented in quick task `260326-hv4` with commit `cca5678`.
