@@ -42,7 +42,7 @@ if [[ -z "${MARKETING_VERSION}" || -z "${CURRENT_PROJECT_VERSION}" ]]; then
 fi
 
 PREVIEW_TAG="v${MARKETING_VERSION}-preview.${CURRENT_PROJECT_VERSION}"
-ZIP_NAME="DefaultEditorSwitcher-v${MARKETING_VERSION}-preview.${CURRENT_PROJECT_VERSION}-macOS.zip"
+ZIP_NAME="DefaultEditorSwitcher-v${MARKETING_VERSION}-preview.${CURRENT_PROJECT_VERSION}-macOS-Universal.zip"
 ZIP_PATH="${BUILD_DIR}/${ZIP_NAME}"
 
 rm -rf "${BUILD_DIR}"
@@ -73,7 +73,7 @@ ditto -c -k --keepParent "${APP_PATH}" "${ZIP_PATH}"
   echo "marketing_version=${MARKETING_VERSION}"
   echo "build_number=${CURRENT_PROJECT_VERSION}"
   echo "tag=${PREVIEW_TAG}"
-  echo "release_title=DefaultEditorSwitcher v${MARKETING_VERSION} Preview ${CURRENT_PROJECT_VERSION}"
+  echo "release_title=DefaultEditorSwitcher v${MARKETING_VERSION} Preview ${CURRENT_PROJECT_VERSION} Universal"
   echo "signing_mode=adhoc"
   echo "app_path=${APP_PATH}"
   echo "zip_path=${ZIP_PATH}"

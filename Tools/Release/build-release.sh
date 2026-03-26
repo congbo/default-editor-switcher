@@ -19,7 +19,7 @@ BUILD_DIR="${ROOT_DIR}/build/release"
 ARCHIVE_PATH="${BUILD_DIR}/DefaultEditorSwitcher.xcarchive"
 EXPORT_DIR="${BUILD_DIR}/exported"
 APP_PATH="${EXPORT_DIR}/DefaultEditorSwitcher.app"
-ZIP_PATH="${BUILD_DIR}/DefaultEditorSwitcher-macOS.zip"
+ZIP_PATH="${BUILD_DIR}/DefaultEditorSwitcher-macOS-Universal.zip"
 MANIFEST_PATH="${BUILD_DIR}/release-manifest.txt"
 EXPORT_OPTIONS_PLIST="${ROOT_DIR}/Tools/Release/export-options.plist"
 

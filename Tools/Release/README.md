@@ -41,13 +41,13 @@ The preview script:
 - builds the app in `Release`
 - copies the app into `build/preview/exported/`
 - applies ad-hoc signing
-- zips the app as `build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS.zip`
+- zips the app as `build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS-Universal.zip`
 - writes `build/preview/preview-manifest.txt`
 
 Expected preview outputs:
 
 - `build/preview/exported/DefaultEditorSwitcher.app`
-- `build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS.zip`
+- `build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS-Universal.zip`
 - `build/preview/preview-manifest.txt`
 
 ## Verify The Exported Artifact
@@ -57,7 +57,7 @@ Run artifact verification against the exported app bundle and final zip:
 ```bash
 ./Tools/Release/verify-artifact.sh \
   build/release/exported/DefaultEditorSwitcher.app \
-  build/release/DefaultEditorSwitcher-macOS.zip
+  build/release/DefaultEditorSwitcher-macOS-Universal.zip
 ```
 
 `verify-artifact.sh` checks:
@@ -74,7 +74,7 @@ Preview builds are not notarized, so local verification is limited to build inte
 ```bash
 codesign --verify --deep --strict --verbose=2 build/preview/exported/DefaultEditorSwitcher.app
 codesign -dv --verbose=4 build/preview/exported/DefaultEditorSwitcher.app 2>&1 | rg "Signature=adhoc"
-ditto -x -k build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS.zip /tmp/default-editor-switcher-preview-check
+ditto -x -k build/preview/DefaultEditorSwitcher-v<version>-preview.<build>-macOS-Universal.zip /tmp/default-editor-switcher-preview-check
 open /tmp/default-editor-switcher-preview-check/DefaultEditorSwitcher.app
 ```
 
@@ -107,7 +107,7 @@ After a successful run, `build/release/` contains:
 
 - `DefaultEditorSwitcher.xcarchive`
 - `exported/DefaultEditorSwitcher.app`
-- `DefaultEditorSwitcher-macOS.zip`
+- `DefaultEditorSwitcher-macOS-Universal.zip`
 - `release-manifest.txt`
 
 ## Credential Setup
