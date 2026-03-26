@@ -371,6 +371,8 @@ final class SettingsCopyFormatterTests: XCTestCase {
             strings: [
                 "Shown in the first-level menu": "会显示在一级菜单中",
                 "Shown in More": "会显示在更多中",
+                "Partial support": "支持不完整",
+                "Needs verification": "需要进一步验证",
                 "Currently unavailable on this Mac": "当前在这台 Mac 上不可用",
                 "%lld editors": "%lld 个编辑器",
             ]
@@ -391,17 +393,41 @@ final class SettingsCopyFormatterTests: XCTestCase {
                     iconLookupPath: "/System/Applications/TextEdit.app",
                     source: .recommendedCatalog,
                     capability: .full
+                ),
+                EditorCandidate(
+                    bundleID: "com.apple.dt.Xcode",
+                    displayName: "Xcode",
+                    iconLookupPath: "/Applications/Xcode.app",
+                    source: .recommendedCatalog,
+                    capability: .partial
+                ),
+                EditorCandidate(
+                    bundleID: "com.example.unknown",
+                    displayName: "Unknown Editor",
+                    iconLookupPath: "/Applications/Unknown Editor.app",
+                    source: .recommendedCatalog,
+                    capability: .unverified
                 )
             ],
             configuration: RecommendedMenuAppsConfiguration(
-                orderedBundleIDs: ["com.microsoft.VSCode", "com.apple.TextEdit", "com.example.missing"],
+                orderedBundleIDs: [
+                    "com.microsoft.VSCode",
+                    "com.apple.TextEdit",
+                    "com.apple.dt.Xcode",
+                    "com.example.unknown",
+                    "com.example.missing",
+                ],
                 enabledBundleIDs: ["com.microsoft.VSCode"]
             )
         )
 
         XCTAssertEqual(entries[0].detail, "会显示在一级菜单中")
         XCTAssertEqual(entries[1].detail, "会显示在更多中")
-        XCTAssertEqual(entries[2].detail, "当前在这台 Mac 上不可用")
+        XCTAssertEqual(entries[2].detail, "支持不完整")
+        XCTAssertEqual(entries[2].isAvailable, true)
+        XCTAssertEqual(entries[3].detail, "需要进一步验证")
+        XCTAssertEqual(entries[3].isAvailable, true)
+        XCTAssertEqual(entries[4].detail, "当前在这台 Mac 上不可用")
         XCTAssertEqual(formatter.recommendedEditorsSummary(enabledCount: 1), "1 个编辑器")
     }
 }

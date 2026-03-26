@@ -154,9 +154,7 @@ struct SettingsCopyFormatter {
         configuration: RecommendedMenuAppsConfiguration
     ) -> [RecommendedAppsEntry] {
         let availableCandidateByBundleID = Dictionary(
-            availableEditors
-                .filter { $0.capability == .full }
-                .map { ($0.bundleID, $0) },
+            availableEditors.map { ($0.bundleID, $0) },
             uniquingKeysWith: { first, _ in first }
         )
         let orderedBundleIDs = configuration.orderedBundleIDs + availableCandidateByBundleID.keys.filter {
@@ -170,12 +168,10 @@ struct SettingsCopyFormatter {
                 ?? applicationLocator?.displayName(for: bundleID)
                 ?? bundleID
             let detail: String
-            if candidate == nil {
-                detail = localizer.string("Currently unavailable on this Mac")
-            } else if configuration.isEnabled(bundleID: bundleID) {
-                detail = localizer.string("Shown in the first-level menu")
+            if let candidate {
+                detail = recommendedEntryDetail(for: candidate, configuration: configuration)
             } else {
-                detail = localizer.string("Shown in More")
+                detail = localizer.string("Currently unavailable on this Mac")
             }
 
             return RecommendedAppsEntry(
@@ -191,6 +187,24 @@ struct SettingsCopyFormatter {
 
     func recommendedEditorsSummary(enabledCount: Int) -> String {
         localizer.formattedString("%lld editors", Int64(enabledCount))
+    }
+
+    private func recommendedEntryDetail(
+        for candidate: EditorCandidate,
+        configuration: RecommendedMenuAppsConfiguration
+    ) -> String {
+        switch candidate.capability {
+        case .full:
+            if configuration.isEnabled(bundleID: candidate.bundleID) {
+                return localizer.string("Shown in the first-level menu")
+            }
+
+            return localizer.string("Shown in More")
+        case .partial:
+            return localizer.string("Partial support")
+        case .unverified:
+            return localizer.string("Needs verification")
+        }
     }
 
     private func displayName(for bundleID: String, displayNames: [String: String]) -> String {
