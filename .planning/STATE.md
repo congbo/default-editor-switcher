@@ -103,6 +103,7 @@ No active blockers remain for v1.0. Next work should start with a new milestone 
 | 260326-86u | Generate packaged app icon assets and wire AppIcon into the Xcode target for DefaultEditorSwitcher | 2026-03-26 | working-tree | [260326-86u-generate-packaged-app-icon-assets-and-wi](./quick/260326-86u-generate-packaged-app-icon-assets-and-wi/) |
 | 260326-8jz | Redraw the app icon in a minimal style and aggressively reduce packaged icon asset sizes | 2026-03-26 | working-tree | [260326-8jz-redraw-the-app-icon-in-a-minimal-style-a](./quick/260326-8jz-redraw-the-app-icon-in-a-minimal-style-a/) |
 | 260326-8ix | 设置页状态卡片重构与菜单栏联动刷新：修复设置页未随菜单栏切换刷新，合并异常与日志为单一状态卡片，并优化通用页布局 | 2026-03-26 | working-tree | [260326-8ix-settings-status-card-refresh](./quick/260326-8ix-settings-status-card-refresh/) |
+| 260326-hh7 | fix Xcode shown unavailable in settings | 2026-03-26 | 8654120 | [260326-hh7-fix-xcode-shown-unavailable-in-settings](./quick/260326-hh7-fix-xcode-shown-unavailable-in-settings/) |
 
 ## Session Continuity
 
