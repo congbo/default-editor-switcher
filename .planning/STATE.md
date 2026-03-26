@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Milestone ready for archive
 stopped_at: Phase 05 verification complete; milestone ready for archive
-last_updated: "2026-03-26T04:56:01Z"
+last_updated: "2026-03-26T05:03:48Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -106,6 +106,7 @@ No active blockers remain for v1.0. Next work should start with a new milestone 
 | 260326-hlr | Rename GitHub release artifacts to include Universal | 2026-03-26 | working-tree | [260326-hlr-rename-github-release-artifacts-to-inclu](./quick/260326-hlr-rename-github-release-artifacts-to-inclu/) |
 | 260326-hh7 | fix Xcode shown unavailable in settings | 2026-03-26 | 8654120 | [260326-hh7-fix-xcode-shown-unavailable-in-settings](./quick/260326-hh7-fix-xcode-shown-unavailable-in-settings/) |
 | 260326-hv4 | add native about dialog in menu bar more menu | 2026-03-26 | cca5678 | [260326-hv4-add-native-about-dialog-in-menu-bar-more](./quick/260326-hv4-add-native-about-dialog-in-menu-bar-more/) |
+| 260326-i42 | refine about menu label and about panel credits | 2026-03-26 | 2fbf87f | [260326-i42-refine-about-menu-label-and-about-panel-](./quick/260326-i42-refine-about-menu-label-and-about-panel-/) |
 
 ## Session Continuity
 
