@@ -106,10 +106,9 @@ struct StandardAboutPanelConfiguration {
     static let projectURL = URL(string: "https://github.com/congbo/default-editor-switcher")!
 
     static func menuTitle(
-        localizer: any AppTextLocalizing,
-        applicationName: String = applicationName()
+        localizer: any AppTextLocalizing
     ) -> String {
-        localizer.formattedString("About %@", applicationName)
+        localizer.string("About")
     }
 
     static func present(localizer: any AppTextLocalizing) {
@@ -135,7 +134,7 @@ struct StandardAboutPanelConfiguration {
         paragraphStyle.alignment = .center
 
         let urlString = projectURL.absoluteString
-        let content = "\(localizer.string("Project Home"))\n\(urlString)"
+        let content = urlString
         let attributedString = NSMutableAttributedString(
             string: content,
             attributes: [

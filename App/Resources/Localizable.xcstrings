@@ -4,22 +4,6 @@
     "" : {
 
     },
-    "About %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "关于 %@"
-          }
-        }
-      }
-    },
     "%@: macOS rejected the change (OSStatus %d)." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -152,6 +136,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 个编辑器"
+          }
+        }
+      }
+    },
+    "About" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于"
           }
         }
       }
@@ -944,22 +945,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "待分配"
-          }
-        }
-      }
-    },
-    "Project Home" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project Home"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项目地址"
           }
         }
       }

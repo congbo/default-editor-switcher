@@ -549,36 +549,26 @@ final class MenuBarViewModelTests: XCTestCase {
     func testAboutMenuTitleUsesLocalizedFormat() {
         let localizer = StubLocalizer(
             stringsByLanguage: [
-                "en": ["About %@": "About %@"],
-                "zh-Hans": ["About %@": "关于 %@"],
+                "en": ["About": "About"],
+                "zh-Hans": ["About": "关于"],
             ]
         )
 
         XCTAssertEqual(
-            StandardAboutPanelConfiguration.menuTitle(
-                localizer: localizer,
-                applicationName: "Default Editor Switcher"
-            ),
-            "About Default Editor Switcher"
+            StandardAboutPanelConfiguration.menuTitle(localizer: localizer),
+            "About"
         )
 
         localizer.languageCode = "zh-Hans"
 
         XCTAssertEqual(
-            StandardAboutPanelConfiguration.menuTitle(
-                localizer: localizer,
-                applicationName: "Default Editor Switcher"
-            ),
-            "关于 Default Editor Switcher"
+            StandardAboutPanelConfiguration.menuTitle(localizer: localizer),
+            "关于"
         )
     }
 
     func testAboutPanelOptionsIncludeClickableProjectLinkCredits() throws {
-        let localizer = StubLocalizer(
-            stringsByLanguage: [
-                "en": ["Project Home": "Project Home"],
-            ]
-        )
+        let localizer = StubLocalizer(stringsByLanguage: [:])
 
         let options = StandardAboutPanelConfiguration.options(
             localizer: localizer,
@@ -590,12 +580,11 @@ final class MenuBarViewModelTests: XCTestCase {
         let credits = try XCTUnwrap(options[.credits] as? NSAttributedString)
         XCTAssertEqual(
             credits.string,
-            "Project Home\nhttps://github.com/congbo/default-editor-switcher"
+            "https://github.com/congbo/default-editor-switcher"
         )
 
-        let linkLocation = ("Project Home\n" as NSString).length
         XCTAssertEqual(
-            credits.attribute(.link, at: linkLocation, effectiveRange: nil) as? URL,
+            credits.attribute(.link, at: 0, effectiveRange: nil) as? URL,
             StandardAboutPanelConfiguration.projectURL
         )
         XCTAssertEqual(
