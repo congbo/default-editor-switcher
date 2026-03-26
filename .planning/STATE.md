@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone ready for archive
-stopped_at: Phase 05 verification complete; milestone ready for archive
-last_updated: "2026-03-26T05:03:48Z"
+status: Milestone archived
+stopped_at: Roadmap capped at v1.0; no follow-up milestone planned
+last_updated: "2026-03-26T10:57:03Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-26)
 
 **Core value:** 开发者可以在几秒内完成默认编辑器切换，而不是在 Finder 和系统设置里逐个文件类型手动修改。
-**Current focus:** Planning next milestone
+**Current focus:** Preserve the archived `v1.0` planning record only
 
 ## Current Position
 
 Phase: 05 (milestone-verification-closure) — VERIFIED COMPLETE
 Plan: 3 of 3
-Status: v1.0 milestone archived; awaiting next milestone definition
+Status: v1.0 milestone archived; roadmap intentionally capped at v1.0
 
 ## Performance Metrics
 
@@ -80,7 +80,7 @@ No pending todos recorded.
 
 ### Blockers/Concerns
 
-No active blockers remain for v1.0. Next work should start with a new milestone definition.
+No active blockers remain for v1.0. No follow-up milestone is currently planned.
 
 ### Quick Tasks Completed
 
@@ -107,6 +107,7 @@ No active blockers remain for v1.0. Next work should start with a new milestone 
 | 260326-hh7 | fix Xcode shown unavailable in settings | 2026-03-26 | 8654120 | [260326-hh7-fix-xcode-shown-unavailable-in-settings](./quick/260326-hh7-fix-xcode-shown-unavailable-in-settings/) |
 | 260326-hv4 | add native about dialog in menu bar more menu | 2026-03-26 | cca5678 | [260326-hv4-add-native-about-dialog-in-menu-bar-more](./quick/260326-hv4-add-native-about-dialog-in-menu-bar-more/) |
 | 260326-i42 | refine about menu label and about panel credits | 2026-03-26 | 2fbf87f | [260326-i42-refine-about-menu-label-and-about-panel-](./quick/260326-i42-refine-about-menu-label-and-about-panel-/) |
+| 260326-qbj | 只保留 1.0 roadmap，删除 1.1 和相关后续文档预留 | 2026-03-26 | working-tree | [260326-qbj-1-0-roadmap-1-1](./quick/260326-qbj-1-0-roadmap-1-1/) |
 
 ## Session Continuity
 

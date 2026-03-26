@@ -4,7 +4,6 @@
 
 - ✅ **v1.0 Core Switcher Foundation** — shipped 2026-03-26
   Archive: `.planning/milestones/v1.0-ROADMAP.md`
-- 📋 **v1.1 Rules, Recovery, and GA Release** — not yet planned
 
 ## v1.0 Summary
 
@@ -15,17 +14,7 @@
 - native settings for launch at login, recommended apps, and app language
 - release hardening, failure recovery messaging, and milestone verification closure
 
-## Next Milestone Direction
-
-No active phases are planned yet.
-
-Start the next roadmap with `$gsd-new-milestone`, using these candidate themes:
-
-- language-specific editor overrides
-- custom extension rules
-- restore snapshots and baseline recovery
-- formal Developer ID notarized GA release validation
-- optional productivity and automation follow-ups
+No further milestones are planned. The active roadmap is intentionally capped at `v1.0`.
 
 ## Archived Milestone Breakdown
 
