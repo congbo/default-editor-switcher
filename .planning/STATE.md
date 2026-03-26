@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Milestone ready for archive
 stopped_at: Phase 05 verification complete; milestone ready for archive
-last_updated: "2026-03-26T12:44:00.000Z"
+last_updated: "2026-03-26T04:48:48.902Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -76,7 +76,8 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-No pending todos recorded.
+- `2026-03-26` [ui] Add native about dialog
+  Add an "About" item under the menu bar "More" submenu that opens the native macOS about panel and includes a clickable project link: `https://github.com/congbo/default-editor-switcher`. Relevant file: `App/Features/MenuBar/MenuBarContentView.swift:27`.
 
 ### Blockers/Concerns
 
