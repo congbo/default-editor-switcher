@@ -16,7 +16,7 @@ Vibe Coding changed what a developer desktop looks like. Cursor for one stream o
 
 And the reason to switch keeps changing too. One task fits a different editor better, another is already running somewhere else, or a token budget simply ran dry and forces you to move. `Default Editor Switcher` is built for that rhythm: a native, one-click way to move multiple file types together, so files opened from Finder or a Git client land in the editor you actually want, without hijacking the workspace already open for something else. When you shift from one project to another and your editor preference changes with it, you can switch the file-opening defaults once instead of cleaning up `Open With` choices type by type.
 
-It is loosely inspired by [`default-browser`](https://sindresorhus.com/default-browser), but aimed at editors instead of browsers.
+It is loosely inspired by [`default-browser-switcher`](https://github.com/congbo/default-browser-switcher), but aimed at editors instead of browsers.
 
 ## What You Can Do
 

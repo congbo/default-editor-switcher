@@ -16,7 +16,7 @@
 
 真正麻烦的不是装了多少编辑器，而是默认打开方式总得跟着切。这个任务更适合另一个编辑器，另一个任务已经在别处跑着，或者 token 配额刚好见底，只能临时换工具。`Default Editor Switcher` 就是为这种高频切换准备的：把一组常见代码和文本文件的默认打开方式一次切过去。这样你从 Finder 或 Git 工具里点开文件时，它会更自然地落到当前想用的编辑器，而不是打断另一个已经打开的工作区；等你切到另一个项目、想换一套编辑器习惯时，也不用再回头把 `Open With` 一项项收尾。
 
-它借鉴了 [`default-browser`](https://sindresorhus.com/default-browser) 那种干脆的切换体验，只是这次目标从浏览器变成了编辑器。
+它借鉴了 [`default-browser-switcher`](https://github.com/congbo/default-browser-switcher) 那种干脆的切换体验，只是这次目标从浏览器变成了编辑器。
 
 ## 你可以做什么
 
