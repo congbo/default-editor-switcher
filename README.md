@@ -10,6 +10,10 @@
 
 </div>
 
+<p align="center">
+  <img src="docs/images/menu-bar-runtime.png" alt="Runtime menu bar screenshot" width="360" />
+</p>
+
 ## Why This Exists
 
 Vibe Coding changed what a developer desktop looks like. Cursor for one stream of work, Windsurf for another, Zed for a lighter loop, VS Code for the familiar setup, JetBrains for a language-specific pass. Once different kinds of tasks are running in parallel, keeping several editors open stops feeling excessive and starts feeling normal.

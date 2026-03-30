@@ -10,6 +10,10 @@
 
 </div>
 
+<p align="center">
+  <img src="docs/images/menu-bar-runtime.png" alt="运行时菜单栏截图" width="360" />
+</p>
+
 ## 项目缘起
 
 到了 Vibe Coding 这一步，很少有人只靠一个编辑器干完一天的活。Cursor 跑一个任务，Windsurf 跑另一个，Zed 负责更轻的回路，VS Code 或 JetBrains 接住特定语言和工作模式。并发处理不同类型的任务时，Mac 上常驻好几个编辑器，早就成了常态。

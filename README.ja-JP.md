@@ -10,6 +10,10 @@
 
 </div>
 
+<p align="center">
+  <img src="docs/images/menu-bar-runtime.png" alt="実行時のメニューバー画面" width="360" />
+</p>
+
 ## このプロジェクトについて
 
 Vibe Coding では、一つのエディタだけで一日を終えるほうが珍しくなりました。Cursor で一つの流れを回し、Windsurf で別の作業を並行し、Zed で軽いループを回し、VS Code や JetBrains が特定の言語や作業モードを受け持つ。異なる種類のタスクが同時に走るほど、複数のエディタを開いておくのが自然になります。
