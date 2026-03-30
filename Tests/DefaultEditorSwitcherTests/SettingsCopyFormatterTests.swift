@@ -150,7 +150,6 @@ final class SettingsCopyFormatterTests: XCTestCase {
                 "Shown in More": "会显示在更多中",
                 "Partial support": "支持不完整",
                 "Needs verification": "需要进一步验证",
-                "Currently unavailable on this Mac": "当前在这台 Mac 上不可用",
                 "%lld editors": "%lld 个编辑器",
             ]
         ))
@@ -184,6 +183,13 @@ final class SettingsCopyFormatterTests: XCTestCase {
                     iconLookupPath: "/Applications/Unknown Editor.app",
                     source: .recommendedCatalog,
                     capability: .unverified
+                ),
+                EditorCandidate(
+                    bundleID: "com.openai.atlas",
+                    displayName: "ChatGPT Atlas",
+                    iconLookupPath: "/Applications/ChatGPT Atlas.app",
+                    source: .systemEligible,
+                    capability: .full
                 )
             ],
             configuration: RecommendedMenuAppsConfiguration(
@@ -204,7 +210,12 @@ final class SettingsCopyFormatterTests: XCTestCase {
         XCTAssertEqual(entries[2].isAvailable, true)
         XCTAssertEqual(entries[3].detail, "需要进一步验证")
         XCTAssertEqual(entries[3].isAvailable, true)
-        XCTAssertEqual(entries[4].detail, "当前在这台 Mac 上不可用")
+        XCTAssertEqual(entries.map(\.bundleID), [
+            "com.microsoft.VSCode",
+            "com.apple.TextEdit",
+            "com.apple.dt.Xcode",
+            "com.example.unknown",
+        ])
         XCTAssertEqual(formatter.recommendedEditorsSummary(enabledCount: 1), "1 个编辑器")
     }
 }

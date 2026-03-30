@@ -93,34 +93,30 @@ struct SettingsCopyFormatter {
         availableEditors: [EditorCandidate],
         configuration: RecommendedMenuAppsConfiguration
     ) -> [RecommendedAppsEntry] {
+        let availableRecommendedEditors = availableEditors.filter(\.isRecommended)
         let availableCandidateByBundleID = Dictionary(
-            availableEditors.map { ($0.bundleID, $0) },
+            availableRecommendedEditors.map { ($0.bundleID, $0) },
             uniquingKeysWith: { first, _ in first }
         )
-        let orderedBundleIDs = configuration.orderedBundleIDs + availableCandidateByBundleID.keys.filter {
+        let orderedBundleIDs = configuration.orderedBundleIDs.filter {
+            availableCandidateByBundleID[$0] != nil
+        } + availableCandidateByBundleID.keys.filter {
             !configuration.orderedBundleIDs.contains($0)
         }.sorted()
 
-        return orderedBundleIDs.map { bundleID in
-            let candidate = availableCandidateByBundleID[bundleID]
-            let displayName = candidate?.displayName
-                ?? KnownEditors.knownEditor(for: bundleID)?.displayName
-                ?? applicationLocator?.displayName(for: bundleID)
-                ?? bundleID
-            let detail: String
-            if let candidate {
-                detail = recommendedEntryDetail(for: candidate, configuration: configuration)
-            } else {
-                detail = localizer.string("Currently unavailable on this Mac")
+        return orderedBundleIDs.compactMap { bundleID in
+            guard let candidate = availableCandidateByBundleID[bundleID] else {
+                return nil
             }
+            let displayName = candidate.displayName
 
             return RecommendedAppsEntry(
                 bundleID: bundleID,
                 displayName: displayName,
-                detail: detail,
-                iconLookupPath: candidate?.iconLookupPath,
+                detail: recommendedEntryDetail(for: candidate, configuration: configuration),
+                iconLookupPath: candidate.iconLookupPath,
                 isEnabled: configuration.isEnabled(bundleID: bundleID),
-                isAvailable: candidate != nil
+                isAvailable: true
             )
         }
     }
