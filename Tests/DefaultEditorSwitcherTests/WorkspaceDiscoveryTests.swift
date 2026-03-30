@@ -96,6 +96,9 @@ final class WorkspaceDiscoveryTests: XCTestCase {
                     partialURL: partialMetadata,
                     unverifiedURL: unverifiedMetadata,
                 ]
+            ),
+            bundleExistenceChecker: FakeApplicationBundleExistenceChecker(
+                existingURLs: [partialURL, unverifiedURL, recommendedURL]
             )
         )
 
@@ -158,6 +161,9 @@ final class WorkspaceDiscoveryTests: XCTestCase {
                     broadURL: broadMetadata,
                     narrowURL: narrowMetadata,
                 ]
+            ),
+            bundleExistenceChecker: FakeApplicationBundleExistenceChecker(
+                existingURLs: [narrowURL, broadURL]
             )
         )
 
@@ -217,6 +223,9 @@ final class WorkspaceDiscoveryTests: XCTestCase {
                     duplicatePartialURL: partialMetadata,
                     duplicateFullURL: fullMetadata,
                 ]
+            ),
+            bundleExistenceChecker: FakeApplicationBundleExistenceChecker(
+                existingURLs: [duplicatePartialURL, duplicateFullURL]
             )
         )
 
@@ -226,6 +235,64 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(ranked[0].bundleID, "at.eggerapps.Postico")
         XCTAssertEqual(ranked[0].capability, .full)
         XCTAssertEqual(ranked[0].supportedTextExtensionCount, 3)
+    }
+
+    func testWorkspaceDiscoveryIgnoresMissingApplicationBundles() {
+        let reader = BundleDocumentTypeReader()
+        let requestedType = UTType(filenameExtension: "txt")!
+        let missingURL = URL(fileURLWithPath: "/Applications/Ghost Editor.app")
+        let installedURL = URL(fileURLWithPath: "/Applications/Visual Studio Code.app")
+
+        let installedMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "CFBundleTypeExtensions": ["txt", "md", "json"],
+                        "CFBundleTypeRole": "Editor",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "com.microsoft.VSCode",
+            displayName: "Visual Studio Code"
+        )
+
+        let missingMetadata = reader.metadata(
+            from: [
+                "CFBundleDocumentTypes": [
+                    [
+                        "CFBundleTypeExtensions": ["txt"],
+                        "CFBundleTypeRole": "Editor",
+                    ]
+                ]
+            ],
+            bundleIdentifier: "com.example.ghost",
+            displayName: "Ghost Editor"
+        )
+
+        let discovery = WorkspaceAppDiscovery(
+            workspace: FakeWorkspaceApplicationURLProvider(urls: [missingURL, installedURL]),
+            bundleInspector: FakeBundleInspector(
+                bundleIdentifiers: [
+                    missingURL: missingMetadata.bundleID,
+                    installedURL: installedMetadata.bundleID,
+                ],
+                displayNames: [
+                    missingURL: missingMetadata.displayName,
+                    installedURL: installedMetadata.displayName,
+                ],
+                metadata: [
+                    missingURL: missingMetadata,
+                    installedURL: installedMetadata,
+                ]
+            ),
+            bundleExistenceChecker: FakeApplicationBundleExistenceChecker(
+                existingURLs: [installedURL]
+            )
+        )
+
+        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+
+        XCTAssertEqual(ranked.map(\.bundleID), ["com.microsoft.VSCode"])
     }
 
     private struct FakeWorkspaceApplicationURLProvider: WorkspaceApplicationURLProviding {
@@ -259,6 +326,14 @@ final class WorkspaceDiscoveryTests: XCTestCase {
                 displayName: bundleURL.deletingPathExtension().lastPathComponent,
                 documentTypes: []
             )
+        }
+    }
+
+    private struct FakeApplicationBundleExistenceChecker: ApplicationBundleExistenceChecking {
+        let existingURLs: Set<URL>
+
+        func applicationExists(at bundleURL: URL) -> Bool {
+            existingURLs.contains(bundleURL)
         }
     }
 }

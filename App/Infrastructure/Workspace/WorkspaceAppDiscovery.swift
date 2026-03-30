@@ -13,6 +13,10 @@ protocol ApplicationBundleInspecting {
     func metadata(for bundleURL: URL) -> BundleDocumentTypeMetadata
 }
 
+protocol ApplicationBundleExistenceChecking {
+    func applicationExists(at bundleURL: URL) -> Bool
+}
+
 struct SystemWorkspaceApplicationURLProvider: WorkspaceApplicationURLProviding {
     func urlsForApplications(toOpen contentType: UTType) -> [URL] {
         NSWorkspace.shared.urlsForApplications(toOpen: contentType)
@@ -44,18 +48,27 @@ struct SystemApplicationBundleInspector: ApplicationBundleInspecting {
     }
 }
 
+struct FileManagerApplicationBundleExistenceChecker: ApplicationBundleExistenceChecking {
+    func applicationExists(at bundleURL: URL) -> Bool {
+        FileManager.default.fileExists(atPath: bundleURL.path)
+    }
+}
+
 struct WorkspaceAppDiscovery {
     private let workspace: WorkspaceApplicationURLProviding
     private let bundleInspector: ApplicationBundleInspecting
+    private let bundleExistenceChecker: ApplicationBundleExistenceChecking
     private let rankingPolicy: EditorRankingPolicy
 
     init(
         workspace: WorkspaceApplicationURLProviding = SystemWorkspaceApplicationURLProvider(),
         bundleInspector: ApplicationBundleInspecting = SystemApplicationBundleInspector(),
+        bundleExistenceChecker: ApplicationBundleExistenceChecking = FileManagerApplicationBundleExistenceChecker(),
         rankingPolicy: EditorRankingPolicy = EditorRankingPolicy()
     ) {
         self.workspace = workspace
         self.bundleInspector = bundleInspector
+        self.bundleExistenceChecker = bundleExistenceChecker
         self.rankingPolicy = rankingPolicy
     }
 
@@ -63,9 +76,11 @@ struct WorkspaceAppDiscovery {
         for contentType: UTType,
         bucket: LanguageBucket? = nil
     ) -> [EditorCandidate] {
-        let candidates = workspace.urlsForApplications(toOpen: contentType).map { bundleURL in
-            candidate(for: bundleURL, requestedContentType: contentType)
-        }
+        let candidates = workspace.urlsForApplications(toOpen: contentType)
+            .filter { bundleExistenceChecker.applicationExists(at: $0) }
+            .map { bundleURL in
+                candidate(for: bundleURL, requestedContentType: contentType)
+            }
 
         return rankingPolicy.rank(deduplicatedCandidates(candidates), for: bucket)
     }
