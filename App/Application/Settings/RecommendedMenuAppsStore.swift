@@ -132,6 +132,8 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
         let availableBundleIDSet = Set(availableBundleIDs)
         return configuration.orderedBundleIDs.filter { bundleID in
             configuration.enabledBundleIDs.contains(bundleID) && availableBundleIDSet.contains(bundleID)
+        } + availableBundleIDs.filter { bundleID in
+            configuration.enabledBundleIDs.contains(bundleID) && !configuration.orderedBundleIDs.contains(bundleID)
         }
     }
 

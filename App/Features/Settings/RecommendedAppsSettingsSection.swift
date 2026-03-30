@@ -45,13 +45,13 @@ struct RecommendedAppsSettingsSection: View {
                 }
                 .onMove(perform: moveEntries)
             } label: {
-                LabeledContent("Recommended Editors") {
+                LabeledContent(localizer.string("Supported Editors")) {
                     Text(summaryLabel)
                         .foregroundStyle(.secondary)
                 }
             }
         } footer: {
-            Text(localizer.string("Checked editors appear in the first-level menu. Unchecked editors move to More. Drag the handle on any row to change the order."))
+            Text(localizer.string("Choose which editors appear in the first-level menu. Checked editors show there; unchecked editors stay in More. Drag any row to adjust the order."))
         }
     }
 

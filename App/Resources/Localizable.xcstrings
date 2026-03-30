@@ -257,6 +257,23 @@
         }
       }
     },
+    "Choose which editors appear in the first-level menu. Checked editors show there; unchecked editors stay in More. Drag any row to adjust the order." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose which editors appear in the first-level menu. Checked editors show there; unchecked editors stay in More. Drag any row to adjust the order."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择哪些编辑器显示在一级菜单中。勾选的会显示在那里，未勾选的会留在“更多”中。拖动任意一行即可调整顺序。"
+          }
+        }
+      }
+    },
     "Completed with Issues" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -831,6 +848,7 @@
       }
     },
     "Recommended Editors" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -978,6 +996,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "成功"
+          }
+        }
+      }
+    },
+    "Supported Editors" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supported Editors"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持的编辑器"
           }
         }
       }

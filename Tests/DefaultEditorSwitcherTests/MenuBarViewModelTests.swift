@@ -612,6 +612,45 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.primaryRows.map(\.bundleID).contains("com.google.antigravity"))
     }
 
+    func testUserEnabledSystemDiscoveredEditorAppearsInPrimaryRows() {
+        let userDefaults = UserDefaults(suiteName: #function)!
+        userDefaults.removePersistentDomain(forName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+        store.setEnabled(bundleID: "com.openai.atlas", isEnabled: true)
+
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: [
+                EditorCandidate(
+                    bundleID: "com.microsoft.VSCode",
+                    displayName: "Visual Studio Code",
+                    iconLookupPath: "/Applications/Visual Studio Code.app",
+                    source: .recommendedCatalog,
+                    capability: .full
+                ),
+                EditorCandidate(
+                    bundleID: "com.openai.atlas",
+                    displayName: "ChatGPT Atlas",
+                    iconLookupPath: "/Applications/ChatGPT Atlas.app",
+                    source: .systemEligible,
+                    capability: .full
+                ),
+            ]),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            recommendedAppsStore: store
+        )
+
+        viewModel.load()
+
+        XCTAssertEqual(viewModel.primaryRows.map(\.bundleID), ["com.microsoft.VSCode", "com.openai.atlas"])
+        XCTAssertTrue(viewModel.overflowRows.isEmpty)
+    }
+
     func testLocalizedMenuLabelsFollowSelectedAppLanguage() {
         let localizer = StubLocalizer(
             stringsByLanguage: [

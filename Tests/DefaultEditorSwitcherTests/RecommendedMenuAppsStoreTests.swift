@@ -43,6 +43,19 @@ final class RecommendedMenuAppsStoreTests: XCTestCase {
         XCTAssertEqual(resolved, ["dev.kiro.desktop", "com.microsoft.VSCode"])
     }
 
+    func testResolvedRecommendedBundleIDsIncludesEnabledDiscoveredEditorsOutsideSavedOrder() {
+        let userDefaults = makeUserDefaults(testName: #function)
+        let store = RecommendedMenuAppsStore(userDefaults: userDefaults)
+
+        store.setEnabled(bundleID: "com.openai.atlas", isEnabled: true)
+
+        let resolved = store.resolvedRecommendedBundleIDs(
+            availableBundleIDs: ["com.microsoft.VSCode", "com.openai.atlas"]
+        )
+
+        XCTAssertEqual(resolved, ["com.microsoft.VSCode", "com.openai.atlas"])
+    }
+
     func testMoveReordersBundleIDs() {
         let userDefaults = makeUserDefaults(testName: #function)
         let store = RecommendedMenuAppsStore(userDefaults: userDefaults)

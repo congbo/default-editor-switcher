@@ -93,16 +93,15 @@ struct SettingsCopyFormatter {
         availableEditors: [EditorCandidate],
         configuration: RecommendedMenuAppsConfiguration
     ) -> [RecommendedAppsEntry] {
-        let availableRecommendedEditors = availableEditors.filter(\.isRecommended)
         let availableCandidateByBundleID = Dictionary(
-            availableRecommendedEditors.map { ($0.bundleID, $0) },
+            availableEditors.map { ($0.bundleID, $0) },
             uniquingKeysWith: { first, _ in first }
         )
         let orderedBundleIDs = configuration.orderedBundleIDs.filter {
             availableCandidateByBundleID[$0] != nil
-        } + availableCandidateByBundleID.keys.filter {
+        } + availableEditors.map(\.bundleID).filter {
             !configuration.orderedBundleIDs.contains($0)
-        }.sorted()
+        }
 
         return orderedBundleIDs.compactMap { bundleID in
             guard let candidate = availableCandidateByBundleID[bundleID] else {

@@ -96,6 +96,7 @@ final class AppLanguageStoreTests: XCTestCase {
         englishStore.selectedLanguage = .system
         XCTAssertEqual(englishLocalizer.string("Settings"), "Settings")
         XCTAssertEqual(englishLocalizer.string("More"), "More")
+        XCTAssertEqual(englishLocalizer.string("Supported Editors"), "Supported Editors")
         XCTAssertEqual(englishLocalizer.string("No Eligible Editors Found"), "No Eligible Editors Found")
 
         let chineseStore = AppLanguageStore(
@@ -107,6 +108,7 @@ final class AppLanguageStoreTests: XCTestCase {
         chineseStore.selectedLanguage = .system
         XCTAssertEqual(chineseLocalizer.string("Settings"), "设置")
         XCTAssertEqual(chineseLocalizer.string("More"), "更多")
+        XCTAssertEqual(chineseLocalizer.string("Supported Editors"), "支持的编辑器")
         XCTAssertEqual(chineseLocalizer.string("No Eligible Editors Found"), "未找到符合条件的编辑器")
     }
 

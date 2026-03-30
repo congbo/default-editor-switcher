@@ -181,7 +181,7 @@ final class SettingsCopyFormatterTests: XCTestCase {
                     bundleID: "com.example.unknown",
                     displayName: "Unknown Editor",
                     iconLookupPath: "/Applications/Unknown Editor.app",
-                    source: .recommendedCatalog,
+                    source: .systemEligible,
                     capability: .unverified
                 ),
                 EditorCandidate(
@@ -215,7 +215,10 @@ final class SettingsCopyFormatterTests: XCTestCase {
             "com.apple.TextEdit",
             "com.apple.dt.Xcode",
             "com.example.unknown",
+            "com.openai.atlas",
         ])
+        XCTAssertEqual(entries[4].detail, "会显示在更多中")
+        XCTAssertFalse(entries[4].isEnabled)
         XCTAssertEqual(formatter.recommendedEditorsSummary(enabledCount: 1), "1 个编辑器")
     }
 }
