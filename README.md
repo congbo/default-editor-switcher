@@ -21,8 +21,8 @@ It is loosely inspired by [`default-browser-switcher`](https://github.com/congbo
 ## What You Can Do
 
 - Shows your current global text default editor directly from the menu bar.
-- Discovers available editors from both a curated recommendation list and the apps macOS says can handle those file types.
-- Switches the built-in global text scope to another editor through a short menu interaction.
+- Lets you refresh the available editor list by rediscovering both the built-in recommended editors and the apps macOS says can handle those file types.
+- One click switches the built-in global text scope to another editor.
 - Gives you a dedicated settings window for launch-at-login, recommended app ordering, and app language.
 
 ## Development
@@ -38,12 +38,6 @@ Test:
 ```bash
 xcodebuild test -scheme DefaultEditorSwitcher -project DefaultEditorSwitcher.xcodeproj -destination 'platform=macOS'
 ```
-
-## Built with GSD
-
-This project is being developed with [gsd-build/get-shit-done: A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TACHES.](https://github.com/gsd-build/get-shit-done)
-
-Thanks to the GSD project for the workflow and structure behind this repo.
 
 ## License
 

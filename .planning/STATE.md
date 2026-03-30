@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Milestone archived
 stopped_at: Roadmap capped at v1.0; no follow-up milestone planned
-last_updated: "2026-03-26T10:57:03Z"
+last_updated: "2026-03-30T06:36:04Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -108,9 +108,13 @@ No active blockers remain for v1.0. No follow-up milestone is currently planned.
 | 260326-hv4 | add native about dialog in menu bar more menu | 2026-03-26 | cca5678 | [260326-hv4-add-native-about-dialog-in-menu-bar-more](./quick/260326-hv4-add-native-about-dialog-in-menu-bar-more/) |
 | 260326-i42 | refine about menu label and about panel credits | 2026-03-26 | 2fbf87f | [260326-i42-refine-about-menu-label-and-about-panel-](./quick/260326-i42-refine-about-menu-label-and-about-panel-/) |
 | 260326-qbj | 只保留 1.0 roadmap，删除 1.1 和相关后续文档预留 | 2026-03-26 | working-tree | [260326-qbj-1-0-roadmap-1-1](./quick/260326-qbj-1-0-roadmap-1-1/) |
+| 260330-k7u | 更新 README 中“你可以做什么”文案，增加 refresh 功能，并将编辑器发现/切换描述精简为一键切换 | 2026-03-30 | working-tree | [260330-k7u-readme-refresh](./quick/260330-k7u-readme-refresh/) |
+| 260330-k9i | 同步英文和日文 README 的“What You Can Do/できること”文案，增加 refresh 能力并统一为一键切换表述 | 2026-03-30 | working-tree | [260330-k9i-readme-what-you-can-do-refresh](./quick/260330-k9i-readme-what-you-can-do-refresh/) |
+| 260330-ka2 | 删除多语言 README 中的 GSD 说明章节 | 2026-03-30 | working-tree | [260330-ka2-readme-gsd](./quick/260330-ka2-readme-gsd/) |
 
 ## Session Continuity
 
+Last activity: 2026-03-30 - Completed quick task 260330-ka2: 删除多语言 README 中的 GSD 说明章节
 Last session: 2026-03-26T05:08:30+08:00
 Stopped at: v1.0 milestone archival complete
 Resume file: .planning/ROADMAP.md

@@ -9,8 +9,12 @@ struct LaunchServicesAssociationVerifier {
         self.client = client
     }
 
-    func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult {
-        let roleResults = PreferredHandlerRole.verificationOrder.map { role in
+    func verify(
+        requestedBundleID: String,
+        for contentType: UTType,
+        roles: [PreferredHandlerRole] = PreferredHandlerRole.verificationOrder
+    ) -> AssociationVerificationResult {
+        let roleResults = roles.map { role in
             verify(requestedBundleID: requestedBundleID, for: contentType, role: role)
         }
 
@@ -33,6 +37,10 @@ struct LaunchServicesAssociationVerifier {
             effectiveBundleID: existingEffectiveBundleID,
             role: role
         )
+
+        if existingEffectiveBundleID == requestedBundleID {
+            return .matched(handler)
+        }
 
         let eligibleBundleIDs = client.allHandlerBundleIDs(for: contentType, role: role)
         guard !eligibleBundleIDs.isEmpty, eligibleBundleIDs.contains(requestedBundleID) else {

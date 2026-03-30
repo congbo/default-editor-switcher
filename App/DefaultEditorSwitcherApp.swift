@@ -34,7 +34,7 @@ struct DefaultEditorSwitcherApp: App {
         }
         .menuBarExtraStyle(.menu)
 
-        WindowGroup("Settings", id: MenuBarViewModel.settingsWindowID) {
+        Settings {
             SettingsWindowView(
                 menuBarViewModel: menuBarViewModel,
                 generalSettingsViewModel: generalSettingsViewModel,
@@ -44,6 +44,6 @@ struct DefaultEditorSwitcherApp: App {
             )
             .environment(\.locale, appLanguageStore.effectiveLocale)
         }
-        .defaultSize(width: 620, height: 520)
+        .defaultSize(width: 560, height: 540)
     }
 }

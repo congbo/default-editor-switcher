@@ -21,8 +21,8 @@
 ## 你可以做什么
 
 - 直接在菜单栏展示当前全局文本默认编辑器。
-- 从内置推荐编辑器名单和 macOS 已声明的可处理应用中发现可用编辑器。
-- 通过简短菜单交互，把内置的全局文本范围切换到另一个编辑器。
+- 支持 refresh 可用编辑器列表，重新发现内置推荐编辑器和 macOS 已声明可处理目标类型的应用。
+- 一键切换内置的全局文本默认编辑器。
 - 提供原生设置窗口，用于配置开机启动、菜单栏推荐应用顺序，以及应用语言。
 
 ## 本地开发
@@ -38,12 +38,6 @@ xcodebuild -scheme DefaultEditorSwitcher -project DefaultEditorSwitcher.xcodepro
 ```bash
 xcodebuild test -scheme DefaultEditorSwitcher -project DefaultEditorSwitcher.xcodeproj -destination 'platform=macOS'
 ```
-
-## 使用 GSD 开发
-
-这个项目使用 [gsd-build/get-shit-done: A light-weight and powerful meta-prompting, context engineering and spec-driven development system for Claude Code by TACHES.](https://github.com/gsd-build/get-shit-done) 进行开发。
-
-感谢 GSD 项目为这个仓库提供工作流和结构化开发方式。
 
 ## License
 

@@ -55,23 +55,6 @@
         }
       }
     },
-    "%d extensions are still missing a default app." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d extensions are still missing a default app."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d 个扩展名仍未检测到默认应用。"
-          }
-        }
-      }
-    },
     "%d extensions currently do not report a default app." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -274,23 +257,6 @@
         }
       }
     },
-    "Completed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已完成"
-          }
-        }
-      }
-    },
     "Completed with Issues" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -321,23 +287,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前默认编辑器"
-          }
-        }
-      }
-    },
-    "Current Distribution" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current Distribution"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前分布"
           }
         }
       }
@@ -559,40 +508,6 @@
         }
       }
     },
-    "Last switch to %@ completed for %d text types." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last switch to %@ completed for %d text types."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最近一次切换到 %@ 已完成，涉及 %d 个文本类型。"
-          }
-        }
-      }
-    },
-    "Last switch to %@ processed %d text types: %d succeeded, %d failed." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last switch to %@ processed %d text types: %d succeeded, %d failed."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最近一次切换到 %@ 共处理 %d 个文本类型：%d 个成功，%d 个失败。"
-          }
-        }
-      }
-    },
     "Launch at login" : {
       "localizations" : {
         "en" : {
@@ -656,23 +571,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "加载中..."
-          }
-        }
-      }
-    },
-    "macOS did not accept this change (%d)" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "macOS did not accept this change (%d)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "macOS 未接受这次变更 (%d)"
           }
         }
       }
@@ -847,23 +745,6 @@
         }
       }
     },
-    "Not Completed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Completed"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未完成"
-          }
-        }
-      }
-    },
     "Not supported on this Mac (%d)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -915,36 +796,19 @@
         }
       }
     },
-    "Partially Completed" : {
+    "Quit" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partially Completed"
+            "value" : "Quit"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "部分完成"
-          }
-        }
-      }
-    },
-    "Pending Assignment" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pending Assignment"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待分配"
+            "value" : "退出"
           }
         }
       }
@@ -966,23 +830,6 @@
         }
       }
     },
-    "Recent Switch" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recent Switch"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最近一次切换"
-          }
-        }
-      }
-    },
     "Recommended Editors" : {
       "localizations" : {
         "en" : {
@@ -995,6 +842,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "推荐编辑器"
+          }
+        }
+      }
+    },
+    "Refresh" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新"
           }
         }
       }
@@ -1017,6 +881,7 @@
       }
     },
     "Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1100,23 +965,6 @@
         }
       }
     },
-    "Still using another default app (%d)" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Still using another default app (%d)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仍保持其他默认应用 (%d)"
-          }
-        }
-      }
-    },
     "Success" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1168,24 +1016,8 @@
         }
       }
     },
-    "This Mac does not currently declare support (%d)" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This Mac does not currently declare support (%d)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这台 Mac 当前未声明支持 (%d)"
-          }
-        }
-      }
-    },
     "Tune launch behavior, keep the menu bar shortlist in order, and check which editor currently owns global text files." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

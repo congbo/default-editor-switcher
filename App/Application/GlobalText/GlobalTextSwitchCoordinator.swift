@@ -2,10 +2,24 @@ import Foundation
 import UniformTypeIdentifiers
 
 protocol LaunchServicesAssociationVerifying {
-    func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult
+    func verify(
+        requestedBundleID: String,
+        for contentType: UTType,
+        roles: [PreferredHandlerRole]
+    ) -> AssociationVerificationResult
 }
 
 extension LaunchServicesAssociationVerifier: LaunchServicesAssociationVerifying {}
+
+extension LaunchServicesAssociationVerifying {
+    func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult {
+        verify(
+            requestedBundleID: requestedBundleID,
+            for: contentType,
+            roles: PreferredHandlerRole.verificationOrder
+        )
+    }
+}
 
 protocol GlobalTextSwitchCoordinating {
     func apply(bundleID: String) -> GlobalTextSwitchReport
@@ -14,20 +28,27 @@ protocol GlobalTextSwitchCoordinating {
 struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
     private let verifier: LaunchServicesAssociationVerifying
     private let resolutionsProvider: (FileScope) -> [ContentTypeResolver.Resolution]
+    private let verificationRoles: [PreferredHandlerRole]
 
     init(
         verifier: LaunchServicesAssociationVerifying = LaunchServicesAssociationVerifier(),
-        resolutionsProvider: @escaping (FileScope) -> [ContentTypeResolver.Resolution] = ContentTypeResolver.resolutions(for:)
+        resolutionsProvider: @escaping (FileScope) -> [ContentTypeResolver.Resolution] = ContentTypeResolver.resolutions(for:),
+        verificationRoles: [PreferredHandlerRole] = [.editor]
     ) {
         self.verifier = verifier
         self.resolutionsProvider = resolutionsProvider
+        self.verificationRoles = verificationRoles
     }
 
     func apply(bundleID: String) -> GlobalTextSwitchReport {
         let declaredResolutions = declaredResolutions()
         let scopeLabelsByContentType = scopeLabelsByContentType(from: declaredResolutions)
         let results = declaredContentTypes(from: declaredResolutions).map { contentType in
-            verifier.verify(requestedBundleID: bundleID, for: contentType)
+            verifier.verify(
+                requestedBundleID: bundleID,
+                for: contentType,
+                roles: verificationRoles
+            )
         }
 
         return GlobalTextSwitchReport(

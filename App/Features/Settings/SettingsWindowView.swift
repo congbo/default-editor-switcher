@@ -26,44 +26,32 @@ struct SettingsWindowView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            header
+        List {
+            GeneralSettingsSection(
+                viewModel: generalSettingsViewModel,
+                statusSnapshot: statusSnapshot,
+                onRefresh: refreshSettings,
+                localizer: localizer
+            )
 
-            List {
-                GeneralSettingsSection(
-                    viewModel: generalSettingsViewModel,
-                    statusSnapshot: statusSnapshot,
-                    localizer: localizer
-                )
+            RecommendedAppsSettingsSection(
+                recommendedAppsStore: recommendedAppsStore,
+                availableEditors: menuBarViewModel.availableEditors,
+                localizer: localizer
+            )
 
-                RecommendedAppsSettingsSection(
-                    recommendedAppsStore: recommendedAppsStore,
-                    availableEditors: menuBarViewModel.availableEditors,
-                    localizer: localizer
-                )
-
-                LanguageSettingsSection(languageStore: languageStore)
-            }
-            .listStyle(.inset)
+            LanguageSettingsSection(languageStore: languageStore)
         }
-        .padding(20)
-        .frame(minWidth: 680, minHeight: 560, alignment: .topLeading)
+        .listStyle(.inset)
+        .frame(minWidth: 520, idealWidth: 560, minHeight: 480, idealHeight: 540, alignment: .topLeading)
+        .background(
+            SettingsWindowAccessor { window in
+                SettingsWindowCoordinator.shared.register(window: window)
+            }
+        )
         .onAppear {
             menuBarViewModel.loadIfNeeded()
             generalSettingsViewModel.loadStatus()
-        }
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Settings")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            Text("Tune launch behavior, keep the menu bar shortlist in order, and check which editor currently owns global text files.")
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -74,9 +62,13 @@ struct SettingsWindowView: View {
         )
         .statusSnapshot(
             from: menuBarViewModel.currentState,
-            lastSwitchReport: menuBarViewModel.lastSwitchReport,
             availableEditors: menuBarViewModel.availableEditors
         )
+    }
+
+    private func refreshSettings() {
+        menuBarViewModel.refresh()
+        generalSettingsViewModel.loadStatus()
     }
 }
 
@@ -84,81 +76,80 @@ struct SettingsStatusSnapshot: Equatable {
     let title: String
     let summary: String
     let iconLookupPath: String?
-    let distributionGroups: [CurrentDefaultEditorGroup]
-    let pendingGroups: [SettingsStatusGroup]
-    let recentSwitch: SettingsStatusActivitySnapshot?
 }
 
-struct CurrentDefaultEditorGroup: Identifiable, Equatable {
-    let bundleID: String
-    let displayName: String
-    let iconLookupPath: String?
-    let extensions: [String]
+@MainActor
+final class SettingsWindowCoordinator {
+    static let shared = SettingsWindowCoordinator()
 
-    var id: String {
-        bundleID
+    private weak var window: NSWindow?
+
+    func register(window: NSWindow) {
+        self.window = window
+        raiseRegisteredWindow()
     }
 
-    var extensionLines: [String] {
-        ExtensionLineChunker().chunk(extensions)
-    }
-}
+    func prepareForPresentation() {
+        NSApp.activate(ignoringOtherApps: true)
 
-struct SettingsStatusGroup: Identifiable, Equatable {
-    let title: String
-    let extensions: [String]
-
-    var id: String {
-        title
-    }
-
-    var extensionLines: [String] {
-        ExtensionLineChunker().chunk(extensions)
-    }
-}
-
-struct SettingsStatusActivitySnapshot: Equatable {
-    let statusTitle: String
-    let headline: String
-    let groups: [SettingsStatusGroup]
-}
-
-struct ExtensionLineChunker {
-    let maximumLineLength: Int
-
-    init(maximumLineLength: Int = 48) {
-        self.maximumLineLength = maximumLineLength
-    }
-
-    func chunk(_ extensions: [String]) -> [String] {
-        guard !extensions.isEmpty else {
-            return []
+        if raiseRegisteredWindow() {
+            return
         }
 
-        let singleLine = extensions.joined(separator: ", ")
-        guard singleLine.count > maximumLineLength, extensions.count > 1 else {
-            return [singleLine]
+        retryRaiseRegisteredWindow(remainingAttempts: 4)
+    }
+
+    @discardableResult
+    private func raiseRegisteredWindow() -> Bool {
+        guard let window else {
+            return false
         }
 
-        var bestSplitIndex = 1
-        var bestScore = Int.max
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+        window.orderFrontRegardless()
+        return true
+    }
 
-        for splitIndex in 1..<extensions.count {
-            let firstLine = extensions[..<splitIndex].joined(separator: ", ")
-            let secondLine = extensions[splitIndex...].joined(separator: ", ")
-            let longestLine = max(firstLine.count, secondLine.count)
-            let balancePenalty = abs(firstLine.count - secondLine.count)
-            let score = (longestLine * 1_000) + balancePenalty
+    private func retryRaiseRegisteredWindow(remainingAttempts: Int) {
+        guard remainingAttempts > 0 else {
+            return
+        }
 
-            if score < bestScore {
-                bestScore = score
-                bestSplitIndex = splitIndex
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            guard let self else {
+                return
             }
-        }
 
-        return [
-            extensions[..<bestSplitIndex].joined(separator: ", "),
-            extensions[bestSplitIndex...].joined(separator: ", "),
-        ]
+            if self.raiseRegisteredWindow() {
+                return
+            }
+
+            self.retryRaiseRegisteredWindow(remainingAttempts: remainingAttempts - 1)
+        }
+    }
+}
+
+struct SettingsWindowAccessor: NSViewRepresentable {
+    let onResolve: (NSWindow) -> Void
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        resolveWindow(for: view)
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        resolveWindow(for: nsView)
+    }
+
+    private func resolveWindow(for view: NSView) {
+        DispatchQueue.main.async {
+            guard let window = view.window else {
+                return
+            }
+
+            onResolve(window)
+        }
     }
 }

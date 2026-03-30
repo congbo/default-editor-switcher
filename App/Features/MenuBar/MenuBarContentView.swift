@@ -7,7 +7,6 @@ struct MenuBarContentView: View {
         static let menuIconCornerRadius: CGFloat = 7
     }
 
-    @Environment(\.openWindow) private var openWindow
     @StateObject private var viewModel: MenuBarViewModel
     @ObservedObject private var localizer: AppLocalizer
 
@@ -32,39 +31,49 @@ struct MenuBarContentView: View {
             }
         }
 
-        Menu {
-            if !viewModel.overflowRows.isEmpty {
+        if !viewModel.overflowRows.isEmpty {
+            Menu {
                 ForEach(viewModel.overflowRows) { row in
                     Toggle(isOn: selectionBinding(for: row)) {
                         menuRowLabel(for: row)
                     }
                     .disabled(viewModel.applyingBundleID != nil)
                 }
-
-                Divider()
+            } label: {
+                Label(localizer.string("More"), systemImage: "ellipsis")
             }
-
-            Button(StandardAboutPanelConfiguration.menuTitle(localizer: localizer)) {
-                StandardAboutPanelConfiguration.present(localizer: localizer)
-            }
-
-            Divider()
-
-            Button(viewModel.settingsWindowAction.title) {
-                NSApp.activate(ignoringOtherApps: true)
-                openWindow(id: viewModel.settingsWindowAction.windowID)
-            }
-            .keyboardShortcut(",", modifiers: .command)
-
-            Divider()
-
-            Button(localizer.string("Quit Default Editor Switcher")) {
-                NSApp.terminate(nil)
-            }
-            .keyboardShortcut("q", modifiers: .command)
-        } label: {
-            Label(localizer.string("More"), systemImage: "ellipsis")
         }
+
+        Divider()
+
+        Button {
+            viewModel.refresh()
+        } label: {
+            Label(viewModel.refreshActionTitle, systemImage: "arrow.clockwise")
+        }
+
+        Button {
+            StandardAboutPanelConfiguration.present(localizer: localizer)
+        } label: {
+            Label(StandardAboutPanelConfiguration.menuTitle(localizer: localizer), systemImage: "info.circle")
+        }
+
+        SettingsLink {
+            Label(localizer.string("Settings"), systemImage: "gearshape")
+        }
+        .simultaneousGesture(
+            TapGesture().onEnded {
+                SettingsWindowCoordinator.shared.prepareForPresentation()
+            }
+        )
+        .keyboardShortcut(",", modifiers: .command)
+
+        Divider()
+
+        Button(viewModel.quitActionTitle) {
+            NSApp.terminate(nil)
+        }
+        .keyboardShortcut("q", modifiers: .command)
     }
 
     private func selectionBinding(for row: MenuBarEditorRow) -> Binding<Bool> {

@@ -131,11 +131,13 @@ final class MenuBarViewModelTests: XCTestCase {
                 GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
             ]
         )
+        let editorDiscovery = SequenceEditorDiscovery(candidateSets: [sampleCandidates])
         let coordinator = StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report])
         let viewModel = MenuBarViewModel(
             stateService: stateService,
-            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            appDiscovery: editorDiscovery,
             switchCoordinator: coordinator,
+            switchExecutor: ImmediateSwitchExecutor(),
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
@@ -145,7 +147,8 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.lastSwitchReport, report)
         XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
         XCTAssertEqual(viewModel.availableEditors.map(\.bundleID), sampleCandidates.map(\.bundleID))
-        XCTAssertEqual(stateService.loadCount, 3)
+        XCTAssertEqual(stateService.loadCount, 2)
+        XCTAssertEqual(editorDiscovery.loadCount, 1)
         XCTAssertEqual(coordinator.appliedBundleIDs, ["com.microsoft.VSCode"])
     }
 
@@ -172,7 +175,7 @@ final class MenuBarViewModelTests: XCTestCase {
                 .init(
                     contentTypeIdentifier: "net.daringfireball.markdown",
                     scopeLabel: ".md",
-                    role: .viewer,
+                    role: .editor,
                     status: "mismatched",
                     effectiveBundleID: "com.apple.TextEdit",
                     statusCode: nil
@@ -189,6 +192,7 @@ final class MenuBarViewModelTests: XCTestCase {
             ),
             appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
             switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": successReport]),
+            switchExecutor: ImmediateSwitchExecutor(),
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
@@ -211,6 +215,7 @@ final class MenuBarViewModelTests: XCTestCase {
             ),
             appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
             switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.example.partial": failureReport]),
+            switchExecutor: ImmediateSwitchExecutor(),
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
@@ -250,7 +255,7 @@ final class MenuBarViewModelTests: XCTestCase {
                             .init(
                                 contentTypeIdentifier: "net.daringfireball.markdown",
                                 scopeLabel: ".md",
-                                role: .viewer,
+                                role: .editor,
                                 status: "mismatched",
                                 effectiveBundleID: "com.apple.TextEdit",
                                 statusCode: nil
@@ -284,6 +289,7 @@ final class MenuBarViewModelTests: XCTestCase {
             ),
             appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
             switchCoordinator: coordinator,
+            switchExecutor: ImmediateSwitchExecutor(),
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
@@ -297,20 +303,119 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.lastSwitchReport?.matchedCount, 2)
     }
 
-    func testOpenSettingsWindowActionIsExposed() {
+    func testApplyEditorMarksBusyImmediatelyWithoutRediscoveringEditors() {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 2,
+            mismatchedCount: 0,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: []
+        )
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+            ]
+        )
+        let editorDiscovery = SequenceEditorDiscovery(candidateSets: [sampleCandidates])
+        let coordinator = StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report])
+        let switchExecutor = ControlledSwitchExecutor()
         let viewModel = MenuBarViewModel(
-            stateService: StubStateService(
-                snapshots: [
-                    GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])
-                ]
-            ),
-            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            stateService: stateService,
+            appDiscovery: editorDiscovery,
+            switchCoordinator: coordinator,
+            switchExecutor: switchExecutor,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+
+        XCTAssertEqual(viewModel.applyingBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(stateService.loadCount, 1)
+        XCTAssertEqual(editorDiscovery.loadCount, 1)
+        XCTAssertTrue(
+            viewModel.sections
+                .flatMap(\.rows)
+                .first(where: { $0.bundleID == "com.microsoft.VSCode" })?
+                .isBusy == true
+        )
+
+        switchExecutor.runNext()
+
+        XCTAssertNil(viewModel.applyingBundleID)
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(stateService.loadCount, 2)
+        XCTAssertEqual(editorDiscovery.loadCount, 1)
+    }
+
+    func testRefreshReloadsStateAndEditors() {
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text"]
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.microsoft.VSCode"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"]
+                ),
+            ]
+        )
+        let editorDiscovery = SequenceEditorDiscovery(candidateSets: [
+            [
+                EditorCandidate(
+                    bundleID: "com.apple.TextEdit",
+                    displayName: "TextEdit",
+                    iconLookupPath: "/System/Applications/TextEdit.app",
+                    source: .recommendedCatalog,
+                    capability: .full
+                )
+            ],
+            [
+                EditorCandidate(
+                    bundleID: "com.microsoft.VSCode",
+                    displayName: "Visual Studio Code",
+                    iconLookupPath: "/Applications/Visual Studio Code.app",
+                    source: .recommendedCatalog,
+                    capability: .full
+                ),
+                EditorCandidate(
+                    bundleID: "com.openai.atlas",
+                    displayName: "ChatGPT Atlas",
+                    iconLookupPath: "/Applications/ChatGPT Atlas.app",
+                    source: .systemEligible,
+                    capability: .full
+                ),
+            ],
+        ])
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: editorDiscovery,
             switchCoordinator: nil,
             applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:])
         )
 
-        XCTAssertEqual(viewModel.settingsWindowAction.title, "Settings...")
-        XCTAssertEqual(viewModel.settingsWindowAction.windowID, "settings-window")
+        viewModel.load()
+        XCTAssertEqual(viewModel.summary.title, "TextEdit")
+        XCTAssertEqual(viewModel.availableEditors.map(\.bundleID), ["com.apple.TextEdit"])
+        XCTAssertEqual(viewModel.primaryRows.map(\.bundleID), ["com.apple.TextEdit"])
+
+        viewModel.refresh()
+
+        XCTAssertEqual(viewModel.summary.title, "Visual Studio Code")
+        XCTAssertEqual(
+            viewModel.availableEditors.map(\.bundleID),
+            ["com.microsoft.VSCode", "com.openai.atlas"]
+        )
+        XCTAssertEqual(viewModel.primaryRows.map(\.bundleID), ["com.microsoft.VSCode"])
+        XCTAssertEqual(viewModel.overflowRows.map(\.bundleID), ["com.openai.atlas"])
+        XCTAssertEqual(viewModel.statusItemIconLookupPath, "/Applications/Visual Studio Code.app")
+        XCTAssertEqual(stateService.loadCount, 2)
+        XCTAssertEqual(editorDiscovery.loadCount, 2)
     }
 
     func testPrimaryRowsUseDefaultEnabledInstalledRecommendedEditors() {
@@ -511,12 +616,14 @@ final class MenuBarViewModelTests: XCTestCase {
         let localizer = StubLocalizer(
             stringsByLanguage: [
                 "en": [
-                    "Settings...": "Settings...",
+                    "Refresh": "Refresh",
+                    "Quit": "Quit",
                     "No Global Editor Detected": "No Global Editor Detected",
                     "No declared text type currently reports an editor handler.": "No declared text type currently reports an editor handler.",
                 ],
                 "zh-Hans": [
-                    "Settings...": "设置...",
+                    "Refresh": "刷新",
+                    "Quit": "退出",
                     "No Global Editor Detected": "未检测到全局编辑器",
                     "No declared text type currently reports an editor handler.": "当前没有已声明的文本类型报告编辑器处理器。",
                 ],
@@ -536,13 +643,15 @@ final class MenuBarViewModelTests: XCTestCase {
         )
 
         viewModel.load()
-        XCTAssertEqual(viewModel.settingsWindowAction.title, "Settings...")
+        XCTAssertEqual(viewModel.refreshActionTitle, "Refresh")
+        XCTAssertEqual(viewModel.quitActionTitle, "Quit")
         XCTAssertEqual(viewModel.summary.title, "No Global Editor Detected")
 
         localizer.languageCode = "zh-Hans"
         localizer.sendChange()
 
-        XCTAssertEqual(viewModel.settingsWindowAction.title, "设置...")
+        XCTAssertEqual(viewModel.refreshActionTitle, "刷新")
+        XCTAssertEqual(viewModel.quitActionTitle, "退出")
         XCTAssertEqual(viewModel.summary.title, "未检测到全局编辑器")
     }
 
@@ -773,6 +882,20 @@ private struct StubEditorDiscovery: EditorDiscovering {
     }
 }
 
+private final class SequenceEditorDiscovery: EditorDiscovering {
+    private let candidateSets: [[EditorCandidate]]
+    private(set) var loadCount = 0
+
+    init(candidateSets: [[EditorCandidate]]) {
+        self.candidateSets = candidateSets
+    }
+
+    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) -> [EditorCandidate] {
+        defer { loadCount += 1 }
+        return candidateSets[min(loadCount, candidateSets.count - 1)]
+    }
+}
+
 private struct StubApplicationLocator: ApplicationLocating {
     let iconPathsByBundleID: [String: String]
     let displayNamesByBundleID: [String: String]
@@ -823,6 +946,40 @@ private final class StubSwitchCoordinator: GlobalTextSwitchCoordinating {
                 processedExtensions: [],
                 sampleFailures: []
             )
+    }
+}
+
+private struct ImmediateSwitchExecutor: GlobalTextSwitchExecuting {
+    func executeSwitch(
+        bundleID: String,
+        coordinator: any GlobalTextSwitchCoordinating,
+        completion: @escaping @MainActor (GlobalTextSwitchReport) -> Void
+    ) {
+        let report = coordinator.apply(bundleID: bundleID)
+        MainActor.assumeIsolated {
+            completion(report)
+        }
+    }
+}
+
+private final class ControlledSwitchExecutor: GlobalTextSwitchExecuting {
+    private var pendingOperations: [() -> Void] = []
+
+    func executeSwitch(
+        bundleID: String,
+        coordinator: any GlobalTextSwitchCoordinating,
+        completion: @escaping @MainActor (GlobalTextSwitchReport) -> Void
+    ) {
+        pendingOperations.append {
+            let report = coordinator.apply(bundleID: bundleID)
+            MainActor.assumeIsolated {
+                completion(report)
+            }
+        }
+    }
+
+    func runNext() {
+        pendingOperations.removeFirst()()
     }
 }
 

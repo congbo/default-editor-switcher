@@ -15,6 +15,43 @@ protocol ApplicationLocating {
     func displayName(for bundleID: String) -> String?
 }
 
+protocol GlobalTextSwitchExecuting {
+    func executeSwitch(
+        bundleID: String,
+        coordinator: any GlobalTextSwitchCoordinating,
+        completion: @escaping @MainActor (GlobalTextSwitchReport) -> Void
+    )
+}
+
+final class BackgroundGlobalTextSwitchExecutor: GlobalTextSwitchExecuting {
+    private let queue: OperationQueue
+
+    init(queue: OperationQueue = BackgroundGlobalTextSwitchExecutor.makeQueue()) {
+        self.queue = queue
+    }
+
+    func executeSwitch(
+        bundleID: String,
+        coordinator: any GlobalTextSwitchCoordinating,
+        completion: @escaping @MainActor (GlobalTextSwitchReport) -> Void
+    ) {
+        queue.addOperation {
+            let report = coordinator.apply(bundleID: bundleID)
+            Task { @MainActor in
+                completion(report)
+            }
+        }
+    }
+
+    private static func makeQueue() -> OperationQueue {
+        let queue = OperationQueue()
+        queue.name = "io.github.congbo.DefaultEditorSwitcher.switch"
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }
+}
+
 struct WorkspaceApplicationLocator: ApplicationLocating {
     func iconLookupPath(for bundleID: String) -> String? {
         applicationURL(for: bundleID)?.path
@@ -41,8 +78,6 @@ struct WorkspaceApplicationLocator: ApplicationLocating {
 
 @MainActor
 final class MenuBarViewModel: ObservableObject {
-    static let settingsWindowID = "settings-window"
-
     @Published private(set) var summary: MenuBarSummary
     @Published private(set) var currentState: GlobalTextState?
     @Published private(set) var availableEditors: [EditorCandidate] = []
@@ -57,6 +92,7 @@ final class MenuBarViewModel: ObservableObject {
     private let stateService: GlobalTextStateServicing
     private let appDiscovery: EditorDiscovering
     private let switchCoordinator: GlobalTextSwitchCoordinating?
+    private let switchExecutor: any GlobalTextSwitchExecuting
     private let applicationLocator: ApplicationLocating
     private let recommendedAppsStore: any RecommendedMenuAppsStoring
     private let localizer: any AppTextLocalizing
@@ -68,6 +104,7 @@ final class MenuBarViewModel: ObservableObject {
         stateService: GlobalTextStateServicing = GlobalTextStateService(),
         appDiscovery: EditorDiscovering = WorkspaceAppDiscovery(),
         switchCoordinator: GlobalTextSwitchCoordinating? = GlobalTextSwitchCoordinator(),
+        switchExecutor: any GlobalTextSwitchExecuting = BackgroundGlobalTextSwitchExecutor(),
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator(),
         recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
         localizer: any AppTextLocalizing = PassthroughLocalizer(),
@@ -76,6 +113,7 @@ final class MenuBarViewModel: ObservableObject {
         self.stateService = stateService
         self.appDiscovery = appDiscovery
         self.switchCoordinator = switchCoordinator
+        self.switchExecutor = switchExecutor
         self.applicationLocator = applicationLocator
         self.recommendedAppsStore = recommendedAppsStore
         self.localizer = localizer
@@ -90,11 +128,12 @@ final class MenuBarViewModel: ObservableObject {
         bindPreferenceUpdates()
     }
 
-    var settingsWindowAction: SettingsWindowAction {
-        SettingsWindowAction(
-            title: localizer.string("Settings..."),
-            windowID: Self.settingsWindowID
-        )
+    var refreshActionTitle: String {
+        localizer.string("Refresh")
+    }
+
+    var quitActionTitle: String {
+        localizer.string("Quit")
     }
 
     func loadIfNeeded() {
@@ -105,7 +144,15 @@ final class MenuBarViewModel: ObservableObject {
         load()
     }
 
+    func refresh() {
+        reloadAllData()
+    }
+
     func load() {
+        reloadAllData()
+    }
+
+    private func reloadAllData() {
         hasLoadedOnce = true
 
         let state = stateService.currentState()
@@ -114,6 +161,18 @@ final class MenuBarViewModel: ObservableObject {
         )
         currentState = state
         availableEditors = candidates
+        rebuildPresentation(state: state, candidates: candidates)
+    }
+
+    private func refreshStateOnly() {
+        hasLoadedOnce = true
+
+        let state = stateService.currentState()
+        currentState = state
+        rebuildPresentation(state: state, candidates: availableEditors)
+    }
+
+    private func rebuildPresentation(state: GlobalTextState, candidates: [EditorCandidate]) {
         let displayNames = Dictionary(candidates.map { ($0.bundleID, $0.displayName) }, uniquingKeysWith: { first, _ in first })
         let iconPaths = Dictionary(candidates.map { ($0.bundleID, $0.iconLookupPath) }, uniquingKeysWith: { first, _ in first })
 
@@ -137,16 +196,24 @@ final class MenuBarViewModel: ObservableObject {
             return
         }
 
-        applyingBundleID = bundleID
-        load()
-
-        let report = switchCoordinator.apply(bundleID: bundleID)
-        lastSwitchReport = report
-        if report.didFullyMatch {
-            lastSwitchFeedback = nil
+        if !hasLoadedOnce {
+            reloadAllData()
         }
-        applyingBundleID = nil
-        load()
+
+        applyingBundleID = bundleID
+        if let currentState {
+            rebuildPresentation(state: currentState, candidates: availableEditors)
+        }
+
+        switchExecutor.executeSwitch(bundleID: bundleID, coordinator: switchCoordinator) { [weak self] report in
+            guard let self else {
+                return
+            }
+
+            self.lastSwitchReport = report
+            self.applyingBundleID = nil
+            self.refreshStateOnly()
+        }
     }
 
     private func summary(
@@ -307,14 +374,14 @@ final class MenuBarViewModel: ObservableObject {
         recommendedAppsStore.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
-                self.load()
+                self.reloadAllData()
             }
             .store(in: &cancellables)
 
         localizer.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
-                self.load()
+                self.reloadAllData()
             }
             .store(in: &cancellables)
     }

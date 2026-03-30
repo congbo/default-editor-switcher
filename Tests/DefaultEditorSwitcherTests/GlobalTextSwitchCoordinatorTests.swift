@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 @testable import DefaultEditorSwitcher
 
 final class GlobalTextSwitchCoordinatorTests: XCTestCase {
-    func testApplyWritesAllDeclaredTypes() {
+    func testApplyWritesAllDeclaredTypesUsingEditorRoleOnly() {
         let textType = UTType(filenameExtension: "txt")!
         let markdownType = UTType(filenameExtension: "md")!
         let verifier = StubAssociationVerifier(
@@ -11,30 +11,30 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
                 textType.identifier: makeResult(
                     for: textType,
                     requestedBundleID: "com.microsoft.VSCode",
-                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                    roleResults: [
                         .matched(
                             PreferredHandler(
                                 contentType: textType,
                                 requestedBundleID: "com.microsoft.VSCode",
                                 effectiveBundleID: "com.microsoft.VSCode",
-                                role: $0
+                                role: .editor
                             )
                         )
-                    }
+                    ]
                 ),
                 markdownType.identifier: makeResult(
                     for: markdownType,
                     requestedBundleID: "com.microsoft.VSCode",
-                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                    roleResults: [
                         .matched(
                             PreferredHandler(
                                 contentType: markdownType,
                                 requestedBundleID: "com.microsoft.VSCode",
                                 effectiveBundleID: "com.microsoft.VSCode",
-                                role: $0
+                                role: .editor
                             )
                         )
-                    }
+                    ]
                 ),
             ]
         )
@@ -53,6 +53,7 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         let report = coordinator.apply(bundleID: "com.microsoft.VSCode")
 
         XCTAssertEqual(verifier.verifiedIdentifiers, [textType.identifier, markdownType.identifier])
+        XCTAssertEqual(verifier.verifiedRoles, [[.editor], [.editor]])
         XCTAssertEqual(report.processedContentTypeIdentifiers, [textType.identifier, markdownType.identifier])
         XCTAssertEqual(report.processedExtensions, ["txt", "md", "txt-copy"])
         XCTAssertEqual(report.matchedCount, 2)
@@ -68,67 +69,35 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
                 textType.identifier: makeResult(
                     for: textType,
                     requestedBundleID: "com.example.editor",
-                    roleResults: PreferredHandlerRole.verificationOrder.map {
+                    roleResults: [
                         .matched(
                             PreferredHandler(
                                 contentType: textType,
                                 requestedBundleID: "com.example.editor",
                                 effectiveBundleID: "com.example.editor",
-                                role: $0
+                                role: .editor
                             )
                         )
-                    }
+                    ]
                 ),
                 markdownType.identifier: makeResult(
                     for: markdownType,
                     requestedBundleID: "com.example.editor",
                     roleResults: [
-                        .matched(
-                            PreferredHandler(
-                                contentType: markdownType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
-                                role: .all
-                            )
-                        ),
                         .mismatched(
                             PreferredHandler(
                                 contentType: markdownType,
                                 requestedBundleID: "com.example.editor",
                                 effectiveBundleID: "com.apple.TextEdit",
-                                role: .viewer
-                            )
-                        ),
-                        .matched(
-                            PreferredHandler(
-                                contentType: markdownType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
                                 role: .editor
                             )
-                        ),
+                        )
                     ]
                 ),
                 pythonType.identifier: makeResult(
                     for: pythonType,
                     requestedBundleID: "com.example.editor",
                     roleResults: [
-                        .matched(
-                            PreferredHandler(
-                                contentType: pythonType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
-                                role: .all
-                            )
-                        ),
-                        .matched(
-                            PreferredHandler(
-                                contentType: pythonType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
-                                role: .viewer
-                            )
-                        ),
                         .unsupportedTarget(
                             PreferredHandler(
                                 contentType: pythonType,
@@ -136,38 +105,22 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
                                 effectiveBundleID: nil,
                                 role: .editor
                             )
-                        ),
+                        )
                     ]
                 ),
                 rustType.identifier: makeResult(
                     for: rustType,
                     requestedBundleID: "com.example.editor",
                     roleResults: [
-                        .matched(
-                            PreferredHandler(
-                                contentType: rustType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
-                                role: .all
-                            )
-                        ),
                         .writeFailed(
                             PreferredHandler(
                                 contentType: rustType,
                                 requestedBundleID: "com.example.editor",
                                 effectiveBundleID: "com.apple.TextEdit",
-                                role: .viewer
+                                role: .editor
                             ),
                             status: -10810
-                        ),
-                        .matched(
-                            PreferredHandler(
-                                contentType: rustType,
-                                requestedBundleID: "com.example.editor",
-                                effectiveBundleID: "com.example.editor",
-                                role: .editor
-                            )
-                        ),
+                        )
                     ]
                 ),
             ]
@@ -195,7 +148,7 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         XCTAssertEqual(report.processedExtensions, ["txt", "md", "py", "rs"])
         XCTAssertEqual(report.sampleFailures.map(\.scopeLabel), [".md", ".py", ".rs"])
         XCTAssertEqual(report.sampleFailures.map(\.status), ["mismatched", "unsupportedTarget", "writeFailed"])
-        XCTAssertEqual(report.sampleFailures.map(\.role), [.viewer, .editor, .viewer])
+        XCTAssertEqual(report.sampleFailures.map(\.role), [.editor, .editor, .editor])
         XCTAssertEqual(report.sampleFailures.last?.statusCode, -10810)
     }
 }
@@ -203,13 +156,19 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
 private final class StubAssociationVerifier: LaunchServicesAssociationVerifying {
     private let resultsByIdentifier: [String: AssociationVerificationResult]
     private(set) var verifiedIdentifiers: [String] = []
+    private(set) var verifiedRoles: [[PreferredHandlerRole]] = []
 
     init(resultsByIdentifier: [String: AssociationVerificationResult]) {
         self.resultsByIdentifier = resultsByIdentifier
     }
 
-    func verify(requestedBundleID: String, for contentType: UTType) -> AssociationVerificationResult {
+    func verify(
+        requestedBundleID: String,
+        for contentType: UTType,
+        roles: [PreferredHandlerRole]
+    ) -> AssociationVerificationResult {
         verifiedIdentifiers.append(contentType.identifier)
+        verifiedRoles.append(roles)
         return resultsByIdentifier[contentType.identifier]
             ?? makeResult(
                 for: contentType,
@@ -220,25 +179,9 @@ private final class StubAssociationVerifier: LaunchServicesAssociationVerifying 
                             contentType: contentType,
                             requestedBundleID: requestedBundleID,
                             effectiveBundleID: nil,
-                            role: .all
-                        )
-                    ),
-                    .unsupportedTarget(
-                        PreferredHandler(
-                            contentType: contentType,
-                            requestedBundleID: requestedBundleID,
-                            effectiveBundleID: nil,
-                            role: .viewer
-                        )
-                    ),
-                    .unsupportedTarget(
-                        PreferredHandler(
-                            contentType: contentType,
-                            requestedBundleID: requestedBundleID,
-                            effectiveBundleID: nil,
                             role: .editor
                         )
-                    ),
+                    )
                 ]
             )
     }
