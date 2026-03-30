@@ -113,6 +113,7 @@ No active blockers remain for v1.0. No follow-up milestone is currently planned.
 | 260330-ka2 | 删除多语言 README 中的 GSD 说明章节 | 2026-03-30 | working-tree | [260330-ka2-readme-gsd](./quick/260330-ka2-readme-gsd/) |
 | 260330-m20 | push current work and ship v1.0-preview.3 github prerelease | 2026-03-30 | 6b1fafa | [260330-m20-push-current-work-and-ship-v1-0-preview-](./quick/260330-m20-push-current-work-and-ship-v1-0-preview-/) |
 | 260330-upf | 重置 GitHub release/tag，版本号回到 1.0 (1)，重新 build 并发布 v1.0-preview.1 | 2026-03-30 | d3f0882 | [260330-upf-github-release-tag-preview-1-github-rele](./quick/260330-upf-github-release-tag-preview-1-github-rele/) |
+| 260330-ve9 | 再次删除 GitHub release/tag，保持版本号 1.0 (1)，基于当前 master 重新 build 并发布 v1.0-preview.1 | 2026-03-30 | 4b89281 | [260330-ve9-github-release-tag-1-0-1-push-master-bui](./quick/260330-ve9-github-release-tag-1-0-1-push-master-bui/) |
 
 ## Session Continuity
 
