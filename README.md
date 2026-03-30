@@ -25,6 +25,22 @@ It is loosely inspired by [`default-browser-switcher`](https://github.com/congbo
 - One click switches the built-in global text scope to another editor.
 - Gives you a dedicated settings window for launch-at-login, recommended app ordering, and app language.
 
+## Troubleshooting
+
+### macOS says the app is damaged and can't be opened
+
+Because macOS applies quarantine checks to apps downloaded outside the App Store, you may see this warning the first time you launch the app.
+
+1. Command-line fix (recommended):
+
+   ```bash
+   sudo xattr -rd com.apple.quarantine "/Applications/DefaultEditorSwitcher.app"
+   ```
+
+   If you moved or renamed the app, adjust the path accordingly.
+
+2. Or open it from `System Settings` -> `Privacy & Security` and click `Open Anyway`.
+
 ## Development
 
 Build:
