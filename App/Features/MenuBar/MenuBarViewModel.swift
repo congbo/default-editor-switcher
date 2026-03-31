@@ -5,7 +5,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 protocol EditorDiscovering {
-    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) -> [EditorCandidate]
+    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) throws -> [EditorCandidate]
 }
 
 extension WorkspaceAppDiscovery: EditorDiscovering {}
@@ -76,6 +76,27 @@ struct WorkspaceApplicationLocator: ApplicationLocating {
     }
 }
 
+struct SettingsRefreshStatus: Equatable {
+    enum Phase: Equatable {
+        case idle
+        case refreshing
+    }
+
+    let phase: Phase
+    let lastAttemptAt: Date?
+    let lastErrorMessage: String?
+
+    init(
+        phase: Phase = .idle,
+        lastAttemptAt: Date? = nil,
+        lastErrorMessage: String? = nil
+    ) {
+        self.phase = phase
+        self.lastAttemptAt = lastAttemptAt
+        self.lastErrorMessage = lastErrorMessage
+    }
+}
+
 @MainActor
 final class MenuBarViewModel: ObservableObject {
     @Published private(set) var summary: MenuBarSummary
@@ -88,6 +109,7 @@ final class MenuBarViewModel: ObservableObject {
     @Published private(set) var statusItemIconLookupPath: String?
     @Published private(set) var primaryRows: [MenuBarEditorRow] = []
     @Published private(set) var overflowRows: [MenuBarEditorRow] = []
+    @Published private(set) var settingsRefreshStatus = SettingsRefreshStatus()
 
     private let stateService: GlobalTextStateServicing
     private let appDiscovery: EditorDiscovering
@@ -98,6 +120,7 @@ final class MenuBarViewModel: ObservableObject {
     private let globalTextTypesStore: any GlobalTextTypesStoring
     private let localizer: any AppTextLocalizing
     private let switchFeedbackFormatter: any GlobalTextSwitchFeedbackFormatting
+    private let settingsActivityStore: SettingsActivityStore?
     private var hasLoadedOnce = false
     private var cancellables: Set<AnyCancellable> = []
 
@@ -110,7 +133,8 @@ final class MenuBarViewModel: ObservableObject {
         recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
         globalTextTypesStore: any GlobalTextTypesStoring = TransientGlobalTextTypesStore(),
         localizer: any AppTextLocalizing = PassthroughLocalizer(),
-        switchFeedbackFormatter: (any GlobalTextSwitchFeedbackFormatting)? = nil
+        switchFeedbackFormatter: (any GlobalTextSwitchFeedbackFormatting)? = nil,
+        settingsActivityStore: SettingsActivityStore? = nil
     ) {
         self.stateService = stateService
         self.appDiscovery = appDiscovery
@@ -120,6 +144,7 @@ final class MenuBarViewModel: ObservableObject {
         self.recommendedAppsStore = recommendedAppsStore
         self.globalTextTypesStore = globalTextTypesStore
         self.localizer = localizer
+        self.settingsActivityStore = settingsActivityStore
         self.switchFeedbackFormatter = switchFeedbackFormatter ?? GlobalTextSwitchFeedbackFormatter(
             localizer: localizer,
             applicationLocator: applicationLocator
@@ -139,6 +164,14 @@ final class MenuBarViewModel: ObservableObject {
         localizer.string("Quit")
     }
 
+    var settingsLogEntries: [SettingsLogEntry] {
+        Array((settingsActivityStore?.entries ?? []).reversed())
+    }
+
+    var isSettingsRefreshDisabled: Bool {
+        settingsRefreshStatus.phase == .refreshing || applyingBundleID != nil
+    }
+
     func loadIfNeeded() {
         guard !hasLoadedOnce else {
             return
@@ -148,23 +181,71 @@ final class MenuBarViewModel: ObservableObject {
     }
 
     func refresh() {
-        reloadAllData()
+        guard !isSettingsRefreshDisabled else {
+            return
+        }
+
+        log(
+            level: .info,
+            category: .refresh,
+            message: "Refreshing current editor state and installed editors."
+        )
+        settingsRefreshStatus = SettingsRefreshStatus(
+            phase: .refreshing,
+            lastAttemptAt: settingsRefreshStatus.lastAttemptAt,
+            lastErrorMessage: nil
+        )
+        reloadAllData(source: .manualRefresh)
     }
 
     func load() {
-        reloadAllData()
+        reloadAllData(source: .initialLoad)
     }
 
-    private func reloadAllData() {
+    private enum ReloadSource {
+        case initialLoad
+        case settingsChange
+        case manualRefresh
+    }
+
+    private func reloadAllData(source: ReloadSource) {
         hasLoadedOnce = true
 
-        let state = stateService.currentState()
-        let candidates = deduplicatedCandidates(
-            appDiscovery.discoverEditors(for: .plainText, bucket: nil)
-        )
-        currentState = state
-        availableEditors = candidates
-        rebuildPresentation(state: state, candidates: candidates)
+        do {
+            let state = stateService.currentState()
+            let candidates = deduplicatedCandidates(
+                try appDiscovery.discoverEditors(for: .plainText, bucket: nil)
+            )
+            currentState = state
+            availableEditors = candidates
+            rebuildPresentation(state: state, candidates: candidates)
+
+            if source == .manualRefresh {
+                settingsRefreshStatus = SettingsRefreshStatus(
+                    phase: .idle,
+                    lastAttemptAt: .now,
+                    lastErrorMessage: nil
+                )
+                log(
+                    level: .info,
+                    category: .refresh,
+                    message: "Current editor state refreshed."
+                )
+            }
+        } catch {
+            if source == .manualRefresh {
+                settingsRefreshStatus = SettingsRefreshStatus(
+                    phase: .idle,
+                    lastAttemptAt: .now,
+                    lastErrorMessage: error.localizedDescription
+                )
+                log(
+                    level: .error,
+                    category: .refresh,
+                    message: error.localizedDescription
+                )
+            }
+        }
     }
 
     private func refreshStateOnly() {
@@ -200,9 +281,20 @@ final class MenuBarViewModel: ObservableObject {
         }
 
         if !hasLoadedOnce {
-            reloadAllData()
+            reloadAllData(source: .initialLoad)
         }
 
+        guard applyingBundleID == nil else {
+            return
+        }
+
+        let requestedEditorName = displayName(for: bundleID, displayNames: displayNamesByBundleID(in: availableEditors))
+        log(
+            level: .info,
+            category: .switching,
+            message: "Switch requested for \(requestedEditorName).",
+            targetDisplayName: requestedEditorName
+        )
         applyingBundleID = bundleID
         if let currentState {
             rebuildPresentation(state: currentState, candidates: availableEditors)
@@ -216,6 +308,7 @@ final class MenuBarViewModel: ObservableObject {
             self.lastSwitchReport = report
             self.applyingBundleID = nil
             self.refreshStateOnly()
+            self.logSwitchOutcome(for: report)
         }
     }
 
@@ -377,23 +470,31 @@ final class MenuBarViewModel: ObservableObject {
         recommendedAppsStore.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
-                self.reloadAllData()
+                self.reloadAllData(source: .settingsChange)
             }
             .store(in: &cancellables)
 
         globalTextTypesStore.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
-                self.reloadAllData()
+                self.reloadAllData(source: .settingsChange)
             }
             .store(in: &cancellables)
 
         localizer.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
-                self.reloadAllData()
+                self.reloadAllData(source: .settingsChange)
             }
             .store(in: &cancellables)
+
+        if let settingsActivityStore {
+            settingsActivityStore.objectWillChange
+                .sink { [weak self] _ in
+                    self?.objectWillChange.send()
+                }
+                .store(in: &cancellables)
+        }
     }
 
     private func feedback(
@@ -412,5 +513,57 @@ final class MenuBarViewModel: ObservableObject {
             for: report,
             requestedEditorName: displayName(for: report.requestedBundleID, displayNames: displayNames)
         )
+    }
+
+    private func displayNamesByBundleID(in candidates: [EditorCandidate]) -> [String: String] {
+        Dictionary(candidates.map { ($0.bundleID, $0.displayName) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    private func log(
+        level: SettingsLogEntry.Level,
+        category: SettingsLogEntry.Category,
+        message: String,
+        targetDisplayName: String? = nil
+    ) {
+        settingsActivityStore?.log(
+            level: level,
+            category: category,
+            message: message,
+            targetDisplayName: targetDisplayName
+        )
+    }
+
+    private func logSwitchOutcome(for report: GlobalTextSwitchReport) {
+        let displayNames = displayNamesByBundleID(in: availableEditors)
+        let requestedEditorName = displayName(for: report.requestedBundleID, displayNames: displayNames)
+
+        if report.didFullyMatch {
+            log(
+                level: .info,
+                category: .switching,
+                message: "Updated all text types to \(requestedEditorName).",
+                targetDisplayName: requestedEditorName
+            )
+            return
+        }
+
+        let level: SettingsLogEntry.Level = report.matchedCount > 0 ? .warning : .error
+        let feedback = feedback(from: report, displayNames: displayNames)
+        let summaryMessage = feedback?.headline ?? "Some text types could not switch to \(requestedEditorName)."
+        log(
+            level: level,
+            category: .switching,
+            message: summaryMessage,
+            targetDisplayName: requestedEditorName
+        )
+
+        for detail in feedback?.details ?? [] {
+            log(
+                level: level,
+                category: .switching,
+                message: detail,
+                targetDisplayName: requestedEditorName
+            )
+        }
     }
 }

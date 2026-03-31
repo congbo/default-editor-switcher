@@ -4,16 +4,18 @@ import SwiftUI
 struct DefaultEditorSwitcherApp: App {
     @StateObject private var appLanguageStore: AppLanguageStore
     @StateObject private var appLocalizer: AppLocalizer
+    @StateObject private var settingsActivityStore: SettingsActivityStore
     @StateObject private var recommendedMenuAppsStore: RecommendedMenuAppsStore
     @StateObject private var globalTextTypesStore: GlobalTextTypesStore
     @StateObject private var generalSettingsViewModel: GeneralSettingsViewModel
     @StateObject private var menuBarViewModel: MenuBarViewModel
 
     init() {
-        let appLanguageStore = AppLanguageStore()
-        let recommendedMenuAppsStore = RecommendedMenuAppsStore()
-        let globalTextTypesStore = GlobalTextTypesStore()
-        let generalSettingsViewModel = GeneralSettingsViewModel()
+        let settingsActivityStore = SettingsActivityStore()
+        let appLanguageStore = AppLanguageStore(activityLogger: settingsActivityStore)
+        let recommendedMenuAppsStore = RecommendedMenuAppsStore(activityLogger: settingsActivityStore)
+        let globalTextTypesStore = GlobalTextTypesStore(activityLogger: settingsActivityStore)
+        let generalSettingsViewModel = GeneralSettingsViewModel(activityLogger: settingsActivityStore)
         let localizer = AppLocalizer(languageStore: appLanguageStore)
         let viewModel = MenuBarViewModel(
             stateService: GlobalTextStateService(
@@ -24,11 +26,13 @@ struct DefaultEditorSwitcherApp: App {
             ),
             recommendedAppsStore: recommendedMenuAppsStore,
             globalTextTypesStore: globalTextTypesStore,
-            localizer: localizer
+            localizer: localizer,
+            settingsActivityStore: settingsActivityStore
         )
         viewModel.load()
         _appLanguageStore = StateObject(wrappedValue: appLanguageStore)
         _appLocalizer = StateObject(wrappedValue: localizer)
+        _settingsActivityStore = StateObject(wrappedValue: settingsActivityStore)
         _recommendedMenuAppsStore = StateObject(wrappedValue: recommendedMenuAppsStore)
         _globalTextTypesStore = StateObject(wrappedValue: globalTextTypesStore)
         _generalSettingsViewModel = StateObject(wrappedValue: generalSettingsViewModel)

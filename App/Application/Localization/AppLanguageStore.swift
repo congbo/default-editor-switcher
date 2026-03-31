@@ -9,19 +9,32 @@ final class AppLanguageStore: ObservableObject {
 
     @Published var selectedLanguage: AppLanguage {
         didSet {
+            guard selectedLanguage != oldValue else {
+                return
+            }
+
             userDefaults.set(selectedLanguage.rawValue, forKey: Keys.selectedLanguage)
+            activityLogger?.log(
+                level: .info,
+                category: .language,
+                message: "Language changed to \(label(for: selectedLanguage)).",
+                targetDisplayName: label(for: selectedLanguage)
+            )
         }
     }
 
     private let userDefaults: UserDefaults
     private let systemLocaleProvider: () -> Locale
+    private weak var activityLogger: (any SettingsActivityLogging)?
 
     init(
         userDefaults: UserDefaults = .standard,
-        systemLocaleProvider: @escaping () -> Locale = { .autoupdatingCurrent }
+        systemLocaleProvider: @escaping () -> Locale = { .autoupdatingCurrent },
+        activityLogger: (any SettingsActivityLogging)? = nil
     ) {
         self.userDefaults = userDefaults
         self.systemLocaleProvider = systemLocaleProvider
+        self.activityLogger = activityLogger
         if let rawValue = userDefaults.string(forKey: Keys.selectedLanguage),
            let selectedLanguage = AppLanguage(rawValue: rawValue) {
             self.selectedLanguage = selectedLanguage
@@ -45,6 +58,17 @@ final class AppLanguageStore: ObservableObject {
 
     private static func defaultLanguage(for locale: Locale) -> AppLanguage {
         locale.identifier.lowercased().hasPrefix("zh") ? .simplifiedChinese : .english
+    }
+
+    private func label(for language: AppLanguage) -> String {
+        switch language {
+        case .system:
+            return "Follow System"
+        case .english:
+            return "English"
+        case .simplifiedChinese:
+            return "简体中文"
+        }
     }
 }
 

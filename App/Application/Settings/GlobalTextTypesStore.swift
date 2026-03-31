@@ -38,9 +38,14 @@ final class GlobalTextTypesStore: ObservableObject, GlobalTextTypesStoring {
 
     private let userDefaults: UserDefaults
     private let didChangeSubject = PassthroughSubject<Void, Never>()
+    private weak var activityLogger: (any SettingsActivityLogging)?
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(
+        userDefaults: UserDefaults = .standard,
+        activityLogger: (any SettingsActivityLogging)? = nil
+    ) {
         self.userDefaults = userDefaults
+        self.activityLogger = activityLogger
         self.configuration = Self.loadConfiguration(from: userDefaults)
     }
 
@@ -81,15 +86,27 @@ final class GlobalTextTypesStore: ObservableObject, GlobalTextTypesStoring {
             enabledExtensions.remove(normalizedExtension)
         }
 
-        persist(enabledExtensions: enabledExtensions)
+        let didPersist = persist(enabledExtensions: enabledExtensions)
+        guard didPersist else {
+            return
+        }
+
+        activityLogger?.log(
+            level: .info,
+            category: .globalTextTypes,
+            message: isEnabled
+                ? "Included .\(normalizedExtension) in the global text switch."
+                : "Excluded .\(normalizedExtension) from the global text switch.",
+            targetDisplayName: ".\(normalizedExtension)"
+        )
     }
 
-    private func persist(enabledExtensions: Set<String>) {
+    private func persist(enabledExtensions: Set<String>) -> Bool {
         let normalizedEnabledExtensions = Set(
             configuration.availableExtensions.filter { enabledExtensions.contains($0) }
         )
         guard configuration.enabledExtensions != normalizedEnabledExtensions else {
-            return
+            return false
         }
 
         configuration = GlobalTextTypesConfiguration(
@@ -98,6 +115,7 @@ final class GlobalTextTypesStore: ObservableObject, GlobalTextTypesStoring {
         )
         userDefaults.set(configuration.availableExtensions.filter { normalizedEnabledExtensions.contains($0) }, forKey: Keys.enabledExtensions)
         didChangeSubject.send(())
+        return true
     }
 
     private static func loadConfiguration(from userDefaults: UserDefaults) -> GlobalTextTypesConfiguration {

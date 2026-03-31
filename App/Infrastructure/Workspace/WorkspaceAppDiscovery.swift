@@ -75,7 +75,7 @@ struct WorkspaceAppDiscovery {
     func discoverEditors(
         for contentType: UTType,
         bucket: LanguageBucket? = nil
-    ) -> [EditorCandidate] {
+    ) throws -> [EditorCandidate] {
         let candidates = workspace.urlsForApplications(toOpen: contentType)
             .filter { bundleExistenceChecker.applicationExists(at: $0) }
             .map { bundleURL in

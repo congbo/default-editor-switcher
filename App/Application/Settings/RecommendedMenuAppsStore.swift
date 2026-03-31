@@ -27,9 +27,14 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
 
     private let userDefaults: UserDefaults
     private let didChangeSubject = PassthroughSubject<Void, Never>()
+    private weak var activityLogger: (any SettingsActivityLogging)?
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(
+        userDefaults: UserDefaults = .standard,
+        activityLogger: (any SettingsActivityLogging)? = nil
+    ) {
         self.userDefaults = userDefaults
+        self.activityLogger = activityLogger
         let configuration = Self.loadConfiguration(from: userDefaults)
         self.configuration = configuration
     }
@@ -53,11 +58,25 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
             enabledBundleIDs.remove(bundleID)
         }
 
-        persist(
+        let didPersist = persist(
             configuration: RecommendedMenuAppsConfiguration(
                 orderedBundleIDs: configuration.orderedBundleIDs,
                 enabledBundleIDs: enabledBundleIDs
             )
+        )
+
+        guard didPersist else {
+            return
+        }
+
+        let displayName = resolvedDisplayName(for: bundleID)
+        activityLogger?.log(
+            level: .info,
+            category: .supportedEditors,
+            message: isEnabled
+                ? "Added \(displayName) to Supported Editors."
+                : "Moved \(displayName) out of the first-level menu.",
+            targetDisplayName: displayName
         )
     }
 
@@ -75,11 +94,25 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
             orderedBundleIDs.append(sourceBundleID)
         }
 
-        persist(
+        let didPersist = persist(
             configuration: RecommendedMenuAppsConfiguration(
                 orderedBundleIDs: orderedBundleIDs,
                 enabledBundleIDs: configuration.enabledBundleIDs
             )
+        )
+
+        guard didPersist else {
+            return
+        }
+
+        let displayName = resolvedDisplayName(for: bundleID)
+        let destinationName = beforeBundleID.map(resolvedDisplayName(for:))
+        activityLogger?.log(
+            level: .info,
+            category: .supportedEditors,
+            message: destinationName.map { "Moved \(displayName) before \($0)." }
+                ?? "Moved \(displayName) to the end of Supported Editors.",
+            targetDisplayName: displayName
         )
     }
 
@@ -100,11 +133,23 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
         reorderedBundleIDs.insert(contentsOf: movingBundleIDs, at: destinationIndex)
         let remainingBundleIDs = configuration.orderedBundleIDs.filter { !reorderedBundleIDs.contains($0) }
 
-        persist(
+        let didPersist = persist(
             configuration: RecommendedMenuAppsConfiguration(
                 orderedBundleIDs: reorderedBundleIDs + remainingBundleIDs,
                 enabledBundleIDs: configuration.enabledBundleIDs
             )
+        )
+
+        guard didPersist else {
+            return
+        }
+
+        let targetName = movingBundleIDs.first.map(resolvedDisplayName(for:))
+        activityLogger?.log(
+            level: .info,
+            category: .supportedEditors,
+            message: "Reordered Supported Editors.",
+            targetDisplayName: targetName
         )
     }
 
@@ -137,15 +182,20 @@ final class RecommendedMenuAppsStore: ObservableObject, RecommendedMenuAppsStori
         }
     }
 
-    private func persist(configuration: RecommendedMenuAppsConfiguration) {
+    private func persist(configuration: RecommendedMenuAppsConfiguration) -> Bool {
         guard self.configuration != configuration else {
-            return
+            return false
         }
 
         self.configuration = configuration
         userDefaults.set(configuration.orderedBundleIDs, forKey: Keys.orderedBundleIDs)
         userDefaults.set(Array(configuration.enabledBundleIDs), forKey: Keys.enabledBundleIDs)
         didChangeSubject.send(())
+        return true
+    }
+
+    private func resolvedDisplayName(for bundleID: String) -> String {
+        KnownEditors.knownEditor(for: bundleID)?.displayName ?? bundleID
     }
 
     private static func loadConfiguration(from userDefaults: UserDefaults) -> RecommendedMenuAppsConfiguration {

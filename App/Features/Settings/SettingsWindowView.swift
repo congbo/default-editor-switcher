@@ -33,9 +33,10 @@ struct SettingsWindowView: View {
             GeneralSettingsSection(
                 viewModel: generalSettingsViewModel,
                 statusSnapshot: statusSnapshot,
-                onRefresh: refreshSettings,
                 localizer: localizer
             )
+
+            refreshSection
 
             RecommendedAppsSettingsSection(
                 recommendedAppsStore: recommendedAppsStore,
@@ -49,6 +50,8 @@ struct SettingsWindowView: View {
             )
 
             LanguageSettingsSection(languageStore: languageStore)
+
+            activityLogSection
         }
         .listStyle(.inset)
         .frame(minWidth: 520, idealWidth: 560, minHeight: 480, idealHeight: 540, alignment: .topLeading)
@@ -63,6 +66,10 @@ struct SettingsWindowView: View {
         }
     }
 
+    private var activityFormatter: SettingsActivityFormatter {
+        SettingsActivityFormatter(localizer: localizer)
+    }
+
     private var statusSnapshot: SettingsStatusSnapshot {
         SettingsCopyFormatter(
             localizer: localizer,
@@ -72,6 +79,74 @@ struct SettingsWindowView: View {
             from: menuBarViewModel.currentState,
             availableEditors: menuBarViewModel.availableEditors
         )
+    }
+
+    private var refreshSection: some View {
+        Section(localizer.string("Refresh")) {
+            HStack(alignment: .center, spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(localizer.string("Refresh"))
+
+                    Text(activityFormatter.refreshDescription())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text(
+                        activityFormatter.refreshStatusDetail(
+                            refreshStatus: menuBarViewModel.settingsRefreshStatus,
+                            isBlockedBySwitch: menuBarViewModel.applyingBundleID != nil
+                        )
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 16)
+
+                Button(localizer.string("Refresh"), action: refreshSettings)
+                    .buttonStyle(.bordered)
+                    .disabled(menuBarViewModel.isSettingsRefreshDisabled)
+            }
+        }
+    }
+
+    private var activityLogSection: some View {
+        Section(localizer.string("Last Switch Log")) {
+            if menuBarViewModel.settingsLogEntries.isEmpty {
+                Text(activityFormatter.activityEmptyStateText())
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(menuBarViewModel.settingsLogEntries) { entry in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(verbatim: entry.timestamp.formatted(date: .omitted, time: .standard))
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+
+                            Text(verbatim: activityFormatter.logLevelTitle(for: entry.level))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(activityFormatter.logLevelColor(for: entry.level))
+
+                            Text(verbatim: activityFormatter.logCategoryTitle(for: entry.category))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            if let targetDisplayName = entry.targetDisplayName, !targetDisplayName.isEmpty {
+                                Text(verbatim: targetDisplayName)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        Text(verbatim: entry.message)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
     }
 
     private func refreshSettings() {

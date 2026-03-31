@@ -112,6 +112,23 @@ final class AppLanguageStoreTests: XCTestCase {
         XCTAssertEqual(chineseLocalizer.string("No Eligible Editors Found"), "未找到符合条件的编辑器")
     }
 
+    func testLanguageSelectionWritesActivityLog() {
+        let activityStore = SettingsActivityStore()
+        let store = AppLanguageStore(
+            userDefaults: makeUserDefaults(testName: #function),
+            systemLocaleProvider: { Locale(identifier: "fr_FR") },
+            activityLogger: activityStore
+        )
+
+        store.selectedLanguage = .english
+        store.selectedLanguage = .simplifiedChinese
+
+        XCTAssertEqual(activityStore.entries.count, 2)
+        XCTAssertEqual(activityStore.entries[0].category, .language)
+        XCTAssertEqual(activityStore.entries[0].message, "Language changed to English.")
+        XCTAssertEqual(activityStore.entries[1].message, "Language changed to 简体中文.")
+    }
+
     private func makeUserDefaults(testName: String) -> UserDefaults {
         let suiteName = "AppLanguageStoreTests.\(testName)"
         let userDefaults = UserDefaults(suiteName: suiteName)!

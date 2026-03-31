@@ -124,6 +124,36 @@ final class RecommendedMenuAppsStoreTests: XCTestCase {
         )
     }
 
+    func testSetEnabledWritesActivityLog() {
+        let userDefaults = makeUserDefaults(testName: #function)
+        let activityStore = SettingsActivityStore()
+        let store = RecommendedMenuAppsStore(
+            userDefaults: userDefaults,
+            activityLogger: activityStore
+        )
+
+        store.setEnabled(bundleID: "com.google.antigravity", isEnabled: false)
+
+        XCTAssertEqual(activityStore.entries.count, 1)
+        XCTAssertEqual(activityStore.entries.last?.category, .supportedEditors)
+        XCTAssertEqual(activityStore.entries.last?.message, "Moved Antigravity out of the first-level menu.")
+    }
+
+    func testMoveWritesActivityLog() {
+        let userDefaults = makeUserDefaults(testName: #function)
+        let activityStore = SettingsActivityStore()
+        let store = RecommendedMenuAppsStore(
+            userDefaults: userDefaults,
+            activityLogger: activityStore
+        )
+
+        store.move(bundleID: "com.microsoft.VSCode", beforeBundleID: "com.google.antigravity")
+
+        XCTAssertEqual(activityStore.entries.count, 1)
+        XCTAssertEqual(activityStore.entries.last?.category, .supportedEditors)
+        XCTAssertEqual(activityStore.entries.last?.message, "Moved Visual Studio Code before Antigravity.")
+    }
+
     private func makeUserDefaults(testName: String) -> UserDefaults {
         let suiteName = "RecommendedMenuAppsStoreTests.\(testName)"
         let userDefaults = UserDefaults(suiteName: suiteName)!

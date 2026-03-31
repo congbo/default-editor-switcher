@@ -3,7 +3,6 @@ import SwiftUI
 struct GeneralSettingsSection: View {
     @ObservedObject var viewModel: GeneralSettingsViewModel
     let statusSnapshot: SettingsStatusSnapshot
-    let onRefresh: () -> Void
     @ObservedObject var localizer: AppLocalizer
 
     var body: some View {
@@ -22,14 +21,6 @@ struct GeneralSettingsSection: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                HStack {
-                    Spacer()
-
-                    Button(localizer.string("Refresh"), action: onRefresh)
-                        .buttonStyle(.bordered)
-                }
-
                 VStack(alignment: .leading, spacing: 6) {
                     LabeledContent("Launch at login") {
                         Toggle("", isOn: launchAtLoginBinding)

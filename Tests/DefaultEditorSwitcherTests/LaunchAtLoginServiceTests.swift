@@ -56,6 +56,44 @@ final class LaunchAtLoginServiceTests: XCTestCase {
         XCTAssertEqual(viewModel.status, .disabled)
         XCTAssertEqual(viewModel.detailKind, .neutral)
     }
+
+    func testSuccessfulToggleWritesActivityLog() {
+        let activityStore = SettingsActivityStore()
+        let service = StubLaunchAtLoginService(state: LaunchAtLoginState(status: .disabled, detailKind: .disabled))
+        let viewModel = GeneralSettingsViewModel(
+            launchAtLoginService: service,
+            activityLogger: activityStore
+        )
+
+        viewModel.setLaunchAtLoginEnabled(true)
+
+        XCTAssertEqual(activityStore.entries.count, 1)
+        XCTAssertEqual(activityStore.entries.last?.category, .launchAtLogin)
+        XCTAssertEqual(activityStore.entries.last?.level, .info)
+        XCTAssertEqual(activityStore.entries.last?.message, "Enabled launch at login.")
+    }
+
+    func testFailedToggleWritesActivityLogError() {
+        let activityStore = SettingsActivityStore()
+        let service = StubLaunchAtLoginService(
+            state: LaunchAtLoginState(status: .disabled, detailKind: .neutral),
+            error: StubLaunchAtLoginError.registrationFailed
+        )
+        let viewModel = GeneralSettingsViewModel(
+            launchAtLoginService: service,
+            activityLogger: activityStore
+        )
+
+        viewModel.setLaunchAtLoginEnabled(true)
+
+        XCTAssertEqual(activityStore.entries.count, 1)
+        XCTAssertEqual(activityStore.entries.last?.category, .launchAtLogin)
+        XCTAssertEqual(activityStore.entries.last?.level, .error)
+        XCTAssertEqual(
+            activityStore.entries.last?.message,
+            "Failed to update launch at login: \(StubLaunchAtLoginError.registrationFailed.localizedDescription)"
+        )
+    }
 }
 
 private final class StubLaunchAtLoginService: LaunchAtLoginControlling {

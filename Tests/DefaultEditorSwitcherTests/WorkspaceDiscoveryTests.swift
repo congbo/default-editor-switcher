@@ -37,7 +37,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(metadata.documentTypes[1].handlerRank, "Alternate")
     }
 
-    func testWorkspaceDiscoveryKeepsRecommendedEditorsFirstAndClassifiesCapabilities() {
+    func testWorkspaceDiscoveryKeepsRecommendedEditorsFirstAndClassifiesCapabilities() throws {
         let reader = BundleDocumentTypeReader()
         let requestedType = UTType(filenameExtension: "py")!
         let recommendedURL = URL(fileURLWithPath: "/Applications/Visual Studio Code.app")
@@ -102,7 +102,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
             )
         )
 
-        let ranked = discovery.discoverEditors(for: requestedType, bucket: .python)
+        let ranked = try discovery.discoverEditors(for: requestedType, bucket: .python)
 
         XCTAssertEqual(ranked.map(\.bundleID), ["com.microsoft.VSCode", "com.example.partial", "com.example.unknown"])
         XCTAssertEqual(ranked.map(\.capability), [.full, .partial, .unverified])
@@ -112,7 +112,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(ranked[0].iconLookupPath, recommendedURL.path)
     }
 
-    func testWorkspaceDiscoverySortsNonRecommendedEditorsBySupportedTextExtensionCount() {
+    func testWorkspaceDiscoverySortsNonRecommendedEditorsBySupportedTextExtensionCount() throws {
         let reader = BundleDocumentTypeReader()
         let requestedType = UTType(filenameExtension: "txt")!
         let broadURL = URL(fileURLWithPath: "/Applications/Broad Editor.app")
@@ -167,14 +167,14 @@ final class WorkspaceDiscoveryTests: XCTestCase {
             )
         )
 
-        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+        let ranked = try discovery.discoverEditors(for: requestedType, bucket: nil)
 
         XCTAssertEqual(ranked.map(\.bundleID), ["com.example.broad", "com.example.narrow"])
         XCTAssertEqual(ranked.map(\.supportedTextExtensionCount), [6, 2])
         XCTAssertEqual(ranked.map(\.capability), [.full, .full])
     }
 
-    func testWorkspaceDiscoveryCollapsesDuplicateBundleIdentifiers() {
+    func testWorkspaceDiscoveryCollapsesDuplicateBundleIdentifiers() throws {
         let reader = BundleDocumentTypeReader()
         let requestedType = UTType(filenameExtension: "txt")!
         let duplicatePartialURL = URL(fileURLWithPath: "/Applications/Postico Partial.app")
@@ -229,7 +229,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
             )
         )
 
-        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+        let ranked = try discovery.discoverEditors(for: requestedType, bucket: nil)
 
         XCTAssertEqual(ranked.count, 1)
         XCTAssertEqual(ranked[0].bundleID, "at.eggerapps.Postico")
@@ -237,7 +237,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
         XCTAssertEqual(ranked[0].supportedTextExtensionCount, 3)
     }
 
-    func testWorkspaceDiscoveryIgnoresMissingApplicationBundles() {
+    func testWorkspaceDiscoveryIgnoresMissingApplicationBundles() throws {
         let reader = BundleDocumentTypeReader()
         let requestedType = UTType(filenameExtension: "txt")!
         let missingURL = URL(fileURLWithPath: "/Applications/Ghost Editor.app")
@@ -290,7 +290,7 @@ final class WorkspaceDiscoveryTests: XCTestCase {
             )
         )
 
-        let ranked = discovery.discoverEditors(for: requestedType, bucket: nil)
+        let ranked = try discovery.discoverEditors(for: requestedType, bucket: nil)
 
         XCTAssertEqual(ranked.map(\.bundleID), ["com.microsoft.VSCode"])
     }

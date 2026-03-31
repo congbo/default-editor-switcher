@@ -441,6 +441,130 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(editorDiscovery.loadCount, 2)
     }
 
+    func testRefreshRecordsLifecycleLogsNewestFirst() {
+        let activityStore = SettingsActivityStore()
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                ]
+            ),
+            appDiscovery: SequenceEditorDiscovery(candidateSets: [
+                sampleCandidates,
+                sampleCandidates,
+            ]),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        viewModel.load()
+        viewModel.refresh()
+
+        XCTAssertEqual(viewModel.settingsRefreshStatus.phase, .idle)
+        XCTAssertNil(viewModel.settingsRefreshStatus.lastErrorMessage)
+        XCTAssertNotNil(viewModel.settingsRefreshStatus.lastAttemptAt)
+        XCTAssertEqual(viewModel.settingsLogEntries.map(\.category), [.refresh, .refresh])
+        XCTAssertEqual(viewModel.settingsLogEntries.map(\.level), [.info, .info])
+        XCTAssertEqual(viewModel.settingsLogEntries.first?.message, "Current editor state refreshed.")
+        XCTAssertEqual(viewModel.settingsLogEntries.last?.message, "Refreshing current editor state and installed editors.")
+    }
+
+    func testRefreshFailureRecordsErrorAndRetainsPreviousState() {
+        let activityStore = SettingsActivityStore()
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+            ]
+        )
+        let discovery = SequenceThrowingEditorDiscovery(results: [
+            .success(sampleCandidates),
+            .failure(StubEditorDiscoveryError.forcedFailure),
+        ])
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: discovery,
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        viewModel.load()
+        viewModel.refresh()
+
+        XCTAssertEqual(viewModel.summary.title, "TextEdit")
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.apple.TextEdit")
+        XCTAssertEqual(viewModel.settingsRefreshStatus.phase, .idle)
+        XCTAssertEqual(viewModel.settingsRefreshStatus.lastErrorMessage, StubEditorDiscoveryError.forcedFailure.localizedDescription)
+        XCTAssertEqual(viewModel.settingsLogEntries.map(\.level), [.error, .info])
+        XCTAssertEqual(viewModel.settingsLogEntries.first?.message, StubEditorDiscoveryError.forcedFailure.localizedDescription)
+        XCTAssertEqual(stateService.loadCount, 2)
+        XCTAssertEqual(discovery.loadCount, 2)
+    }
+
+    func testApplyEditorRecordsSwitchLifecycleLogs() {
+        let activityStore = SettingsActivityStore()
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 2,
+            mismatchedCount: 0,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: []
+        )
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                    GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+
+        XCTAssertEqual(viewModel.settingsLogEntries.map(\.category), [.switching, .switching])
+        XCTAssertEqual(viewModel.settingsLogEntries.map(\.level), [.info, .info])
+        XCTAssertEqual(viewModel.settingsLogEntries.first?.message, "Updated all text types to Visual Studio Code.")
+        XCTAssertEqual(viewModel.settingsLogEntries.last?.message, "Switch requested for Visual Studio Code.")
+    }
+
+    func testSettingsLogRetentionTrimsOldestEntries() {
+        let activityStore = SettingsActivityStore()
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [GlobalTextState(status: .unavailable, inspectedContentTypeIdentifiers: ["public.plain-text"])]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        for index in 0..<205 {
+            activityStore.log(
+                level: .info,
+                category: .refresh,
+                message: "log-\(index)",
+                targetDisplayName: nil
+            )
+        }
+
+        XCTAssertEqual(viewModel.settingsLogEntries.count, 200)
+        XCTAssertEqual(viewModel.settingsLogEntries.first?.message, "log-204")
+        XCTAssertEqual(viewModel.settingsLogEntries.last?.message, "log-5")
+    }
+
     func testPrimaryRowsUseDefaultEnabledInstalledRecommendedEditors() {
         let viewModel = MenuBarViewModel(
             stateService: StubStateService(
@@ -939,7 +1063,7 @@ private final class StubStateService: GlobalTextStateServicing {
 private struct StubEditorDiscovery: EditorDiscovering {
     let candidates: [EditorCandidate]
 
-    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) -> [EditorCandidate] {
+    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) throws -> [EditorCandidate] {
         candidates
     }
 }
@@ -952,9 +1076,31 @@ private final class SequenceEditorDiscovery: EditorDiscovering {
         self.candidateSets = candidateSets
     }
 
-    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) -> [EditorCandidate] {
+    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) throws -> [EditorCandidate] {
         defer { loadCount += 1 }
         return candidateSets[min(loadCount, candidateSets.count - 1)]
+    }
+}
+
+private final class SequenceThrowingEditorDiscovery: EditorDiscovering {
+    private let results: [Result<[EditorCandidate], Error>]
+    private(set) var loadCount = 0
+
+    init(results: [Result<[EditorCandidate], Error>]) {
+        self.results = results
+    }
+
+    func discoverEditors(for contentType: UTType, bucket: LanguageBucket?) throws -> [EditorCandidate] {
+        defer { loadCount += 1 }
+        return try results[min(loadCount, results.count - 1)].get()
+    }
+}
+
+private enum StubEditorDiscoveryError: LocalizedError {
+    case forcedFailure
+
+    var errorDescription: String? {
+        "Editor discovery failed."
     }
 }
 

@@ -46,6 +46,21 @@ final class GlobalTextTypesStoreTests: XCTestCase {
         XCTAssertTrue(observedConfigurations.last?.enabledExtensions.contains("html") == true)
     }
 
+    func testSetEnabledWritesActivityLog() {
+        let userDefaults = makeUserDefaults(testName: #function)
+        let activityStore = SettingsActivityStore()
+        let store = GlobalTextTypesStore(
+            userDefaults: userDefaults,
+            activityLogger: activityStore
+        )
+
+        store.setEnabled(extension: "html", isEnabled: true)
+
+        XCTAssertEqual(activityStore.entries.count, 1)
+        XCTAssertEqual(activityStore.entries.last?.category, .globalTextTypes)
+        XCTAssertEqual(activityStore.entries.last?.message, "Included .html in the global text switch.")
+    }
+
     private func makeUserDefaults(testName: String) -> UserDefaults {
         let suiteName = "GlobalTextTypesStoreTests.\(testName)"
         let userDefaults = UserDefaults(suiteName: suiteName)!
