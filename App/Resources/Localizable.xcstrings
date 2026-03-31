@@ -541,23 +541,6 @@
         }
       }
     },
-    "Launch at login is unavailable for the current build." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Launch at login is unavailable for the current build."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前构建无法使用登录时启动。"
-          }
-        }
-      }
-    },
     "Launch the app automatically when you sign in to macOS." : {
       "extractionState" : "stale",
       "localizations" : {

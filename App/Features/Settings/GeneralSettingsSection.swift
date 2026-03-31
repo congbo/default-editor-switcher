@@ -55,7 +55,7 @@ struct GeneralSettingsSection: View {
 
     private var launchAtLoginDetail: String {
         SettingsCopyFormatter(localizer: localizer)
-            .launchAtLoginDetail(status: viewModel.status, errorMessage: viewModel.errorMessage)
+            .launchAtLoginDetail(detailKind: viewModel.detailKind, errorMessage: viewModel.errorMessage)
     }
 
     @ViewBuilder

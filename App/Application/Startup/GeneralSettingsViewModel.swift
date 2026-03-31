@@ -6,6 +6,7 @@ final class GeneralSettingsViewModel: ObservableObject {
     @Published private(set) var isBusy = false
     @Published private(set) var errorMessage: String?
     @Published private(set) var status: LaunchAtLoginStatus = .disabled
+    @Published private(set) var detailKind: LaunchAtLoginDetailKind = .neutral
 
     private let launchAtLoginService: LaunchAtLoginControlling
 
@@ -15,7 +16,9 @@ final class GeneralSettingsViewModel: ObservableObject {
     }
 
     func loadStatus() {
-        status = launchAtLoginService.currentStatus()
+        let state = launchAtLoginService.currentState()
+        status = state.status
+        detailKind = state.detailKind
         isEnabled = status == .enabled
     }
 

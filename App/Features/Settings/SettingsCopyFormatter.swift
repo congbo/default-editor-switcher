@@ -70,22 +70,20 @@ struct SettingsCopyFormatter {
     }
 
     func launchAtLoginDetail(
-        status: LaunchAtLoginStatus,
+        detailKind: LaunchAtLoginDetailKind,
         errorMessage: String?
     ) -> String {
         if let errorMessage {
             return errorMessage
         }
 
-        switch status {
-        case .enabled:
+        switch detailKind {
+        case .enabled, .neutral:
             return localizer.string("Launch the app automatically when you sign in to macOS.")
         case .disabled:
             return localizer.string("The app opens manually from your menu bar until launch at login is enabled.")
-        case .requiresApproval:
+        case .approvalRequired:
             return localizer.string("macOS requires approval before this app can launch at login.")
-        case .unavailable:
-            return localizer.string("Launch at login is unavailable for the current build.")
         }
     }
 

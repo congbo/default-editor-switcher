@@ -138,7 +138,20 @@ final class SettingsCopyFormatterTests: XCTestCase {
         ))
 
         XCTAssertEqual(
-            formatter.launchAtLoginDetail(status: .enabled, errorMessage: nil),
+            formatter.launchAtLoginDetail(detailKind: .enabled, errorMessage: nil),
+            "在你登录 macOS 时自动启动应用。"
+        )
+    }
+
+    func testLaunchAtLoginDetailUsesNeutralCopyForImplicitlyDisabledState() {
+        let formatter = SettingsCopyFormatter(localizer: StubSettingsLocalizer(
+            strings: [
+                "Launch the app automatically when you sign in to macOS.": "在你登录 macOS 时自动启动应用。",
+            ]
+        ))
+
+        XCTAssertEqual(
+            formatter.launchAtLoginDetail(detailKind: .neutral, errorMessage: nil),
             "在你登录 macOS 时自动启动应用。"
         )
     }
