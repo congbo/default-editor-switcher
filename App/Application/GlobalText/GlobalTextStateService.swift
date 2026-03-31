@@ -49,14 +49,19 @@ struct GlobalTextState: Equatable {
 
 struct GlobalTextStateService: GlobalTextStateServicing {
     private let client: LaunchServicesClienting
-    private let resolutionsProvider: (FileScope) -> [ContentTypeResolver.Resolution]
+    private let resolutionsProvider: () -> [ContentTypeResolver.Resolution]
 
     init(
         client: LaunchServicesClienting = LaunchServicesClient(),
-        resolutionsProvider: @escaping (FileScope) -> [ContentTypeResolver.Resolution] = ContentTypeResolver.resolutions(for:)
+        resolutionsProvider: (() -> [ContentTypeResolver.Resolution])? = nil,
+        enabledExtensionsProvider: @escaping () -> Set<String> = {
+            ContentTypeResolver.defaultEnabledGlobalTextExtensions
+        }
     ) {
         self.client = client
-        self.resolutionsProvider = resolutionsProvider
+        self.resolutionsProvider = resolutionsProvider ?? {
+            ContentTypeResolver.resolutions(forExtensions: enabledExtensionsProvider())
+        }
     }
 
     func currentState() -> GlobalTextState {
@@ -93,7 +98,7 @@ struct GlobalTextStateService: GlobalTextStateServicing {
     }
 
     private func declaredExtensionAssociations() -> [GlobalTextState.ExtensionAssociation] {
-        resolutionsProvider(.allText).compactMap { resolution in
+        resolutionsProvider().compactMap { resolution in
             guard resolution.isDeclared, let type = resolution.type else {
                 return nil
             }

@@ -42,18 +42,21 @@
 		A1B2C3D4E5F60718293A00D0 /* App/Application/Startup/LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E0 /* App/Application/Startup/LaunchAtLoginService.swift */; };
 		A1B2C3D4E5F60718293A00D1 /* App/Application/Startup/GeneralSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E1 /* App/Application/Startup/GeneralSettingsViewModel.swift */; };
 		A1B2C3D4E5F60718293A00D2 /* App/Application/Settings/RecommendedMenuAppsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E2 /* App/Application/Settings/RecommendedMenuAppsStore.swift */; };
+		A1B2C3D4E5F60718293A00D2A /* App/Application/Settings/GlobalTextTypesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E2A /* App/Application/Settings/GlobalTextTypesStore.swift */; };
 		A1B2C3D4E5F60718293A00D3 /* App/Application/Localization/AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E3 /* App/Application/Localization/AppLanguage.swift */; };
 		A1B2C3D4E5F60718293A00D4 /* App/Application/Localization/AppLanguageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E4 /* App/Application/Localization/AppLanguageStore.swift */; };
 		A1B2C3D4E5F60718293A00D5 /* App/Features/Settings/SettingsWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E5 /* App/Features/Settings/SettingsWindowView.swift */; };
 		A1B2C3D4E5F60718293A00D6 /* App/Features/Settings/GeneralSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E6 /* App/Features/Settings/GeneralSettingsSection.swift */; };
 		A1B2C3D4E5F60718293A00D7 /* App/Features/Settings/RecommendedAppsSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E7 /* App/Features/Settings/RecommendedAppsSettingsSection.swift */; };
 		A1B2C3D4E5F60718293A00D8 /* App/Features/Settings/LanguageSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E8 /* App/Features/Settings/LanguageSettingsSection.swift */; };
+		A1B2C3D4E5F60718293A00D8A /* App/Features/Settings/GlobalTextTypesSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E8A /* App/Features/Settings/GlobalTextTypesSettingsSection.swift */; };
 		A1B2C3D4E5F60718293A00D9 /* App/Resources/Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00E9 /* App/Resources/Localizable.xcstrings */; };
 		A1B2C3D4E5F60718293A00DA /* Tests/DefaultEditorSwitcherTests/LaunchAtLoginServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EA /* Tests/DefaultEditorSwitcherTests/LaunchAtLoginServiceTests.swift */; };
 		A1B2C3D4E5F60718293A00DB /* Tests/DefaultEditorSwitcherTests/RecommendedMenuAppsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EB /* Tests/DefaultEditorSwitcherTests/RecommendedMenuAppsStoreTests.swift */; };
 		A1B2C3D4E5F60718293A00DC /* Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EC /* Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift */; };
 		A1B2C3D4E5F60718293A00DD /* App/Features/Settings/SettingsCopyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00ED /* App/Features/Settings/SettingsCopyFormatter.swift */; };
 		A1B2C3D4E5F60718293A00DE /* Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EE /* Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift */; };
+		A1B2C3D4E5F60718293A00DEA /* Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A00EEA /* Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift */; };
 		A1B2C3D4E5F60718293A0100 /* App/Features/MenuBar/GlobalTextSwitchFeedbackFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0102 /* App/Features/MenuBar/GlobalTextSwitchFeedbackFormatter.swift */; };
 		A1B2C3D4E5F60718293A0101 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0103 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift */; };
 		A1B2C3D4E5F60718293A0110 /* App/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A0111 /* App/Resources/Assets.xcassets */; };
@@ -104,18 +107,21 @@
 		A1B2C3D4E5F60718293A00E0 /* App/Application/Startup/LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Startup/LaunchAtLoginService.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E1 /* App/Application/Startup/GeneralSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Startup/GeneralSettingsViewModel.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E2 /* App/Application/Settings/RecommendedMenuAppsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Settings/RecommendedMenuAppsStore.swift; sourceTree = SOURCE_ROOT; };
+		A1B2C3D4E5F60718293A00E2A /* App/Application/Settings/GlobalTextTypesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Settings/GlobalTextTypesStore.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E3 /* App/Application/Localization/AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Localization/AppLanguage.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E4 /* App/Application/Localization/AppLanguageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Application/Localization/AppLanguageStore.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E5 /* App/Features/Settings/SettingsWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/SettingsWindowView.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E6 /* App/Features/Settings/GeneralSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/GeneralSettingsSection.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E7 /* App/Features/Settings/RecommendedAppsSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/RecommendedAppsSettingsSection.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E8 /* App/Features/Settings/LanguageSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/LanguageSettingsSection.swift; sourceTree = SOURCE_ROOT; };
+		A1B2C3D4E5F60718293A00E8A /* App/Features/Settings/GlobalTextTypesSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/GlobalTextTypesSettingsSection.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00E9 /* App/Resources/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = App/Resources/Localizable.xcstrings; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00EA /* Tests/DefaultEditorSwitcherTests/LaunchAtLoginServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/LaunchAtLoginServiceTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00EB /* Tests/DefaultEditorSwitcherTests/RecommendedMenuAppsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/RecommendedMenuAppsStoreTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00EC /* Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00ED /* App/Features/Settings/SettingsCopyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/Settings/SettingsCopyFormatter.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A00EE /* Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift; sourceTree = SOURCE_ROOT; };
+		A1B2C3D4E5F60718293A00EEA /* Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A0102 /* App/Features/MenuBar/GlobalTextSwitchFeedbackFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/Features/MenuBar/GlobalTextSwitchFeedbackFormatter.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A0103 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A0111 /* App/Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = App/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
@@ -197,6 +203,7 @@
 				A1B2C3D4E5F60718293A00E0 /* App/Application/Startup/LaunchAtLoginService.swift */,
 				A1B2C3D4E5F60718293A00E1 /* App/Application/Startup/GeneralSettingsViewModel.swift */,
 				A1B2C3D4E5F60718293A00E2 /* App/Application/Settings/RecommendedMenuAppsStore.swift */,
+				A1B2C3D4E5F60718293A00E2A /* App/Application/Settings/GlobalTextTypesStore.swift */,
 				A1B2C3D4E5F60718293A00E3 /* App/Application/Localization/AppLanguage.swift */,
 				A1B2C3D4E5F60718293A00E4 /* App/Application/Localization/AppLanguageStore.swift */,
 				A1B2C3D4E5F60718293A00ED /* App/Features/Settings/SettingsCopyFormatter.swift */,
@@ -204,6 +211,7 @@
 				A1B2C3D4E5F60718293A00E6 /* App/Features/Settings/GeneralSettingsSection.swift */,
 				A1B2C3D4E5F60718293A00E7 /* App/Features/Settings/RecommendedAppsSettingsSection.swift */,
 				A1B2C3D4E5F60718293A00E8 /* App/Features/Settings/LanguageSettingsSection.swift */,
+				A1B2C3D4E5F60718293A00E8A /* App/Features/Settings/GlobalTextTypesSettingsSection.swift */,
 				A1B2C3D4E5F60718293A0111 /* App/Resources/Assets.xcassets */,
 				A1B2C3D4E5F60718293A00E9 /* App/Resources/Localizable.xcstrings */,
 				A1B2C3D4E5F60718293A0014 /* Tests/DefaultEditorSwitcherTests/FileScopeCatalogTests.swift */,
@@ -218,6 +226,7 @@
 				A1B2C3D4E5F60718293A00EC /* Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift */,
 				A1B2C3D4E5F60718293A0103 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift */,
 				A1B2C3D4E5F60718293A00EE /* Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift */,
+				A1B2C3D4E5F60718293A00EEA /* Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift */,
 				A1B2C3D4E5F60718293A0023 /* Tools/AssociationProbe/main.swift */,
 			);
 			name = "Recovered References";
@@ -372,6 +381,7 @@
 				A1B2C3D4E5F60718293A00D0 /* App/Application/Startup/LaunchAtLoginService.swift in Sources */,
 				A1B2C3D4E5F60718293A00D1 /* App/Application/Startup/GeneralSettingsViewModel.swift in Sources */,
 				A1B2C3D4E5F60718293A00D2 /* App/Application/Settings/RecommendedMenuAppsStore.swift in Sources */,
+				A1B2C3D4E5F60718293A00D2A /* App/Application/Settings/GlobalTextTypesStore.swift in Sources */,
 				A1B2C3D4E5F60718293A00D3 /* App/Application/Localization/AppLanguage.swift in Sources */,
 				A1B2C3D4E5F60718293A00D4 /* App/Application/Localization/AppLanguageStore.swift in Sources */,
 				A1B2C3D4E5F60718293A00DD /* App/Features/Settings/SettingsCopyFormatter.swift in Sources */,
@@ -379,6 +389,7 @@
 				A1B2C3D4E5F60718293A00D6 /* App/Features/Settings/GeneralSettingsSection.swift in Sources */,
 				A1B2C3D4E5F60718293A00D7 /* App/Features/Settings/RecommendedAppsSettingsSection.swift in Sources */,
 				A1B2C3D4E5F60718293A00D8 /* App/Features/Settings/LanguageSettingsSection.swift in Sources */,
+				A1B2C3D4E5F60718293A00D8A /* App/Features/Settings/GlobalTextTypesSettingsSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +409,7 @@
 				A1B2C3D4E5F60718293A00DC /* Tests/DefaultEditorSwitcherTests/AppLanguageStoreTests.swift in Sources */,
 				A1B2C3D4E5F60718293A0101 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift in Sources */,
 				A1B2C3D4E5F60718293A00DE /* Tests/DefaultEditorSwitcherTests/SettingsCopyFormatterTests.swift in Sources */,
+				A1B2C3D4E5F60718293A00DEA /* Tests/DefaultEditorSwitcherTests/GlobalTextTypesStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

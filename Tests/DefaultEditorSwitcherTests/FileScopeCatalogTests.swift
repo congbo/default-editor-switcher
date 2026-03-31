@@ -6,6 +6,8 @@ final class FileScopeCatalogTests: XCTestCase {
         let extensions = ContentTypeResolver.extensions(for: .allText)
 
         XCTAssertTrue(extensions.isSuperset(of: ["py", "ts", "rs", "md", "json"]))
+        XCTAssertTrue(extensions.contains("css"))
+        XCTAssertFalse(extensions.contains("html"))
     }
 
     func testMarkdownBucketContainsExpectedExtensions() {
@@ -27,5 +29,11 @@ final class FileScopeCatalogTests: XCTestCase {
         XCTAssertEqual(uppercased.normalizedExtension, "tsx")
         XCTAssertEqual(uppercased.normalizedExtension, lowercased.normalizedExtension)
         XCTAssertEqual(uppercased.type, lowercased.type)
+    }
+
+    func testBuiltInGlobalTextExtensionsStillIncludeHTMLAsOptionalType() {
+        XCTAssertTrue(ContentTypeResolver.builtInGlobalTextExtensions.contains("html"))
+        XCTAssertTrue(ContentTypeResolver.defaultEnabledGlobalTextExtensions.contains("css"))
+        XCTAssertFalse(ContentTypeResolver.defaultEnabledGlobalTextExtensions.contains("html"))
     }
 }

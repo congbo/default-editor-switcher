@@ -40,7 +40,7 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         )
         let coordinator = GlobalTextSwitchCoordinator(
             verifier: verifier,
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "md", type: markdownType),
@@ -127,7 +127,7 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         )
         let coordinator = GlobalTextSwitchCoordinator(
             verifier: verifier,
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "md", type: markdownType),
@@ -150,6 +150,54 @@ final class GlobalTextSwitchCoordinatorTests: XCTestCase {
         XCTAssertEqual(report.sampleFailures.map(\.status), ["mismatched", "unsupportedTarget", "writeFailed"])
         XCTAssertEqual(report.sampleFailures.map(\.role), [.editor, .editor, .editor])
         XCTAssertEqual(report.sampleFailures.last?.statusCode, -10810)
+    }
+
+    func testApplySkipsDisabledHTMLType() {
+        let cssType = UTType(filenameExtension: "css")!
+        let htmlType = UTType(filenameExtension: "html")!
+        let verifier = StubAssociationVerifier(
+            resultsByIdentifier: [
+                cssType.identifier: makeResult(
+                    for: cssType,
+                    requestedBundleID: "com.microsoft.VSCode",
+                    roleResults: [
+                        .matched(
+                            PreferredHandler(
+                                contentType: cssType,
+                                requestedBundleID: "com.microsoft.VSCode",
+                                effectiveBundleID: "com.microsoft.VSCode",
+                                role: .editor
+                            )
+                        )
+                    ]
+                ),
+                htmlType.identifier: makeResult(
+                    for: htmlType,
+                    requestedBundleID: "com.microsoft.VSCode",
+                    roleResults: [
+                        .matched(
+                            PreferredHandler(
+                                contentType: htmlType,
+                                requestedBundleID: "com.microsoft.VSCode",
+                                effectiveBundleID: "com.microsoft.VSCode",
+                                role: .editor
+                            )
+                        )
+                    ]
+                )
+            ]
+        )
+        let coordinator = GlobalTextSwitchCoordinator(
+            verifier: verifier,
+            enabledExtensionsProvider: { ["css"] }
+        )
+
+        let report = coordinator.apply(bundleID: "com.microsoft.VSCode")
+
+        XCTAssertEqual(verifier.verifiedIdentifiers, [cssType.identifier])
+        XCTAssertEqual(report.processedExtensions, ["css"])
+        XCTAssertEqual(report.processedContentTypeIdentifiers, [cssType.identifier])
+        XCTAssertNotEqual(report.processedContentTypeIdentifiers, [htmlType.identifier])
     }
 }
 

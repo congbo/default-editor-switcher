@@ -4,6 +4,7 @@ struct SettingsWindowView: View {
     @ObservedObject var menuBarViewModel: MenuBarViewModel
     @ObservedObject var generalSettingsViewModel: GeneralSettingsViewModel
     @ObservedObject var recommendedAppsStore: RecommendedMenuAppsStore
+    @ObservedObject var globalTextTypesStore: GlobalTextTypesStore
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var localizer: AppLocalizer
 
@@ -13,6 +14,7 @@ struct SettingsWindowView: View {
         menuBarViewModel: MenuBarViewModel,
         generalSettingsViewModel: GeneralSettingsViewModel,
         recommendedAppsStore: RecommendedMenuAppsStore,
+        globalTextTypesStore: GlobalTextTypesStore,
         languageStore: AppLanguageStore,
         localizer: AppLocalizer,
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator()
@@ -20,6 +22,7 @@ struct SettingsWindowView: View {
         self.menuBarViewModel = menuBarViewModel
         self.generalSettingsViewModel = generalSettingsViewModel
         self.recommendedAppsStore = recommendedAppsStore
+        self.globalTextTypesStore = globalTextTypesStore
         self.languageStore = languageStore
         self.localizer = localizer
         self.applicationLocator = applicationLocator
@@ -37,6 +40,11 @@ struct SettingsWindowView: View {
             RecommendedAppsSettingsSection(
                 recommendedAppsStore: recommendedAppsStore,
                 availableEditors: menuBarViewModel.availableEditors,
+                localizer: localizer
+            )
+
+            GlobalTextTypesSettingsSection(
+                globalTextTypesStore: globalTextTypesStore,
                 localizer: localizer
             )
 

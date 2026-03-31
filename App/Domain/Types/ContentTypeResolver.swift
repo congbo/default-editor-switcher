@@ -19,7 +19,7 @@ enum ContentTypeResolver {
         }
     }
 
-    static let developerTextExtensions: Set<String> = [
+    static let builtInGlobalTextExtensions: Set<String> = [
         "txt",
         "md",
         "mdx",
@@ -52,6 +52,8 @@ enum ContentTypeResolver {
         "svelte",
     ]
 
+    static let defaultEnabledGlobalTextExtensions: Set<String> = builtInGlobalTextExtensions.subtracting(["html"])
+
     static func normalizeExtension(_ rawExtension: String) -> String {
         rawExtension
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -62,7 +64,7 @@ enum ContentTypeResolver {
     static func extensions(for scope: FileScope) -> Set<String> {
         switch scope {
         case .allText:
-            return developerTextExtensions
+            return defaultEnabledGlobalTextExtensions
         case .language(let bucket):
             return bucket.extensions
         case .customExtensions(let extensions):
@@ -78,6 +80,13 @@ enum ContentTypeResolver {
 
     static func resolutions(for scope: FileScope) -> [Resolution] {
         extensions(for: scope)
+            .sorted()
+            .map(resolve(for:))
+    }
+
+    static func resolutions(forExtensions extensions: Set<String>) -> [Resolution] {
+        extensions
+            .map(normalizeExtension)
             .sorted()
             .map(resolve(for:))
     }

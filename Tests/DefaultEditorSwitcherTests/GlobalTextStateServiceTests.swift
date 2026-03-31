@@ -13,7 +13,7 @@ final class GlobalTextStateServiceTests: XCTestCase {
                     markdownType.identifier: "com.microsoft.VSCode",
                 ]
             ),
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "md", type: markdownType),
@@ -53,7 +53,7 @@ final class GlobalTextStateServiceTests: XCTestCase {
                     markdownType.identifier: "com.apple.TextEdit",
                 ]
             ),
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "md", type: markdownType),
@@ -94,7 +94,7 @@ final class GlobalTextStateServiceTests: XCTestCase {
                     textType.identifier: "com.microsoft.VSCode",
                 ]
             ),
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "md", type: markdownType),
@@ -126,7 +126,7 @@ final class GlobalTextStateServiceTests: XCTestCase {
         let textType = UTType(filenameExtension: "txt")!
         let service = GlobalTextStateService(
             client: StubLaunchServicesClient(currentEditorBundleIDs: [:]),
-            resolutionsProvider: { _ in
+            resolutionsProvider: {
                 [
                     ContentTypeResolver.Resolution(normalizedExtension: "txt", type: textType),
                     ContentTypeResolver.Resolution(normalizedExtension: "mystery", type: nil),
@@ -139,6 +139,36 @@ final class GlobalTextStateServiceTests: XCTestCase {
         XCTAssertEqual(state.status, .unavailable)
         XCTAssertEqual(state.inspectedContentTypeIdentifiers, [textType.identifier])
         XCTAssertNil(state.currentBundleID)
+    }
+
+    func testCurrentStateIgnoresDisabledHTMLType() {
+        let cssType = UTType(filenameExtension: "css")!
+        let htmlType = UTType(filenameExtension: "html")!
+        let service = GlobalTextStateService(
+            client: StubLaunchServicesClient(
+                currentEditorBundleIDs: [
+                    cssType.identifier: "com.microsoft.VSCode",
+                    htmlType.identifier: "com.apple.Safari",
+                ]
+            ),
+            enabledExtensionsProvider: { ["css"] }
+        )
+
+        let state = service.currentState()
+
+        XCTAssertEqual(state.inspectedContentTypeIdentifiers, [cssType.identifier])
+        XCTAssertEqual(state.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(
+            state.extensionAssociations,
+            [
+                .init(
+                    normalizedExtension: "css",
+                    contentTypeIdentifier: cssType.identifier,
+                    bundleID: "com.microsoft.VSCode"
+                )
+            ]
+        )
+        XCTAssertNotEqual(state.inspectedContentTypeIdentifiers, [htmlType.identifier])
     }
 }
 

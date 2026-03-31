@@ -4,6 +4,9 @@
     "" : {
 
     },
+    ".%@" : {
+
+    },
     "%@: macOS rejected the change (OSStatus %d)." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -223,6 +226,23 @@
         }
       }
     },
+    "Checked types will be overwritten together when you choose \"Use … for All Text Files\" from the menu bar." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked types will be overwritten together when you choose \"Use … for All Text Files\" from the menu bar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当你在菜单栏中选择“Use … for All Text Files”时，已勾选的类型会一起被覆盖。"
+          }
+        }
+      }
+    },
     "Checking the current global text editor." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -274,6 +294,40 @@
         }
       }
     },
+    "Choose which file types are affected by the menu bar's one-click global switch. HTML stays available here, but is off by default." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose which file types are affected by the menu bar's one-click global switch. HTML stays available here, but is off by default."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择哪些文件类型会被菜单栏的一键全局切换影响。HTML 仍然保留为可选项，但默认关闭。"
+          }
+        }
+      }
+    },
+    "Config & Data" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Config & Data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置与数据"
+          }
+        }
+      }
+    },
     "Completed with Issues" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -304,6 +358,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前默认编辑器"
+          }
+        }
+      }
+    },
+    "Documents" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documents"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文档"
           }
         }
       }
@@ -454,6 +525,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通用"
+          }
+        }
+      }
+    },
+    "Global Text Types" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Global Text Types"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局文本类型"
+          }
+        }
+      }
+    },
+    "Languages" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Languages"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编程语言"
           }
         }
       }
@@ -796,6 +901,23 @@
         }
       }
     },
+    "Shell Scripts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shell Scripts"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shell 脚本"
+          }
+        }
+      }
+    },
     "Quit" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1051,6 +1173,23 @@
         }
       }
     },
+    "Type unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "类型不可用"
+          }
+        }
+      }
+    },
     "Use %@ for All Text Files" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1080,6 +1219,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认使用系统语言，或为应用自身文案强制使用英文或中文。"
+          }
+        }
+      }
+    },
+    "Web" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web"
+          }
+        }
+      }
+    },
+    "UTI: %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI: %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI：%@。"
+          }
+        }
+      }
+    },
+    "UTI: %@. Default off to avoid browser prompts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI: %@. Default off to avoid browser prompts."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI：%@。默认关闭以避免触发浏览器提示。"
+          }
+        }
+      }
+    },
+    "UTI: %@. Enabled by default." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI: %@. Enabled by default."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTI：%@。默认启用。"
           }
         }
       }

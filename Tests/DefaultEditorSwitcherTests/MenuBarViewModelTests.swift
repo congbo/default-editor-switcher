@@ -114,6 +114,29 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.statusItemIconLookupPath, "/Applications/TRAE.app")
     }
 
+    func testGlobalTextTypePreferenceChangesTriggerReload() {
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(status: .single(bundleID: "com.apple.TextEdit"), inspectedContentTypeIdentifiers: ["public.plain-text"]),
+                GlobalTextState(status: .single(bundleID: "com.microsoft.VSCode"), inspectedContentTypeIdentifiers: ["public.plain-text", "public.css"]),
+            ]
+        )
+        let globalTextTypesStore = StubGlobalTextTypesStore()
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: nil,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            globalTextTypesStore: globalTextTypesStore
+        )
+
+        viewModel.load()
+        globalTextTypesStore.sendChange()
+
+        XCTAssertEqual(stateService.loadCount, 2)
+        XCTAssertEqual(viewModel.currentState?.inspectedContentTypeIdentifiers, ["public.plain-text", "public.css"])
+    }
+
     func testApplyEditorStoresLatestAggregateReportAndTriggersReload() {
         let report = GlobalTextSwitchReport(
             requestedBundleID: "com.microsoft.VSCode",
@@ -1041,6 +1064,22 @@ private final class StubLocalizer: AppTextLocalizing {
 
     func formattedString(_ key: String, _ arguments: CVarArg...) -> String {
         String(format: string(key), locale: Locale(identifier: languageCode), arguments: arguments)
+    }
+
+    func sendChange() {
+        subject.send(())
+    }
+}
+
+private final class StubGlobalTextTypesStore: GlobalTextTypesStoring {
+    private let subject = PassthroughSubject<Void, Never>()
+
+    var objectWillChangePublisher: AnyPublisher<Void, Never> {
+        subject.eraseToAnyPublisher()
+    }
+
+    func enabledExtensions() -> Set<String> {
+        ContentTypeResolver.defaultEnabledGlobalTextExtensions
     }
 
     func sendChange() {

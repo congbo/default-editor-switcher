@@ -95,6 +95,7 @@ final class MenuBarViewModel: ObservableObject {
     private let switchExecutor: any GlobalTextSwitchExecuting
     private let applicationLocator: ApplicationLocating
     private let recommendedAppsStore: any RecommendedMenuAppsStoring
+    private let globalTextTypesStore: any GlobalTextTypesStoring
     private let localizer: any AppTextLocalizing
     private let switchFeedbackFormatter: any GlobalTextSwitchFeedbackFormatting
     private var hasLoadedOnce = false
@@ -107,6 +108,7 @@ final class MenuBarViewModel: ObservableObject {
         switchExecutor: any GlobalTextSwitchExecuting = BackgroundGlobalTextSwitchExecutor(),
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator(),
         recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
+        globalTextTypesStore: any GlobalTextTypesStoring = TransientGlobalTextTypesStore(),
         localizer: any AppTextLocalizing = PassthroughLocalizer(),
         switchFeedbackFormatter: (any GlobalTextSwitchFeedbackFormatting)? = nil
     ) {
@@ -116,6 +118,7 @@ final class MenuBarViewModel: ObservableObject {
         self.switchExecutor = switchExecutor
         self.applicationLocator = applicationLocator
         self.recommendedAppsStore = recommendedAppsStore
+        self.globalTextTypesStore = globalTextTypesStore
         self.localizer = localizer
         self.switchFeedbackFormatter = switchFeedbackFormatter ?? GlobalTextSwitchFeedbackFormatter(
             localizer: localizer,
@@ -372,6 +375,13 @@ final class MenuBarViewModel: ObservableObject {
 
     private func bindPreferenceUpdates() {
         recommendedAppsStore.objectWillChangePublisher
+            .sink { [weak self] in
+                guard let self, self.hasLoadedOnce else { return }
+                self.reloadAllData()
+            }
+            .store(in: &cancellables)
+
+        globalTextTypesStore.objectWillChangePublisher
             .sink { [weak self] in
                 guard let self, self.hasLoadedOnce else { return }
                 self.reloadAllData()

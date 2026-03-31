@@ -27,16 +27,21 @@ protocol GlobalTextSwitchCoordinating {
 
 struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
     private let verifier: LaunchServicesAssociationVerifying
-    private let resolutionsProvider: (FileScope) -> [ContentTypeResolver.Resolution]
+    private let resolutionsProvider: () -> [ContentTypeResolver.Resolution]
     private let verificationRoles: [PreferredHandlerRole]
 
     init(
         verifier: LaunchServicesAssociationVerifying = LaunchServicesAssociationVerifier(),
-        resolutionsProvider: @escaping (FileScope) -> [ContentTypeResolver.Resolution] = ContentTypeResolver.resolutions(for:),
+        resolutionsProvider: (() -> [ContentTypeResolver.Resolution])? = nil,
+        enabledExtensionsProvider: @escaping () -> Set<String> = {
+            ContentTypeResolver.defaultEnabledGlobalTextExtensions
+        },
         verificationRoles: [PreferredHandlerRole] = [.editor]
     ) {
         self.verifier = verifier
-        self.resolutionsProvider = resolutionsProvider
+        self.resolutionsProvider = resolutionsProvider ?? {
+            ContentTypeResolver.resolutions(forExtensions: enabledExtensionsProvider())
+        }
         self.verificationRoles = verificationRoles
     }
 
@@ -67,7 +72,7 @@ struct GlobalTextSwitchCoordinator: GlobalTextSwitchCoordinating {
 
     private func declaredResolutions() -> [ContentTypeResolver.Resolution] {
         var seen = Set<String>()
-        return resolutionsProvider(.allText).filter { resolution in
+        return resolutionsProvider().filter { resolution in
             guard resolution.isDeclared else {
                 return false
             }
