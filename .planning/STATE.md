@@ -117,10 +117,11 @@ No active blockers remain for v1.0. No follow-up milestone is currently planned.
 | 260330-wp8 | 再次删除 GitHub release/tag，确认版本保持 1.0 (1)，重新 build 并发布 v1.0-preview.1 | 2026-03-30 | 6ebb9fc | [260330-wp8-github-release-tag-v1-0-preview-1-1-0-1-](./quick/260330-wp8-github-release-tag-v1-0-preview-1-1-0-1-/) |
 | 260330-ve9 | 再次删除 GitHub release/tag，保持版本号 1.0 (1)，基于当前 master 重新 build 并发布 v1.0-preview.1 | 2026-03-30 | 4b89281 | [260330-ve9-github-release-tag-1-0-1-push-master-bui](./quick/260330-ve9-github-release-tag-1-0-1-push-master-bui/) |
 | 260330-wen | Redesign app icon/logo for Default Editor Switcher with minimalist native blue developer-tool direction | 2026-03-30 | working-tree | [260330-wen-redesign-app-icon-logo-for-default-edito](./quick/260330-wen-redesign-app-icon-logo-for-default-edito/) |
+| 260331-jwp | 再次删除 GitHub release/tag，确认版本保持 1.0 (1)，push 当前 master，重新 build 并发布 v1.0-preview.1 | 2026-03-31 | 122d2f9 | [260331-jwp-github-release-tag-1-0-1-push-master-bui](./quick/260331-jwp-github-release-tag-1-0-1-push-master-bui/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-30 - Completed quick task 260330-wen: redesign app icon/logo for Default Editor Switcher with minimalist native blue developer-tool direction
+Last activity: 2026-03-31 - Completed quick task 260331-jwp: 再次删除 GitHub release/tag 并重新发布 v1.0-preview.1
 Last session: 2026-03-26T05:08:30+08:00
 Stopped at: v1.0 milestone archival complete
 Resume file: .planning/ROADMAP.md
