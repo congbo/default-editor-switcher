@@ -97,6 +97,44 @@ struct SettingsRefreshStatus: Equatable {
     }
 }
 
+struct MenuBarSwitchVerificationPolicy: Equatable {
+    let initialPollIntervalNanoseconds: UInt64
+    let initialMaxAttempts: Int
+    let repairPollIntervalNanoseconds: UInt64
+    let repairMaxAttempts: Int
+
+    init(
+        initialPollInterval: TimeInterval = 0.1,
+        initialTimeout: TimeInterval = 1.5,
+        repairPollInterval: TimeInterval = 0.2,
+        repairTimeout: TimeInterval = 3
+    ) {
+        initialPollIntervalNanoseconds = Self.nanoseconds(for: initialPollInterval)
+        initialMaxAttempts = Self.maxAttempts(
+            pollInterval: initialPollInterval,
+            timeout: initialTimeout
+        )
+        repairPollIntervalNanoseconds = Self.nanoseconds(for: repairPollInterval)
+        repairMaxAttempts = Self.maxAttempts(
+            pollInterval: repairPollInterval,
+            timeout: repairTimeout
+        )
+    }
+
+    private static func nanoseconds(for pollInterval: TimeInterval) -> UInt64 {
+        UInt64(max(pollInterval, 0.01) * 1_000_000_000)
+    }
+
+    private static func maxAttempts(
+        pollInterval: TimeInterval,
+        timeout: TimeInterval
+    ) -> Int {
+        let sanitizedPollInterval = max(pollInterval, 0.01)
+        let sanitizedTimeout = max(timeout, sanitizedPollInterval)
+        return max(Int(ceil(sanitizedTimeout / sanitizedPollInterval)), 1)
+    }
+}
+
 @MainActor
 final class MenuBarViewModel: ObservableObject {
     @Published private(set) var summary: MenuBarSummary
@@ -115,43 +153,56 @@ final class MenuBarViewModel: ObservableObject {
     private let appDiscovery: EditorDiscovering
     private let switchCoordinator: GlobalTextSwitchCoordinating?
     private let switchExecutor: any GlobalTextSwitchExecuting
+    private let switchRefreshScheduler: any LaunchServicesRefreshScheduling
     private let applicationLocator: ApplicationLocating
     private let recommendedAppsStore: any RecommendedMenuAppsStoring
     private let globalTextTypesStore: any GlobalTextTypesStoring
     private let localizer: any AppTextLocalizing
     private let switchFeedbackFormatter: any GlobalTextSwitchFeedbackFormatting
     private let settingsActivityStore: SettingsActivityStore?
+    private let switchVerificationPolicy: MenuBarSwitchVerificationPolicy
+    private let switchVerificationSleeper: @Sendable (UInt64) async throws -> Void
     private var hasLoadedOnce = false
     private var cancellables: Set<AnyCancellable> = []
+    private var switchVerificationTask: Task<Void, Never>?
+    private var switchVerificationToken = UUID()
 
     init(
         stateService: GlobalTextStateServicing = GlobalTextStateService(),
         appDiscovery: EditorDiscovering = WorkspaceAppDiscovery(),
         switchCoordinator: GlobalTextSwitchCoordinating? = GlobalTextSwitchCoordinator(),
         switchExecutor: any GlobalTextSwitchExecuting = BackgroundGlobalTextSwitchExecutor(),
+        switchRefreshScheduler: any LaunchServicesRefreshScheduling = LaunchServicesRefreshScheduler(),
         applicationLocator: ApplicationLocating = WorkspaceApplicationLocator(),
         recommendedAppsStore: any RecommendedMenuAppsStoring = TransientRecommendedMenuAppsStore(),
         globalTextTypesStore: any GlobalTextTypesStoring = TransientGlobalTextTypesStore(),
         localizer: any AppTextLocalizing = PassthroughLocalizer(),
         switchFeedbackFormatter: (any GlobalTextSwitchFeedbackFormatting)? = nil,
-        settingsActivityStore: SettingsActivityStore? = nil
+        settingsActivityStore: SettingsActivityStore? = nil,
+        switchVerificationPolicy: MenuBarSwitchVerificationPolicy = MenuBarSwitchVerificationPolicy(),
+        switchVerificationSleeper: @escaping @Sendable (UInt64) async throws -> Void = { nanoseconds in
+            try await Task.sleep(nanoseconds: nanoseconds)
+        }
     ) {
         self.stateService = stateService
         self.appDiscovery = appDiscovery
         self.switchCoordinator = switchCoordinator
         self.switchExecutor = switchExecutor
+        self.switchRefreshScheduler = switchRefreshScheduler
         self.applicationLocator = applicationLocator
         self.recommendedAppsStore = recommendedAppsStore
         self.globalTextTypesStore = globalTextTypesStore
         self.localizer = localizer
         self.settingsActivityStore = settingsActivityStore
+        self.switchVerificationPolicy = switchVerificationPolicy
+        self.switchVerificationSleeper = switchVerificationSleeper
         self.switchFeedbackFormatter = switchFeedbackFormatter ?? GlobalTextSwitchFeedbackFormatter(
             localizer: localizer,
             applicationLocator: applicationLocator
         )
         self.summary = MenuBarSummary(
             title: localizer.string("Loading..."),
-            detail: localizer.string("Checking the current global text editor.")
+            detail: localizer.string("Checking the current global text default app.")
         )
         bindPreferenceUpdates()
     }
@@ -210,6 +261,7 @@ final class MenuBarViewModel: ObservableObject {
 
     private func reloadAllData(source: ReloadSource) {
         hasLoadedOnce = true
+        cancelPendingSwitchVerification()
 
         do {
             let state = stateService.currentState()
@@ -288,6 +340,7 @@ final class MenuBarViewModel: ObservableObject {
             return
         }
 
+        cancelPendingSwitchVerification()
         let requestedEditorName = displayName(for: bundleID, displayNames: displayNamesByBundleID(in: availableEditors))
         log(
             level: .info,
@@ -307,7 +360,20 @@ final class MenuBarViewModel: ObservableObject {
 
             self.lastSwitchReport = report
             self.applyingBundleID = nil
-            self.refreshStateOnly()
+            if report.pendingVerificationCount > 0,
+               let currentState = self.currentState {
+                self.switchRefreshScheduler.scheduleFastRefresh()
+                let projectedState = self.projectedState(
+                    from: currentState,
+                    requestedBundleID: bundleID,
+                    report: report
+                )
+                self.currentState = projectedState
+                self.rebuildPresentation(state: projectedState, candidates: self.availableEditors)
+                self.scheduleSwitchVerification(for: report)
+            } else {
+                self.refreshStateOnly()
+            }
             self.logSwitchOutcome(for: report)
         }
     }
@@ -321,7 +387,7 @@ final class MenuBarViewModel: ObservableObject {
             return MenuBarSummary(
                 title: displayName(for: bundleID, displayNames: displayNames),
                 detail: localizer.formattedString(
-                    "Current global text editor across %d declared text types.",
+                    "Current global text default app across %d declared text types.",
                     state.inspectedContentTypeIdentifiers.count
                 )
             )
@@ -352,7 +418,7 @@ final class MenuBarViewModel: ObservableObject {
         case .unavailable:
             return MenuBarSummary(
                 title: localizer.string("No Global Editor Detected"),
-                detail: localizer.string("No declared text type currently reports an editor handler.")
+                detail: localizer.string("No declared text type currently reports a default app.")
             )
         }
     }
@@ -519,6 +585,231 @@ final class MenuBarViewModel: ObservableObject {
         Dictionary(candidates.map { ($0.bundleID, $0.displayName) }, uniquingKeysWith: { first, _ in first })
     }
 
+    private func scheduleSwitchVerification(for report: GlobalTextSwitchReport) {
+        cancelPendingSwitchVerification()
+        let token = UUID()
+        switchVerificationToken = token
+        switchVerificationTask = Task { [weak self] in
+            await self?.runSwitchVerification(for: report, token: token)
+        }
+    }
+
+    private func cancelPendingSwitchVerification() {
+        switchVerificationTask?.cancel()
+        switchVerificationTask = nil
+        switchVerificationToken = UUID()
+    }
+
+    private func runSwitchVerification(
+        for report: GlobalTextSwitchReport,
+        token: UUID
+    ) async {
+        defer {
+            if switchVerificationToken == token {
+                switchVerificationTask = nil
+            }
+        }
+
+        if let state = await verifiedState(
+            for: report,
+            pollIntervalNanoseconds: switchVerificationPolicy.initialPollIntervalNanoseconds,
+            maxAttempts: switchVerificationPolicy.initialMaxAttempts
+        ) {
+            applyVerifiedSwitchState(state, for: report)
+            return
+        }
+
+        guard !Task.isCancelled else {
+            return
+        }
+
+        logSwitchVerificationRepairStarted(for: report)
+        switchRefreshScheduler.scheduleRepairRefresh()
+
+        if let state = await verifiedState(
+            for: report,
+            pollIntervalNanoseconds: switchVerificationPolicy.repairPollIntervalNanoseconds,
+            maxAttempts: switchVerificationPolicy.repairMaxAttempts
+        ) {
+            applyVerifiedSwitchState(state, for: report)
+            return
+        }
+
+        guard !Task.isCancelled else {
+            return
+        }
+
+        lastSwitchReport = report
+        logSwitchVerificationUnconfirmed(for: report)
+    }
+
+    private func verifiedState(
+        for report: GlobalTextSwitchReport,
+        pollIntervalNanoseconds: UInt64,
+        maxAttempts: Int
+    ) async -> GlobalTextState? {
+        for attempt in 0..<maxAttempts {
+            if Task.isCancelled {
+                return nil
+            }
+
+            if attempt > 0 {
+                do {
+                    try await switchVerificationSleeper(pollIntervalNanoseconds)
+                } catch {
+                    return nil
+                }
+            }
+
+            let state = stateService.currentState()
+            if reportIsVerified(report, by: state) {
+                return state
+            }
+        }
+
+        return nil
+    }
+
+    private func applyVerifiedSwitchState(
+        _ state: GlobalTextState,
+        for report: GlobalTextSwitchReport
+    ) {
+        let verifiedReport = resolvedReport(from: report, using: state)
+        lastSwitchReport = verifiedReport
+        currentState = state
+        rebuildPresentation(state: state, candidates: availableEditors)
+        logSwitchVerificationConfirmed(for: report)
+    }
+
+    private func reportIsVerified(_ report: GlobalTextSwitchReport, by state: GlobalTextState) -> Bool {
+        guard report.pendingVerificationCount > 0 else {
+            return true
+        }
+
+        let bundleIDsByContentType = Dictionary(
+            state.extensionAssociations.map { ($0.contentTypeIdentifier, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        return report.failures
+            .filter { $0.status == AssociationVerificationStatus.pendingVerification.rawValue }
+            .allSatisfy { failure in
+                resolvedBundleID(
+                    for: failure,
+                    associationsByContentType: bundleIDsByContentType,
+                    fallbackBundleID: state.currentBundleID
+                ) == report.requestedBundleID
+            }
+    }
+
+    private func resolvedReport(
+        from report: GlobalTextSwitchReport,
+        using state: GlobalTextState
+    ) -> GlobalTextSwitchReport {
+        let associationsByContentType = Dictionary(
+            state.extensionAssociations.map { ($0.contentTypeIdentifier, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        var matchedCount = report.matchedCount
+        var failures: [GlobalTextSwitchReport.Failure] = []
+
+        for failure in report.failures {
+            guard failure.status == AssociationVerificationStatus.pendingVerification.rawValue else {
+                failures.append(failure)
+                continue
+            }
+
+            let effectiveBundleID = resolvedBundleID(
+                for: failure,
+                associationsByContentType: associationsByContentType,
+                fallbackBundleID: state.currentBundleID
+            )
+            if effectiveBundleID == report.requestedBundleID {
+                matchedCount += 1
+                continue
+            }
+
+            failures.append(
+                GlobalTextSwitchReport.Failure(
+                    contentTypeIdentifier: failure.contentTypeIdentifier,
+                    scopeLabel: failure.scopeLabel,
+                    role: failure.role,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: effectiveBundleID,
+                    statusCode: nil,
+                    diagnostic: failure.diagnostic
+                )
+            )
+        }
+
+        return GlobalTextSwitchReport(
+            requestedBundleID: report.requestedBundleID,
+            matchedCount: matchedCount,
+            mismatchedCount: report.mismatchedCount,
+            pendingVerificationCount: failures.filter {
+                $0.status == AssociationVerificationStatus.pendingVerification.rawValue
+            }.count,
+            unsupportedCount: report.unsupportedCount,
+            writeFailedCount: report.writeFailedCount,
+            processedContentTypeIdentifiers: report.processedContentTypeIdentifiers,
+            processedExtensions: report.processedExtensions,
+            failures: failures
+        )
+    }
+
+    private func projectedState(
+        from state: GlobalTextState,
+        requestedBundleID: String,
+        report: GlobalTextSwitchReport
+    ) -> GlobalTextState {
+        let unsupportedContentTypeIdentifiers = Set(
+            report.failures
+                .filter { $0.status == AssociationVerificationStatus.unsupportedTarget.rawValue }
+                .map(\.contentTypeIdentifier)
+        )
+        let updatedAssociations = state.extensionAssociations.map { association in
+            let projectedBundleID = unsupportedContentTypeIdentifiers.contains(association.contentTypeIdentifier)
+                ? association.bundleID
+                : requestedBundleID
+            return GlobalTextState.ExtensionAssociation(
+                normalizedExtension: association.normalizedExtension,
+                contentTypeIdentifier: association.contentTypeIdentifier,
+                bundleID: projectedBundleID,
+                allBundleID: unsupportedContentTypeIdentifiers.contains(association.contentTypeIdentifier)
+                    ? association.allBundleID
+                    : requestedBundleID,
+                viewerBundleID: unsupportedContentTypeIdentifiers.contains(association.contentTypeIdentifier)
+                    ? association.viewerBundleID
+                    : requestedBundleID,
+                editorBundleID: unsupportedContentTypeIdentifiers.contains(association.contentTypeIdentifier)
+                    ? association.editorBundleID
+                    : requestedBundleID
+            )
+        }
+        let uniqueBundleIDs = orderedUnique(updatedAssociations.compactMap(\.bundleID))
+        let status: GlobalTextState.Status
+
+        if uniqueBundleIDs.isEmpty {
+            status = .single(bundleID: requestedBundleID)
+        } else if uniqueBundleIDs.count == 1 {
+            status = .single(bundleID: uniqueBundleIDs[0])
+        } else {
+            status = .mixed(bundleIDs: uniqueBundleIDs)
+        }
+
+        return GlobalTextState(
+            status: status,
+            inspectedContentTypeIdentifiers: state.inspectedContentTypeIdentifiers,
+            extensionAssociations: updatedAssociations,
+            representativeBundleID: requestedBundleID
+        )
+    }
+
+    private func orderedUnique(_ values: [String]) -> [String] {
+        var seen = Set<String>()
+        return values.filter { seen.insert($0).inserted }
+    }
+
     private func log(
         level: SettingsLogEntry.Level,
         category: SettingsLogEntry.Category,
@@ -530,6 +821,45 @@ final class MenuBarViewModel: ObservableObject {
             category: category,
             message: message,
             targetDisplayName: targetDisplayName
+        )
+    }
+
+    private func logSwitchVerificationRepairStarted(for report: GlobalTextSwitchReport) {
+        let requestedEditorName = displayName(
+            for: report.requestedBundleID,
+            displayNames: displayNamesByBundleID(in: availableEditors)
+        )
+        log(
+            level: .info,
+            category: .switching,
+            message: "Verification is taking longer than expected for \(requestedEditorName). Running a deeper Launch Services refresh.",
+            targetDisplayName: requestedEditorName
+        )
+    }
+
+    private func logSwitchVerificationConfirmed(for report: GlobalTextSwitchReport) {
+        let requestedEditorName = displayName(
+            for: report.requestedBundleID,
+            displayNames: displayNamesByBundleID(in: availableEditors)
+        )
+        log(
+            level: .info,
+            category: .switching,
+            message: "Background verification confirmed \(requestedEditorName).",
+            targetDisplayName: requestedEditorName
+        )
+    }
+
+    private func logSwitchVerificationUnconfirmed(for report: GlobalTextSwitchReport) {
+        let requestedEditorName = displayName(
+            for: report.requestedBundleID,
+            displayNames: displayNamesByBundleID(in: availableEditors)
+        )
+        log(
+            level: .warning,
+            category: .switching,
+            message: "macOS has not confirmed \(requestedEditorName) yet. The menu stays on the requested editor; use Refresh to check the live state.",
+            targetDisplayName: requestedEditorName
         )
     }
 
@@ -547,7 +877,17 @@ final class MenuBarViewModel: ObservableObject {
             return
         }
 
-        let level: SettingsLogEntry.Level = report.matchedCount > 0 ? .warning : .error
+        if report.pendingVerificationCount > 0, !report.hasBlockingFailures {
+            log(
+                level: .info,
+                category: .switching,
+                message: "Updated text types to \(requestedEditorName). Verifying system state in background.",
+                targetDisplayName: requestedEditorName
+            )
+            return
+        }
+
+        let level = switchFailureLogLevel(for: report)
         let feedback = feedback(from: report, displayNames: displayNames)
         let summaryMessage = feedback?.headline ?? "Some text types could not switch to \(requestedEditorName)."
         log(
@@ -565,5 +905,27 @@ final class MenuBarViewModel: ObservableObject {
                 targetDisplayName: requestedEditorName
             )
         }
+    }
+
+    private func switchFailureLogLevel(for report: GlobalTextSwitchReport) -> SettingsLogEntry.Level {
+        if report.writeFailedCount == 0, report.mismatchedCount == 0, report.unsupportedCount > 0 {
+            return .warning
+        }
+
+        return report.matchedCount > 0 ? .warning : .error
+    }
+
+    private func resolvedBundleID(
+        for failure: GlobalTextSwitchReport.Failure,
+        associationsByContentType: [String: GlobalTextState.ExtensionAssociation],
+        fallbackBundleID: String?
+    ) -> String? {
+        guard let association = associationsByContentType[failure.contentTypeIdentifier] else {
+            return fallbackBundleID
+        }
+
+        return association.bundleID(for: failure.role)
+            ?? association.bundleID
+            ?? fallbackBundleID
     }
 }

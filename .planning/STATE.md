@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Milestone archived
 stopped_at: Roadmap capped at v1.0; no follow-up milestone planned
-last_updated: "2026-03-30T07:56:45Z"
+last_updated: "2026-03-31T19:05:32Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -118,10 +118,12 @@ No active blockers remain for v1.0. No follow-up milestone is currently planned.
 | 260330-ve9 | 再次删除 GitHub release/tag，保持版本号 1.0 (1)，基于当前 master 重新 build 并发布 v1.0-preview.1 | 2026-03-30 | 4b89281 | [260330-ve9-github-release-tag-1-0-1-push-master-bui](./quick/260330-ve9-github-release-tag-1-0-1-push-master-bui/) |
 | 260330-wen | Redesign app icon/logo for Default Editor Switcher with minimalist native blue developer-tool direction | 2026-03-30 | working-tree | [260330-wen-redesign-app-icon-logo-for-default-edito](./quick/260330-wen-redesign-app-icon-logo-for-default-edito/) |
 | 260331-jwp | 再次删除 GitHub release/tag，确认版本保持 1.0 (1)，push 当前 master，重新 build 并发布 v1.0-preview.1 | 2026-03-31 | 122d2f9 | [260331-jwp-github-release-tag-1-0-1-push-master-bui](./quick/260331-jwp-github-release-tag-1-0-1-push-master-bui/) |
+| 260401-21l | Replace prompting switch path with silent Launch Services mutation | 2026-03-31 | working-tree | [260401-21l-replace-prompting-switch-path-with-silen](./quick/260401-21l-replace-prompting-switch-path-with-silen/) |
+| 260401-4am | README multilingual development notes: explain Launch Services rationale, macOS 26.4 prompt behavior, and launchservices secure plist commands | 2026-03-31 | working-tree | [260401-4am-readme-multilingual-development-notes-ex](./quick/260401-4am-readme-multilingual-development-notes-ex/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-31 - Completed quick task 260331-jwp: 再次删除 GitHub release/tag 并重新发布 v1.0-preview.1
+Last activity: 2026-03-31 - Completed quick task 260401-4am: README multilingual development notes: explain Launch Services rationale, macOS 26.4 prompt behavior, and launchservices secure plist commands
 Last session: 2026-03-26T05:08:30+08:00
 Stopped at: v1.0 milestone archival complete
 Resume file: .planning/ROADMAP.md

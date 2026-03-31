@@ -20,7 +20,7 @@ struct SettingsCopyFormatter {
         guard let state else {
             return SettingsStatusSnapshot(
                 title: localizer.string("Loading..."),
-                summary: localizer.string("Checking the current global text editor."),
+                summary: localizer.string("Checking the current global text default app."),
                 iconLookupPath: nil
             )
         }
@@ -43,7 +43,7 @@ struct SettingsCopyFormatter {
             let exampleExtensions = exampleExtensions(in: state.extensionAssociations)
             title = displayName(for: bundleID, displayNames: displayNames)
             summary = localizer.formattedString(
-                "Current editor covers %d declared text extensions, for example %@.",
+                "Current default app covers %d declared text extensions, for example %@.",
                 state.extensionAssociations.count,
                 exampleExtensions
             )
@@ -52,12 +52,12 @@ struct SettingsCopyFormatter {
             let representativeBundleID = state.currentBundleID
             title = representativeBundleID.map { displayName(for: $0, displayNames: displayNames) }
                 ?? localizer.string("Mixed Defaults")
-            summary = localizer.string("Declared text types are currently split across multiple editors.")
+            summary = localizer.string("Declared text types are currently split across multiple default apps.")
             titleIconLookupPath = representativeBundleID.flatMap { iconLookupPath(for: $0, iconPaths: iconPaths) }
         case .unavailable:
             return SettingsStatusSnapshot(
                 title: localizer.string("No Global Editor Detected"),
-                summary: localizer.string("No declared text type currently reports an editor handler."),
+                summary: localizer.string("No declared text type currently reports a default app."),
                 iconLookupPath: nil
             )
         }

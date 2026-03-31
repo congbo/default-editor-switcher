@@ -12,6 +12,8 @@ final class GlobalTextSwitchFeedbackFormatterTests: XCTestCase {
                     "%@: Still opens in %@.": "%@: 仍然会在 %@ 中打开。",
                     "%@: This editor does not support this type on this Mac.": "%@: 这个编辑器在这台 Mac 上不支持此类型。",
                     "%@: macOS rejected the change (OSStatus %d).": "%@: macOS 拒绝了这次变更（OSStatus %d）。",
+                    "macOS only reports a dynamic UTI for this extension, so app matching is limited.": "macOS 目前只为这个扩展名报告动态 UTI，因此应用匹配能力有限。",
+                    "viewer": "查看",
                 ],
                 languageCode: "zh-Hans"
             ),
@@ -39,7 +41,7 @@ final class GlobalTextSwitchFeedbackFormatterTests: XCTestCase {
                         statusCode: nil
                     ),
                     .init(
-                        contentTypeIdentifier: "public.python-script",
+                        contentTypeIdentifier: "dyn.ah62d4rv4ge80g55sq2",
                         scopeLabel: ".py",
                         role: .editor,
                         status: "unsupportedTarget",
@@ -64,9 +66,9 @@ final class GlobalTextSwitchFeedbackFormatterTests: XCTestCase {
             GlobalTextSwitchFeedback(
                 headline: "3 个文本类型未能切换到 Partial Editor。",
                 details: [
-                    ".md: 仍然会在 TextEdit 中打开。",
-                    ".py: 这个编辑器在这台 Mac 上不支持此类型。",
-                    ".rs: macOS 拒绝了这次变更（OSStatus -10810）。",
+                    ".md (查看): 仍然会在 TextEdit 中打开。",
+                    ".py (editor): 这个编辑器在这台 Mac 上不支持此类型。 macOS 目前只为这个扩展名报告动态 UTI，因此应用匹配能力有限。",
+                    ".rs (查看): macOS 拒绝了这次变更（OSStatus -10810）。",
                 ]
             )
         )
@@ -85,6 +87,39 @@ final class GlobalTextSwitchFeedbackFormatterTests: XCTestCase {
                 processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
                 processedExtensions: ["txt", "md"],
                 sampleFailures: []
+            ),
+            requestedEditorName: "Visual Studio Code"
+        )
+
+        XCTAssertNil(feedback)
+    }
+
+    func testFeedbackIgnoresPendingVerificationFailures() {
+        let formatter = GlobalTextSwitchFeedbackFormatter(
+            localizer: StubFeedbackLocalizer(strings: [:]),
+            applicationLocator: StubFeedbackApplicationLocator(displayNamesByBundleID: [:])
+        )
+
+        let feedback = formatter.feedback(
+            for: GlobalTextSwitchReport(
+                requestedBundleID: "com.microsoft.VSCode",
+                matchedCount: 0,
+                mismatchedCount: 0,
+                pendingVerificationCount: 1,
+                unsupportedCount: 0,
+                writeFailedCount: 0,
+                processedContentTypeIdentifiers: ["public.plain-text"],
+                processedExtensions: ["txt"],
+                sampleFailures: [
+                    .init(
+                        contentTypeIdentifier: "public.plain-text",
+                        scopeLabel: ".txt",
+                        role: .editor,
+                        status: AssociationVerificationStatus.pendingVerification.rawValue,
+                        effectiveBundleID: "com.apple.TextEdit",
+                        statusCode: nil
+                    )
+                ]
             ),
             requestedEditorName: "Visual Studio Code"
         )

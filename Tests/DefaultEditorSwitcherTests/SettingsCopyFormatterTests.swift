@@ -8,7 +8,7 @@ final class SettingsCopyFormatterTests: XCTestCase {
         let formatter = SettingsCopyFormatter(
             localizer: StubSettingsLocalizer(
                 strings: [
-                    "Current editor covers %d declared text extensions, for example %@.": "当前应用覆盖 %d 个已声明文本扩展名，例如 %@。",
+                    "Current default app covers %d declared text extensions, for example %@.": "当前默认应用覆盖 %d 个已声明文本扩展名，例如 %@。",
                 ]
             ),
             applicationLocator: StubSettingsApplicationLocator(
@@ -45,14 +45,14 @@ final class SettingsCopyFormatterTests: XCTestCase {
         )
 
         XCTAssertEqual(snapshot.title, "Visual Studio Code")
-        XCTAssertEqual(snapshot.summary, "当前应用覆盖 2 个已声明文本扩展名，例如 .md, .txt。")
+        XCTAssertEqual(snapshot.summary, "当前默认应用覆盖 2 个已声明文本扩展名，例如 .md, .txt。")
         XCTAssertEqual(snapshot.iconLookupPath, "/Applications/Visual Studio Code.app")
     }
 
     func testStatusSnapshotUsesMixedStateSummary() {
         let formatter = SettingsCopyFormatter(localizer: StubSettingsLocalizer(
             strings: [
-                "Declared text types are currently split across multiple editors.": "已声明文本类型当前分散在多个编辑器中。",
+                "Declared text types are currently split across multiple default apps.": "已声明文本类型当前分散在多个默认应用中。",
             ]
         ))
 
@@ -98,7 +98,7 @@ final class SettingsCopyFormatterTests: XCTestCase {
         )
 
         XCTAssertEqual(snapshot.title, "Visual Studio Code")
-        XCTAssertEqual(snapshot.summary, "已声明文本类型当前分散在多个编辑器中。")
+        XCTAssertEqual(snapshot.summary, "已声明文本类型当前分散在多个默认应用中。")
         XCTAssertEqual(snapshot.iconLookupPath, "/Applications/Visual Studio Code.app")
     }
 

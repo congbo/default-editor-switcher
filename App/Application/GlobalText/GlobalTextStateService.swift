@@ -10,6 +10,36 @@ struct GlobalTextState: Equatable {
         let normalizedExtension: String
         let contentTypeIdentifier: String
         let bundleID: String?
+        let allBundleID: String?
+        let viewerBundleID: String?
+        let editorBundleID: String?
+
+        init(
+            normalizedExtension: String,
+            contentTypeIdentifier: String,
+            bundleID: String?,
+            allBundleID: String? = nil,
+            viewerBundleID: String? = nil,
+            editorBundleID: String? = nil
+        ) {
+            self.normalizedExtension = normalizedExtension
+            self.contentTypeIdentifier = contentTypeIdentifier
+            self.bundleID = bundleID
+            self.allBundleID = allBundleID
+            self.viewerBundleID = viewerBundleID
+            self.editorBundleID = editorBundleID
+        }
+
+        func bundleID(for role: PreferredHandlerRole) -> String? {
+            switch role {
+            case .all:
+                return allBundleID
+            case .viewer:
+                return viewerBundleID
+            case .editor:
+                return editorBundleID
+            }
+        }
     }
 
     enum Status: Equatable {
@@ -103,10 +133,21 @@ struct GlobalTextStateService: GlobalTextStateServicing {
                 return nil
             }
 
+            let allBundleID = client.currentHandlerBundleID(for: type, role: .all)
+            let viewerBundleID = client.currentHandlerBundleID(for: type, role: .viewer)
+            let editorBundleID = client.currentHandlerBundleID(for: type, role: .editor)
+
             return GlobalTextState.ExtensionAssociation(
                 normalizedExtension: resolution.normalizedExtension,
                 contentTypeIdentifier: type.identifier,
-                bundleID: client.currentHandlerBundleID(for: type, role: .editor)
+                bundleID: preferredOpenerBundleID(
+                    allBundleID: allBundleID,
+                    viewerBundleID: viewerBundleID,
+                    editorBundleID: editorBundleID
+                ),
+                allBundleID: allBundleID,
+                viewerBundleID: viewerBundleID,
+                editorBundleID: editorBundleID
             )
         }
     }
@@ -121,7 +162,7 @@ struct GlobalTextStateService: GlobalTextStateServicing {
     }
 
     private func representativeCurrentBundleID(bundleIDs: [String]) -> String? {
-        if let plainTextBundleID = client.currentHandlerBundleID(for: .plainText, role: .editor) {
+        if let plainTextBundleID = preferredOpenerBundleID(for: .plainText) {
             return plainTextBundleID
         }
 
@@ -137,5 +178,21 @@ struct GlobalTextStateService: GlobalTextStateServicing {
 
             return lhs.value < rhs.value
         }?.key
+    }
+
+    private func preferredOpenerBundleID(for contentType: UTType) -> String? {
+        preferredOpenerBundleID(
+            allBundleID: client.currentHandlerBundleID(for: contentType, role: .all),
+            viewerBundleID: client.currentHandlerBundleID(for: contentType, role: .viewer),
+            editorBundleID: client.currentHandlerBundleID(for: contentType, role: .editor)
+        )
+    }
+
+    private func preferredOpenerBundleID(
+        allBundleID: String?,
+        viewerBundleID: String?,
+        editorBundleID: String?
+    ) -> String? {
+        allBundleID ?? viewerBundleID ?? editorBundleID
     }
 }

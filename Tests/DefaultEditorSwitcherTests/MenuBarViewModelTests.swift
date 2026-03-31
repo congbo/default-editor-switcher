@@ -250,7 +250,7 @@ final class MenuBarViewModelTests: XCTestCase {
             failureViewModel.lastSwitchFeedback,
             GlobalTextSwitchFeedback(
                 headline: "1 text types could not switch to Partial Editor.",
-                details: [".md: Still opens in TextEdit."]
+                details: [".md (editor): Still opens in TextEdit."]
             )
         )
         XCTAssertEqual(failureViewModel.summary.title, "Partial Editor")
@@ -373,6 +373,565 @@ final class MenuBarViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
         XCTAssertEqual(stateService.loadCount, 2)
         XCTAssertEqual(editorDiscovery.loadCount, 1)
+    }
+
+    func testApplyEditorOptimisticallyUpdatesPresentationForPendingVerification() {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 1,
+            mismatchedCount: 0,
+            pendingVerificationCount: 1,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                )
+            ]
+        )
+        let activityStore = SettingsActivityStore()
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(
+                        status: .mixed(bundleIDs: ["com.apple.TextEdit"]),
+                        inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                        extensionAssociations: [
+                            .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                            .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                        ],
+                        representativeBundleID: "com.microsoft.VSCode"
+                    )
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+
+        XCTAssertNil(viewModel.applyingBundleID)
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.statusItemIconLookupPath, "/Applications/Visual Studio Code.app")
+        XCTAssertTrue(
+            viewModel.sections
+                .flatMap(\.rows)
+                .first(where: { $0.bundleID == "com.microsoft.VSCode" })?
+                .isCurrent == true
+        )
+        XCTAssertNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(refreshScheduler.repairRefreshCount, 0)
+        XCTAssertEqual(
+            viewModel.settingsLogEntries.first?.message,
+            "Updated text types to Visual Studio Code. Verifying system state in background."
+        )
+    }
+
+    func testPendingVerificationEventuallyReconcilesWithoutManualRefresh() async {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 1,
+            mismatchedCount: 0,
+            pendingVerificationCount: 1,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                )
+            ]
+        )
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(
+                    status: .mixed(bundleIDs: ["com.microsoft.VSCode", "com.apple.TextEdit"]),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.microsoft.VSCode"
+                ),
+                GlobalTextState(
+                    status: .mixed(bundleIDs: ["com.microsoft.VSCode", "com.apple.TextEdit"]),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.microsoft.VSCode"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.microsoft.VSCode"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.microsoft.VSCode"),
+                    ],
+                    representativeBundleID: "com.microsoft.VSCode"
+                ),
+            ]
+        )
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            switchVerificationPolicy: MenuBarSwitchVerificationPolicy(
+                initialPollInterval: 0.01,
+                initialTimeout: 0.02,
+                repairPollInterval: 0.01,
+                repairTimeout: 0.02
+            ),
+            switchVerificationSleeper: { _ in }
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+        await exhaustMainActorTurns()
+
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.lastSwitchReport?.pendingVerificationCount, 0)
+        XCTAssertEqual(viewModel.lastSwitchReport?.mismatchedCount, 0)
+        XCTAssertNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(refreshScheduler.repairRefreshCount, 0)
+        XCTAssertEqual(stateService.loadCount, 3)
+    }
+
+    func testApplyEditorStillSchedulesRefreshWhenUnsupportedTypesRemain() {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 0,
+            mismatchedCount: 0,
+            pendingVerificationCount: 1,
+            unsupportedCount: 1,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "dyn.unresolved"],
+            processedExtensions: ["txt", "conf"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "public.plain-text",
+                    scopeLabel: ".txt",
+                    role: .all,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                ),
+                .init(
+                    contentTypeIdentifier: "dyn.unresolved",
+                    scopeLabel: ".conf",
+                    role: .all,
+                    status: AssociationVerificationStatus.unsupportedTarget.rawValue,
+                    effectiveBundleID: nil,
+                    statusCode: nil
+                ),
+            ]
+        )
+        let activityStore = SettingsActivityStore()
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let viewModel = MenuBarViewModel(
+            stateService: StubStateService(
+                snapshots: [
+                    GlobalTextState(
+                        status: .single(bundleID: "com.apple.TextEdit"),
+                        inspectedContentTypeIdentifiers: ["public.plain-text", "dyn.unresolved"],
+                        extensionAssociations: [
+                            .init(
+                                normalizedExtension: "txt",
+                                contentTypeIdentifier: "public.plain-text",
+                                bundleID: "com.apple.TextEdit",
+                                allBundleID: "com.apple.TextEdit",
+                                viewerBundleID: "com.apple.TextEdit",
+                                editorBundleID: "com.apple.TextEdit"
+                            ),
+                            .init(
+                                normalizedExtension: "conf",
+                                contentTypeIdentifier: "dyn.unresolved",
+                                bundleID: "com.apple.TextEdit",
+                                allBundleID: "com.apple.TextEdit",
+                                viewerBundleID: "com.apple.TextEdit",
+                                editorBundleID: "com.apple.TextEdit"
+                            ),
+                        ],
+                        representativeBundleID: "com.apple.TextEdit"
+                    )
+                ]
+            ),
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertNotNil(viewModel.lastSwitchFeedback)
+        XCTAssertTrue(
+            viewModel.settingsLogEntries.contains {
+                $0.level == .warning
+                    && $0.message == "1 text types could not switch to Visual Studio Code."
+            }
+        )
+        XCTAssertTrue(
+            activityStore.entries.contains {
+                $0.level == .warning
+                    && $0.message == ".conf: This editor does not support this type on this Mac. macOS only reports a dynamic UTI for this extension, so app matching is limited."
+            }
+        )
+    }
+
+    func testPendingVerificationTriggersRepairAndEventuallyReconciles() async {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 0,
+            mismatchedCount: 0,
+            pendingVerificationCount: 2,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "public.plain-text",
+                    scopeLabel: ".txt",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                ),
+                .init(
+                    contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                )
+            ]
+        )
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .mixed(bundleIDs: ["com.microsoft.VSCode", "com.apple.TextEdit"]),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.microsoft.VSCode"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.microsoft.VSCode"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.microsoft.VSCode"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.microsoft.VSCode"),
+                    ],
+                    representativeBundleID: "com.microsoft.VSCode"
+                ),
+            ]
+        )
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            switchVerificationPolicy: MenuBarSwitchVerificationPolicy(
+                initialPollInterval: 0.01,
+                initialTimeout: 0.02,
+                repairPollInterval: 0.01,
+                repairTimeout: 0.02
+            ),
+            switchVerificationSleeper: { _ in }
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+        await exhaustMainActorTurns()
+
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.lastSwitchReport?.pendingVerificationCount, 0)
+        XCTAssertEqual(viewModel.lastSwitchReport?.mismatchedCount, 0)
+        XCTAssertNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(refreshScheduler.repairRefreshCount, 1)
+        XCTAssertEqual(stateService.loadCount, 5)
+    }
+
+    func testPendingVerificationTimeoutKeepsRequestedEditorAndLogsWarning() async {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 0,
+            mismatchedCount: 0,
+            pendingVerificationCount: 2,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "public.plain-text",
+                    scopeLabel: ".txt",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                ),
+                .init(
+                    contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                )
+            ]
+        )
+        let activityStore = SettingsActivityStore()
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+            ]
+        )
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: StubEditorDiscovery(candidates: sampleCandidates),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            settingsActivityStore: activityStore,
+            switchVerificationPolicy: MenuBarSwitchVerificationPolicy(
+                initialPollInterval: 0.01,
+                initialTimeout: 0.02,
+                repairPollInterval: 0.01,
+                repairTimeout: 0.02
+            ),
+            switchVerificationSleeper: { _ in }
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+        await exhaustMainActorTurns()
+
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.microsoft.VSCode")
+        XCTAssertEqual(viewModel.lastSwitchReport?.pendingVerificationCount, 2)
+        XCTAssertEqual(viewModel.lastSwitchReport?.mismatchedCount, 0)
+        XCTAssertNil(viewModel.lastSwitchFeedback)
+        XCTAssertEqual(viewModel.settingsLogEntries.first?.level, .warning)
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(refreshScheduler.repairRefreshCount, 1)
+        XCTAssertEqual(
+            viewModel.settingsLogEntries.first?.message,
+            "macOS has not confirmed Visual Studio Code yet. The menu stays on the requested editor; use Refresh to check the live state."
+        )
+    }
+
+    func testManualRefreshCancelsPendingVerificationTask() async {
+        let report = GlobalTextSwitchReport(
+            requestedBundleID: "com.microsoft.VSCode",
+            matchedCount: 0,
+            mismatchedCount: 0,
+            pendingVerificationCount: 2,
+            unsupportedCount: 0,
+            writeFailedCount: 0,
+            processedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+            processedExtensions: ["txt", "md"],
+            sampleFailures: [
+                .init(
+                    contentTypeIdentifier: "public.plain-text",
+                    scopeLabel: ".txt",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                ),
+                .init(
+                    contentTypeIdentifier: "net.daringfireball.markdown",
+                    scopeLabel: ".md",
+                    role: .editor,
+                    status: AssociationVerificationStatus.pendingVerification.rawValue,
+                    effectiveBundleID: "com.apple.TextEdit",
+                    statusCode: nil
+                )
+            ]
+        )
+        let blockingSleeper = BlockingVerificationSleeper()
+        let refreshScheduler = StubLaunchServicesRefreshScheduler()
+        let stateService = StubStateService(
+            snapshots: [
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.openai.atlas"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.openai.atlas"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.openai.atlas"),
+                    ],
+                    representativeBundleID: "com.openai.atlas"
+                ),
+                GlobalTextState(
+                    status: .single(bundleID: "com.apple.TextEdit"),
+                    inspectedContentTypeIdentifiers: ["public.plain-text", "net.daringfireball.markdown"],
+                    extensionAssociations: [
+                        .init(normalizedExtension: "txt", contentTypeIdentifier: "public.plain-text", bundleID: "com.apple.TextEdit"),
+                        .init(normalizedExtension: "md", contentTypeIdentifier: "net.daringfireball.markdown", bundleID: "com.apple.TextEdit"),
+                    ],
+                    representativeBundleID: "com.apple.TextEdit"
+                ),
+            ]
+        )
+        let viewModel = MenuBarViewModel(
+            stateService: stateService,
+            appDiscovery: SequenceEditorDiscovery(candidateSets: [sampleCandidates, sampleCandidates]),
+            switchCoordinator: StubSwitchCoordinator(reportsByBundleID: ["com.microsoft.VSCode": report]),
+            switchExecutor: ImmediateSwitchExecutor(),
+            switchRefreshScheduler: refreshScheduler,
+            applicationLocator: StubApplicationLocator(iconPathsByBundleID: [:]),
+            switchVerificationPolicy: MenuBarSwitchVerificationPolicy(
+                initialPollInterval: 0.01,
+                initialTimeout: 0.02,
+                repairPollInterval: 0.01,
+                repairTimeout: 0.02
+            ),
+            switchVerificationSleeper: { nanoseconds in
+                try await blockingSleeper.sleep(nanoseconds: nanoseconds)
+            }
+        )
+
+        viewModel.load()
+        viewModel.applyEditor(bundleID: "com.microsoft.VSCode")
+        await exhaustMainActorTurns()
+        viewModel.refresh()
+        await blockingSleeper.resumeAll()
+        await exhaustMainActorTurns()
+
+        XCTAssertEqual(viewModel.currentState?.currentBundleID, "com.openai.atlas")
+        XCTAssertEqual(refreshScheduler.fastRefreshCount, 1)
+        XCTAssertEqual(refreshScheduler.repairRefreshCount, 0)
+        XCTAssertEqual(stateService.loadCount, 3)
     }
 
     func testRefreshReloadsStateAndEditors() {
@@ -805,13 +1364,13 @@ final class MenuBarViewModelTests: XCTestCase {
                     "Refresh": "Refresh",
                     "Quit": "Quit",
                     "No Global Editor Detected": "No Global Editor Detected",
-                    "No declared text type currently reports an editor handler.": "No declared text type currently reports an editor handler.",
+                    "No declared text type currently reports a default app.": "No declared text type currently reports a default app.",
                 ],
                 "zh-Hans": [
                     "Refresh": "刷新",
                     "Quit": "退出",
                     "No Global Editor Detected": "未检测到全局编辑器",
-                    "No declared text type currently reports an editor handler.": "当前没有已声明的文本类型报告编辑器处理器。",
+                    "No declared text type currently reports a default app.": "当前没有已声明的文本类型报告默认应用。",
                 ],
             ]
         )
@@ -1060,6 +1619,38 @@ private final class StubStateService: GlobalTextStateServicing {
     }
 }
 
+private actor BlockingVerificationSleeper {
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+
+    func sleep(nanoseconds _: UInt64) async throws {
+        if Task.isCancelled {
+            throw CancellationError()
+        }
+
+        await withCheckedContinuation { continuation in
+            continuations.append(continuation)
+        }
+
+        if Task.isCancelled {
+            throw CancellationError()
+        }
+    }
+
+    func resumeAll() {
+        let pendingContinuations = continuations
+        continuations.removeAll()
+        for continuation in pendingContinuations {
+            continuation.resume()
+        }
+    }
+}
+
+private func exhaustMainActorTurns(count: Int = 8) async {
+    for _ in 0..<count {
+        await Task.yield()
+    }
+}
+
 private struct StubEditorDiscovery: EditorDiscovering {
     let candidates: [EditorCandidate]
 
@@ -1154,6 +1745,19 @@ private final class StubSwitchCoordinator: GlobalTextSwitchCoordinating {
                 processedExtensions: [],
                 sampleFailures: []
             )
+    }
+}
+
+private final class StubLaunchServicesRefreshScheduler: LaunchServicesRefreshScheduling {
+    private(set) var fastRefreshCount = 0
+    private(set) var repairRefreshCount = 0
+
+    func scheduleFastRefresh() {
+        fastRefreshCount += 1
+    }
+
+    func scheduleRepairRefresh() {
+        repairRefreshCount += 1
     }
 }
 

@@ -40,32 +40,51 @@ struct GlobalTextSwitchFeedbackFormatter: GlobalTextSwitchFeedbackFormatting {
                 report.affectedCount,
                 requestedEditorName
             ),
-            details: report.sampleFailures.prefix(3).map(detailLine(for:))
+            details: report.sampleFailures.compactMap(detailLine(for:))
         )
     }
 
-    private func detailLine(for failure: GlobalTextSwitchReport.SampleFailure) -> String {
+    private func detailLine(for failure: GlobalTextSwitchReport.SampleFailure) -> String? {
+        let scopeLabel = annotatedScopeLabel(for: failure)
+
         switch failure.status {
         case AssociationVerificationStatus.mismatched.rawValue:
             return localizer.formattedString(
                 "%@: Still opens in %@.",
-                failure.scopeLabel,
+                scopeLabel,
                 effectiveDisplayName(for: failure.effectiveBundleID)
             )
         case AssociationVerificationStatus.unsupportedTarget.rawValue:
-            return localizer.formattedString(
+            let baseMessage = localizer.formattedString(
                 "%@: This editor does not support this type on this Mac.",
-                failure.scopeLabel
+                scopeLabel
+            )
+            guard isDynamicContentTypeIdentifier(failure.contentTypeIdentifier) else {
+                return baseMessage
+            }
+
+            return baseMessage + " " + localizer.string(
+                "macOS only reports a dynamic UTI for this extension, so app matching is limited."
             )
         case AssociationVerificationStatus.writeFailed.rawValue:
+            if let diagnostic = failure.diagnostic, !diagnostic.isEmpty {
+                return "\(scopeLabel): \(diagnostic)"
+            }
+
             return String(
                 format: localizer.string("%@: macOS rejected the change (OSStatus %d)."),
                 locale: Locale(identifier: "en_US_POSIX"),
-                arguments: [failure.scopeLabel, Int(failure.statusCode ?? -1)]
+                arguments: [scopeLabel, Int(failure.statusCode ?? -1)]
             )
+        case AssociationVerificationStatus.pendingVerification.rawValue:
+            return nil
         default:
-            return failure.scopeLabel
+            return scopeLabel
         }
+    }
+
+    private func isDynamicContentTypeIdentifier(_ contentTypeIdentifier: String) -> Bool {
+        contentTypeIdentifier.hasPrefix("dyn.")
     }
 
     private func effectiveDisplayName(for bundleID: String?) -> String {
@@ -76,5 +95,24 @@ struct GlobalTextSwitchFeedbackFormatter: GlobalTextSwitchFeedbackFormatting {
         return KnownEditors.knownEditor(for: bundleID)?.displayName
             ?? applicationLocator?.displayName(for: bundleID)
             ?? bundleID
+    }
+
+    private func annotatedScopeLabel(for failure: GlobalTextSwitchReport.SampleFailure) -> String {
+        guard failure.role != .all else {
+            return failure.scopeLabel
+        }
+
+        return "\(failure.scopeLabel) (\(roleDisplayName(for: failure.role)))"
+    }
+
+    private func roleDisplayName(for role: PreferredHandlerRole) -> String {
+        switch role {
+        case .all:
+            return localizer.string("all")
+        case .viewer:
+            return localizer.string("viewer")
+        case .editor:
+            return localizer.string("editor")
+        }
     }
 }

@@ -132,6 +132,7 @@
 		A1B2C3D4E5F60718293A0103 /* Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DefaultEditorSwitcherTests/GlobalTextSwitchFeedbackFormatterTests.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A0111 /* App/Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = App/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		F82556A02F7C37280078B596 /* DefaultEditorSwitcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DefaultEditorSwitcher.xcodeproj; sourceTree = "<group>"; };
+		F82589282F7C3BDC0078B596 /* DefaultEditorSwitcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DefaultEditorSwitcher.xcodeproj; sourceTree = "<group>"; };
 		F83D559D2F7ACC0400431BA8 /* DefaultEditorSwitcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DefaultEditorSwitcher.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -184,6 +185,11 @@
 			sourceTree = "<group>";
 		};
 		F82556A52F7C37280078B596 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F825892D2F7C3BDC0078B596 /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
 			sourceTree = "<group>";
@@ -348,6 +354,10 @@
 				{
 					ProductGroup = F83D55A22F7ACC0400431BA8 /* Products */;
 					ProjectRef = F83D559D2F7ACC0400431BA8 /* DefaultEditorSwitcher.xcodeproj */;
+				},
+				{
+					ProductGroup = F825892D2F7C3BDC0078B596 /* Products */;
+					ProjectRef = F82589282F7C3BDC0078B596 /* DefaultEditorSwitcher.xcodeproj */;
 				},
 			);
 			projectRoot = "";

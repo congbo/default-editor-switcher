@@ -7,6 +7,40 @@
     ".%@" : {
 
     },
+    ".%@ is not a text type, but it will still be included in the global switch." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".%@ is not a text type, but it will still be included in the global switch."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".%@ 不是文本类型，但仍会被纳入全局切换。"
+          }
+        }
+      }
+    },
+    ".%@ is saved, but macOS cannot resolve it yet, so the global switch will skip it." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".%@ is saved, but macOS cannot resolve it yet, so the global switch will skip it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".%@ 已保存，但 macOS 目前还无法解析它，所以全局切换会跳过它。"
+          }
+        }
+      }
+    },
     "%@: macOS rejected the change (OSStatus %d)." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -54,6 +88,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@: 这个编辑器在这台 Mac 上不支持此类型。"
+          }
+        }
+      }
+    },
+    "macOS only reports a dynamic UTI for this extension, so app matching is limited." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS only reports a dynamic UTI for this extension, so app matching is limited."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 目前只为这个扩展名报告动态 UTI，因此应用匹配能力有限。"
           }
         }
       }
@@ -143,6 +194,57 @@
         }
       }
     },
+    "Add" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
+        }
+      }
+    },
+    "Add any file extension here to include it in the global switch." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add any file extension here to include it in the global switch."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在这里添加任意文件扩展名，即可把它纳入全局切换。"
+          }
+        }
+      }
+    },
+    "Add Extension" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Extension"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加扩展名"
+          }
+        }
+      }
+    },
     "Advanced language and custom extension rules arrive in later phases. Phase 02 keeps the resident menu utility focused on one-click global text switching." : {
       "localizations" : {
         "en" : {
@@ -171,6 +273,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "高级规则窗口"
+          }
+        }
+      }
+    },
+    "all" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部"
           }
         }
       }
@@ -243,19 +362,19 @@
         }
       }
     },
-    "Checking the current global text editor." : {
+    "Checking the current global text default app." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checking the current global text editor."
+            "value" : "Checking the current global text default app."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在检查当前全局文本编辑器。"
+            "value" : "正在检查当前全局文本默认应用。"
           }
         }
       }
@@ -311,6 +430,23 @@
         }
       }
     },
+    "Completed with Issues" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed with Issues"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成，但有问题"
+          }
+        }
+      }
+    },
     "Config & Data" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -328,19 +464,19 @@
         }
       }
     },
-    "Completed with Issues" : {
+    "Current default app covers %d declared text extensions, for example %@." : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completed with Issues"
+            "value" : "Current default app covers %d declared text extensions, for example %@."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "完成，但有问题"
+            "value" : "当前默认应用覆盖 %d 个已声明文本扩展名，例如 %@。"
           }
         }
       }
@@ -362,53 +498,19 @@
         }
       }
     },
-    "Documents" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Documents"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文档"
-          }
-        }
-      }
-    },
-    "Current editor covers %d declared text extensions, for example %@." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current editor covers %d declared text extensions, for example %@."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前应用覆盖 %d 个已声明文本扩展名，例如 %@。"
-          }
-        }
-      }
-    },
-    "Current global text editor across %d declared text types." : {
+    "Current global text default app across %d declared text types." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Current global text editor across %d declared text types."
+            "value" : "Current global text default app across %d declared text types."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前全局文本编辑器覆盖 %d 个已声明的文本类型。"
+            "value" : "当前全局文本默认应用覆盖 %d 个已声明的文本类型。"
           }
         }
       }
@@ -447,19 +549,70 @@
         }
       }
     },
-    "Declared text types are currently split across multiple editors." : {
+    "Custom" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Declared text types are currently split across multiple editors."
+            "value" : "Custom"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已声明文本类型当前分散在多个编辑器中。"
+            "value" : "自定义"
+          }
+        }
+      }
+    },
+    "Declared text types are currently split across multiple default apps." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Declared text types are currently split across multiple default apps."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已声明文本类型当前分散在多个默认应用中。"
+          }
+        }
+      }
+    },
+    "Documents" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documents"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文档"
+          }
+        }
+      }
+    },
+    "editor" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "editor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
           }
         }
       }
@@ -546,23 +699,6 @@
         }
       }
     },
-    "Languages" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Languages"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编程语言"
-          }
-        }
-      }
-    },
     "Included in the first-level dropdown when enabled" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -592,6 +728,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "语言"
+          }
+        }
+      }
+    },
+    "Languages" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Languages"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编程语言"
           }
         }
       }
@@ -799,19 +952,36 @@
         }
       }
     },
-    "No declared text type currently reports an editor handler." : {
-      "extractionState" : "stale",
+    "No custom extensions yet." : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No declared text type currently reports an editor handler."
+            "value" : "No custom extensions yet."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当前没有已声明的文本类型报告编辑器处理器。"
+            "value" : "还没有自定义扩展名。"
+          }
+        }
+      }
+    },
+    "No declared text type currently reports a default app." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No declared text type currently reports a default app."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前没有已声明的文本类型报告默认应用。"
           }
         }
       }
@@ -901,23 +1071,6 @@
         }
       }
     },
-    "Shell Scripts" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shell Scripts"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shell 脚本"
-          }
-        }
-      }
-    },
     "Quit" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1003,6 +1156,23 @@
         }
       }
     },
+    "Remove" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除"
+          }
+        }
+      }
+    },
     "Settings" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1033,6 +1203,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置..."
+          }
+        }
+      }
+    },
+    "Shell Scripts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shell Scripts"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shell 脚本"
           }
         }
       }
@@ -1139,6 +1326,40 @@
         }
       }
     },
+    "That custom extension already exists: .%@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That custom extension already exists: .%@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个自定义扩展名已经存在：.%@。"
+          }
+        }
+      }
+    },
+    "That extension is already included in the built-in list: .%@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That extension is already included in the built-in list: .%@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个扩展名已经在内置列表中：.%@。"
+          }
+        }
+      }
+    },
     "The app opens manually from your menu bar until launch at login is enabled." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1223,23 +1444,6 @@
         }
       }
     },
-    "Web" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web"
-          }
-        }
-      }
-    },
     "UTI: %@." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1287,6 +1491,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "UTI：%@。默认启用。"
+          }
+        }
+      }
+    },
+    "viewer" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "viewer"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看"
+          }
+        }
+      }
+    },
+    "Web" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web"
           }
         }
       }

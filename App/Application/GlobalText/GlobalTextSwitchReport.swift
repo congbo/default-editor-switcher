@@ -9,6 +9,25 @@ struct GlobalTextSwitchReport: Equatable {
         let status: String
         let effectiveBundleID: String?
         let statusCode: OSStatus?
+        let diagnostic: String?
+
+        init(
+            contentTypeIdentifier: String,
+            scopeLabel: String,
+            role: PreferredHandlerRole,
+            status: String,
+            effectiveBundleID: String?,
+            statusCode: OSStatus?,
+            diagnostic: String? = nil
+        ) {
+            self.contentTypeIdentifier = contentTypeIdentifier
+            self.scopeLabel = scopeLabel
+            self.role = role
+            self.status = status
+            self.effectiveBundleID = effectiveBundleID
+            self.statusCode = statusCode
+            self.diagnostic = diagnostic
+        }
     }
 
     typealias SampleFailure = Failure
@@ -16,6 +35,7 @@ struct GlobalTextSwitchReport: Equatable {
     let requestedBundleID: String
     let matchedCount: Int
     let mismatchedCount: Int
+    let pendingVerificationCount: Int
     let unsupportedCount: Int
     let writeFailedCount: Int
     let processedContentTypeIdentifiers: [String]
@@ -26,6 +46,7 @@ struct GlobalTextSwitchReport: Equatable {
         requestedBundleID: String,
         matchedCount: Int,
         mismatchedCount: Int,
+        pendingVerificationCount: Int = 0,
         unsupportedCount: Int,
         writeFailedCount: Int,
         processedContentTypeIdentifiers: [String],
@@ -35,6 +56,7 @@ struct GlobalTextSwitchReport: Equatable {
         self.requestedBundleID = requestedBundleID
         self.matchedCount = matchedCount
         self.mismatchedCount = mismatchedCount
+        self.pendingVerificationCount = pendingVerificationCount
         self.unsupportedCount = unsupportedCount
         self.writeFailedCount = writeFailedCount
         self.processedContentTypeIdentifiers = processedContentTypeIdentifiers
@@ -46,6 +68,7 @@ struct GlobalTextSwitchReport: Equatable {
         requestedBundleID: String,
         matchedCount: Int,
         mismatchedCount: Int,
+        pendingVerificationCount: Int = 0,
         unsupportedCount: Int,
         writeFailedCount: Int,
         processedContentTypeIdentifiers: [String],
@@ -56,6 +79,7 @@ struct GlobalTextSwitchReport: Equatable {
             requestedBundleID: requestedBundleID,
             matchedCount: matchedCount,
             mismatchedCount: mismatchedCount,
+            pendingVerificationCount: pendingVerificationCount,
             unsupportedCount: unsupportedCount,
             writeFailedCount: writeFailedCount,
             processedContentTypeIdentifiers: processedContentTypeIdentifiers,
@@ -72,11 +96,23 @@ struct GlobalTextSwitchReport: Equatable {
         mismatchedCount + unsupportedCount + writeFailedCount
     }
 
+    var hasBlockingFailures: Bool {
+        affectedCount > 0
+    }
+
     var sampleFailures: [SampleFailure] {
-        Array(failures.prefix(3))
+        Array(
+            failures
+                .filter { $0.status != AssociationVerificationStatus.pendingVerification.rawValue }
+                .prefix(3)
+        )
     }
 
     var didFullyMatch: Bool {
-        totalProcessedCount > 0 && affectedCount == 0
+        totalProcessedCount > 0 && affectedCount == 0 && pendingVerificationCount == 0
+    }
+
+    var canOptimisticallyPresentRequestedEditor: Bool {
+        totalProcessedCount > 0 && !hasBlockingFailures
     }
 }
